@@ -14,10 +14,7 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "nodenext",
-    "baseUrl": "./",
-    "paths": {
-      "@angular/*": ["node_modules/@angular/*"]
-    }
+
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
