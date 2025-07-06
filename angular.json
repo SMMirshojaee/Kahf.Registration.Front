@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "registration.Front": {
+    "Kahf.Registration.Front": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -61,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "registration.Front:build:production"
+              "buildTarget": "Kahf.Registration.Front:build:production"
             },
             "development": {
-              "buildTarget": "registration.Front:build:development"
+              "buildTarget": "Kahf.Registration.Front:build:development"
             }
           },
           "defaultConfiguration": "development"
