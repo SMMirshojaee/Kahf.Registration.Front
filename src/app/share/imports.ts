@@ -5,7 +5,7 @@ import { CheckboxModule } from "primeng/checkbox";
 import { RadioButtonModule } from "primeng/radiobutton";
 import { DividerModule } from "primeng/divider";
 
-export const IMPORTS = [
+export const SHARE_IMPORTS = [
     ButtonModule,
     CheckboxModule,
     RadioButtonModule,

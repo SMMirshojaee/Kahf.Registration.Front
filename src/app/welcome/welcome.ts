@@ -2,11 +2,11 @@ import { Component, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { RegService } from '@app/core/reg-service';
-import { IMPORTS } from '@app/share/imports';
+import { SHARE_IMPORTS } from '@app/share/imports';
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [RouterModule, IMPORTS],
+  imports: [RouterModule, SHARE_IMPORTS],
   templateUrl: './welcome.html',
   styleUrl: './welcome.scss'
 })
