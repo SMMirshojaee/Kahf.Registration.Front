@@ -1,3 +1,10 @@
-<p-button (onClick)="route('signup')">ثبت نام</p-button>
-<p-button (onClick)="route('followup')">پیگیری</p-button>
+<p-button class="col text-left" severity="warn" (onClick)="route('applicant/followup')">ورود به صفحه پیگیری</p-button>
+<p-divider></p-divider>
 
+<div [innerHTML]="description">
+</div>
+<p-divider></p-divider>
+<div class="col-12 flex">
+    <p-button class="col" (onClick)="route('applicant/signup')">ثبت نام</p-button>
+    <p-button class="col text-left" severity="warn" (onClick)="route('applicant/followup')">پیگیری</p-button>
+</div>
