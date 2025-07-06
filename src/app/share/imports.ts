@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
 import { RadioButtonModule } from "primeng/radiobutton";
+import { DividerModule } from "primeng/divider";
 
 export const IMPORTS = [
     ButtonModule,
@@ -10,5 +11,6 @@ export const IMPORTS = [
     RadioButtonModule,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DividerModule
 ]

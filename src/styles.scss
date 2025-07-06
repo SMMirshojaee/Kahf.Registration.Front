@@ -3,6 +3,24 @@
     font-family: IRANsans;
     src: url('assets/Fonts/IRANSansWeb.woff');
 }
-*{
+
+$primary-color: #11afa8;
+:root{
+    --p-primary-color: #11afa8 !important
+}
+// html {
+
+//     background-color:$primary-color ;
+// }
+
+* {
     font-family: IRANsans;
+}
+
+.app-dark-style {
+    background-color: initial;
+}
+
+.text-primary {
+    color: $primary-color;
 }

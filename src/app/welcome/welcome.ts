@@ -9,7 +9,7 @@ import { IMPORTS } from '@app/share/imports';
   styleUrl: './welcome.scss'
 })
 export class Welcome {
-  ingredient: boolean = true;
+  
   private router = inject(Router);
   route(address: string) {
     this.router.navigate([address])
