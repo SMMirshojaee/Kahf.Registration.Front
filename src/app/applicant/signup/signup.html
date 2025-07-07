@@ -1,4 +1,26 @@
 <div class="col-12">
-    چنانچه قبلا ثبت نام اولیه را انجام داده اید، با ورود به صحفه پیگیری از وضعیت ثبت نام خود مطلع شوید
-    <p-button></p-button>
+    <small>
+        چنانچه قبلا ثبت نام اولیه را انجام داده اید، با ورود به صحفه پیگیری از وضعیت ثبت نام خود مطلع شوید
+    </small>
+    <div class="text-center">
+        <p-button size="small" class="col" severity="warn" (onClick)="route('applicant/followup')">ورود به صفحه
+            پیگیری</p-button>
+    </div>
 </div>
+<form [formGroup]="signupForm">
+    <div class="col-12">
+        <p-floatlabel variant="on">
+            <input class="w-full" pInputText id="nationalCode" formControlName="nationalCode" autocomplete="off" />
+            <label for="nationalCode">کد ملی</label>
+        </p-floatlabel>
+    </div>
+    <div class="col-12">
+        <p-floatlabel variant="on">
+            <input class="w-full" pInputText id="mobile" formControlName="mobile" autocomplete="off" />
+            <label for="mobile">شماره موبایل</label>
+        </p-floatlabel>
+    </div>
+    <div class="col-12 text-center">
+        <p-button (onClick)="submit()" >ثبت</p-button>
+    </div>
+</form>

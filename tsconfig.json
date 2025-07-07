@@ -4,6 +4,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "strict": true,
+    "allowArbitraryExtensions": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -17,7 +18,9 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "@app/*": ["src/app/*"]
+      "@app/*": [
+        "src/app/*"
+      ]
     }
   },
   "angularCompilerOptions": {

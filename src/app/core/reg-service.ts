@@ -10,7 +10,6 @@ import { Observable } from 'rxjs';
 export class RegService {
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/reg`;
-  constructor() { }
 
   getReg(): Observable<RegDto> {
     return this.httpClient.get<RegDto>(`${this.address}/GetAll`);
