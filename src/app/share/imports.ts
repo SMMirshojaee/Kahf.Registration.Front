@@ -6,6 +6,9 @@ import { RadioButtonModule } from "primeng/radiobutton";
 import { DividerModule } from "primeng/divider";
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { ToastModule } from 'primeng/toast';
+import { MessageModule } from 'primeng/message';
+
 export const SHARE_IMPORTS = [
     ButtonModule,
     CheckboxModule,
@@ -15,5 +18,7 @@ export const SHARE_IMPORTS = [
     ReactiveFormsModule,
     DividerModule,
     InputTextModule,
-    FloatLabelModule
+    FloatLabelModule,
+    ToastModule,
+    MessageModule
 ]

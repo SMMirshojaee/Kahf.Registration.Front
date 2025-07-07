@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { RegService } from '@app/core/reg-service';
+import { ToastService } from '@app/core/toast-service';
 import { SHARE_IMPORTS } from '@app/share/imports';
 @Component({
   selector: 'app-welcome',
@@ -14,6 +15,7 @@ export class Welcome {
   private regService = inject(RegService);
   private router = inject(Router);
   private sanitizer = inject(DomSanitizer);
+  private toastService = inject(ToastService);
 
   protected description!: SafeHtml;
   route(address: string) {
@@ -23,9 +25,9 @@ export class Welcome {
   ngOnInit() {
     this.regService.getDefault().subscribe({
       next: (data) => {
-        this.description =this.sanitizer.bypassSecurityTrustHtml(this.decodeHtml(data.description ?? ''));
+        this.description = this.sanitizer.bypassSecurityTrustHtml(this.decodeHtml(data.description ?? ''));
       }, error: (err) => {
-
+        this.toastService.error('خطا در دریافت اطلاعات');
       }
     })
   }

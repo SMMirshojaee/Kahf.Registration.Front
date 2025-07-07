@@ -9,8 +9,10 @@ import { Header } from './header/header';
   imports: [RouterOutlet, SHARE_IMPORTS, Footer, Header],
   templateUrl: './app.html',
   styleUrl: './app.scss',
-  standalone: true
+  standalone: true,
+  providers:[]
 })
 export class App {
 
+  
 }

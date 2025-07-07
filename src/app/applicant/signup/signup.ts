@@ -3,19 +3,21 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApplicantService } from '@app/core/applicant-service';
+import { ToastService } from '@app/core/toast-service';
 import { SHARE_IMPORTS } from '@app/share/imports';
 import { MobileValidator } from '@app/share/validators/mobile.validator';
 import { NationalCodeValidator } from '@app/share/validators/national-code.validator';
-
 @Component({
   selector: 'app-signup',
   standalone: true,
   imports: [SHARE_IMPORTS],
   templateUrl: './signup.html',
-  styleUrl: './signup.scss'
+  styleUrl: './signup.scss',
+  providers: []
 })
 export class Signup {
   private router = inject(Router);
+  private toastService = inject(ToastService);
   protected signupForm: FormGroup;
   private applicantService = inject(ApplicantService);
   /**
@@ -44,7 +46,7 @@ export class Signup {
         next: data => {
 
         }, error: (err: HttpErrorResponse) => {
-debugger
+          this.toastService.success('موفق')
         }
       })
   }

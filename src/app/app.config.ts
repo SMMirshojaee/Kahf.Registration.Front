@@ -6,6 +6,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config'; // add this
 import Aura from '@primeng/themes/aura'; // add this
 import { provideHttpClient } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
 // import lara from '@primeng/themes/lara'; // add this
 // import material from '@primeng/themes/material'; // add this
 // import nora from '@primeng/themes/nora'; // add this
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
+    MessageService,
     providePrimeNG({
       theme: {
         preset: Aura, 
