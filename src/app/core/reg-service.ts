@@ -14,7 +14,11 @@ export class RegService {
   getReg(): Observable<RegDto> {
     return this.httpClient.get<RegDto>(`${this.address}/GetAll`);
   }
-  getDefault(): Observable<RegDto> {
-    return this.httpClient.get<RegDto>(`${this.address}/GetDefault`);
+  // getDefault(): Observable<RegDto> {
+  //   return this.httpClient.get<RegDto>(`${this.address}/GetDefault`);
+  // }
+
+  getActiveRegs(): Observable<RegDto[]>{
+    return this.httpClient.get<RegDto[]>(`${this.address}/GetActiveRegs`);
   }
 }

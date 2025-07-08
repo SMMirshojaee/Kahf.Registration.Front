@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { SHARE_IMPORTS } from './share/imports';
 import { Footer } from './footer/footer';
 import { Header } from './header/header';
+import { GenericComponent } from './share/generic-component';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +11,12 @@ import { Header } from './header/header';
   templateUrl: './app.html',
   styleUrl: './app.scss',
   standalone: true,
-  providers:[]
+  providers: []
 })
-export class App {
+export class App extends GenericComponent {
 
-  
+
+  ngOnInit() {
+  }
+
 }

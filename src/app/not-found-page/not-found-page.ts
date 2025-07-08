@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { GenericComponent } from '@app/share/generic-component';
 
 @Component({
   selector: 'app-not-found-page',
@@ -7,6 +8,6 @@ import { Component } from '@angular/core';
   styleUrl: './not-found-page.scss',
   standalone: true
 })
-export class NotFoundPage {
+export class NotFoundPage extends GenericComponent {
 
 }

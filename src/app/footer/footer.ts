@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { GenericComponent } from '@app/share/generic-component';
 
 @Component({
   standalone:true,
@@ -6,6 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './footer.html',
   styleUrl: './footer.scss'
 })
-export class Footer {
+export class Footer extends GenericComponent{
 
 }

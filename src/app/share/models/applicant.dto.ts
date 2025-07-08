@@ -1,4 +1,4 @@
 export class SignupDto {
-    public nationalCode!: string;
-    public mobile!: string;
+    public nationalCode: string;
+    public mobile: string;
 }

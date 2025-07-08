@@ -1,12 +1,4 @@
-<div class="col-12">
-    <small>
-        چنانچه قبلا ثبت نام اولیه را انجام داده اید، با ورود به صحفه پیگیری از وضعیت ثبت نام خود مطلع شوید
-    </small>
-    <div class="text-center">
-        <p-button size="small" class="col" severity="warn" (onClick)="route('applicant/followup')">ورود به صفحه
-            پیگیری</p-button>
-    </div>
-</div>
+
 <form [formGroup]="signupForm">
     <div class="col-12">
         <p-floatlabel variant="on">
@@ -24,3 +16,12 @@
         <p-button (onClick)="submit()" >ثبت</p-button>
     </div>
 </form>
+<div class="col-12">
+    <small>
+        چنانچه قبلا ثبت نام اولیه را انجام داده اید، با ورود به صحفه پیگیری از وضعیت ثبت نام خود مطلع شوید
+    </small>
+    <div class="text-center">
+        <p-button size="small" class="col" severity="warn" (onClick)="route('applicant/followup')">ورود به صفحه
+            پیگیری</p-button>
+    </div>
+</div>

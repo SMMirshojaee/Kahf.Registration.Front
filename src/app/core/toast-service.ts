@@ -7,14 +7,21 @@ import { MessageService } from 'primeng/api';
 export class ToastService {
 
   private messageService = inject(MessageService);
-  constructor() { }
 
   success(message: string, detail?: string) {
     this.messageService.add({
       key: 'toast',
       severity: 'success',
       summary: message,
-      detail: detail,
+      detail: detail
+    });
+  }
+  disconnect() {
+    this.messageService.add({
+      key: 'toast',
+      severity: 'error',
+      summary: 'عدم اتصال به اینترنت',
+      detail: 'اتصال خود به اینترنت را بررسی کنید. چنانچه از اتصال خود به اینترنت مطمئن هستید، لطفا با راهبر سامانه تماس حاصل فرمایید',
     });
   }
   error(message: string, detail?: string) {

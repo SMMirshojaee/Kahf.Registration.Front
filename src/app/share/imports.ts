@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ToastModule } from 'primeng/toast';
 import { MessageModule } from 'primeng/message';
+import { NgxSpinnerModule } from "ngx-spinner";
 
 export const SHARE_IMPORTS = [
     ButtonModule,
@@ -20,5 +21,6 @@ export const SHARE_IMPORTS = [
     InputTextModule,
     FloatLabelModule,
     ToastModule,
-    MessageModule
+    MessageModule,
+    NgxSpinnerModule
 ]

@@ -1,0 +1,9 @@
+<div class="col-12 grid">
+    <div class="col-12"><strong>{{reg.title}}</strong></div>
+    <div class="col-12">تاریخ شروع: {{reg.startDate}}</div>
+    <div class="col-12">تاریخ پایان: {{reg.endDate}}</div>
+</div>
+<div class="col-12 grid">
+    <p-button class="col" (onClick)="route('applicant/signup')">ثبت نام</p-button>
+    <p-button class="col text-left" severity="warn" (onClick)="route('applicant/followup')">پیگیری</p-button>
+</div>

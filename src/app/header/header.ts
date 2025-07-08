@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
 
 @Component({
@@ -9,7 +10,7 @@ import { SHARE_IMPORTS } from '@app/share/imports';
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })
-export class Header {
+export class Header extends GenericComponent{
   private route = inject(Router);
 
   toggleDarkMode() {

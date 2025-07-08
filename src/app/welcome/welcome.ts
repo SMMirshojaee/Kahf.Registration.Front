@@ -1,39 +1,36 @@
 import { Component, inject } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Router, RouterModule } from '@angular/router';
+import { SafeHtml } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { RegService } from '@app/core/reg-service';
-import { ToastService } from '@app/core/toast-service';
+import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
+import { RegDto } from '@app/share/models/reg.dto';
+import { RegTile } from '@app/share/reg-tile/reg-tile';
+import { finalize } from 'rxjs';
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [RouterModule, SHARE_IMPORTS],
+  imports: [RouterModule, SHARE_IMPORTS,RegTile],
   templateUrl: './welcome.html',
   styleUrl: './welcome.scss'
 })
-export class Welcome {
+export class Welcome extends GenericComponent {
   private regService = inject(RegService);
-  private router = inject(Router);
-  private sanitizer = inject(DomSanitizer);
-  private toastService = inject(ToastService);
-
+  protected regs: RegDto[];
   protected description!: SafeHtml;
-  route(address: string) {
-    this.router.navigate([address])
-  }
+  
 
   ngOnInit() {
-    this.regService.getDefault().subscribe({
-      next: (data) => {
-        this.description = this.sanitizer.bypassSecurityTrustHtml(this.decodeHtml(data.description ?? ''));
-      }, error: (err) => {
-        this.toastService.error('خطا در دریافت اطلاعات');
-      }
-    })
+    this.spinnerService.show();
+    this.regService.getActiveRegs()
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: (data) => {
+          this.regs = data;
+        }, error: (err) => {
+          this.notify.error('خطا در دریافت اطلاعات');
+        }
+      })
   }
-  private decodeHtml(html: string): string {
-    const txt = document.createElement('textarea');
-    txt.innerHTML = html;
-    return txt.value;
-  }
+ 
 }
