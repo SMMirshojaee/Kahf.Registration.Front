@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ApplicantService } from '@app/core/applicant-service';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
 
@@ -9,5 +10,9 @@ import { SHARE_IMPORTS } from '@app/share/imports';
   styleUrl: './dashboard.scss'
 })
 export class Dashboard extends GenericComponent {
+  private applicantService = inject(ApplicantService);
 
+  ngOnInit() {
+    this.applicantService
+  }
 }

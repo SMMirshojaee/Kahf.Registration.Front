@@ -27,3 +27,12 @@
         <p-button (onClick)="submit()">ورود</p-button>
     </div>
 </form>
+<div class="col-12 mt-2">
+    <small class="text-center">
+        چنانچه قبلا ثبت نام اولیه را انجام نداده اید، یا هنوز کد رهگیری از سامانه دریافت نکرده اید به صفحه ثبت‌نام بروید
+    </small>
+    <div class="text-center mt-3">
+        <p-button size="small" class="col" severity="warn" (onClick)="route('applicant/signup/'+reg.id)">ورود به صفحه
+            ثبت‌نام</p-button>
+    </div>
+</div>

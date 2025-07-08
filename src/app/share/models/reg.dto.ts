@@ -14,6 +14,7 @@ export class RegStepDto {
     public regId: number;
     public stepId: number;
     public title: string;
+    public description?: string;
     public order: number;
     public regStepStatuses: RegStepStatusDto;
 }
