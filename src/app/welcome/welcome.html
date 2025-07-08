@@ -1,3 +1,7 @@
-@for (reg of regs; track $index) {
-<reg-tile [reg]="reg"></reg-tile>
-}
+<div class="grid">
+    @for (reg of regs; track $index) {
+        <div class="col-12 md:col-4">
+            <reg-tile [reg]="reg"></reg-tile>
+        </div>
+    }
+</div>

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@app/share/environment/environment';
-import { SignupDto } from '@app/share/models/applicant.dto';
+import { SigninDto, SignupDto } from '@app/share/models/applicant.dto';
 import { TokenDto } from '@app/share/models/token.dto';
 import { Observable } from 'rxjs';
 
@@ -12,8 +12,10 @@ export class ApplicantService {
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/applicant`;
 
-  signup(signupDto: SignupDto): Observable<TokenDto> {
-    return this.httpClient.post<TokenDto>(`${this.address}/signup`, signupDto)
-
+  signup(regId: number, signupForm: SignupDto): Observable<TokenDto> {
+    return this.httpClient.post<TokenDto>(`${this.address}/signup/${regId}`, signupForm)
+  }
+  singin(regId: number, signinForm: SigninDto): Observable<TokenDto> {
+    return this.httpClient.put<TokenDto>(`${this.address}/singin/${regId}`, signinForm)
   }
 }

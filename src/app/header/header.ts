@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
 
@@ -10,14 +9,13 @@ import { SHARE_IMPORTS } from '@app/share/imports';
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })
-export class Header extends GenericComponent{
-  private route = inject(Router);
+export class Header extends GenericComponent {
 
   toggleDarkMode() {
     const element = document.querySelector('html');
     element?.classList.toggle('app-dark-style');
   }
   gotoRoute(address: string) {
-    this.route.navigate([address])
+    this.route(address)
   }
 }

@@ -24,6 +24,14 @@ export class ToastService {
       detail: 'اتصال خود به اینترنت را بررسی کنید. چنانچه از اتصال خود به اینترنت مطمئن هستید، لطفا با راهبر سامانه تماس حاصل فرمایید',
     });
   }
+  defaultError() {
+    this.messageService.add({
+      key: 'toast',
+      severity: 'error',
+      summary: 'خطا',
+      detail: 'خطا در دریافت اطلاعات از سرور '
+    });
+  }
   error(message: string, detail?: string) {
     this.messageService.add({
       key: 'toast',

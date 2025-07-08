@@ -1,6 +1,7 @@
 export class RegDto {
     public id: number;
     public title: string;
+    public imageAddress?: string;
     public description?: string;
     public startDate: Date;
     public endDate?: Date;

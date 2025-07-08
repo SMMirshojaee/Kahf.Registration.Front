@@ -1,1 +1,23 @@
-<p>followup works!</p>
+<form [formGroup]="followupForm">
+    <div class="col-12">
+        <p-floatlabel variant="on">
+            <input class="w-full" pInputText id="nationalCode" formControlName="nationalCode" autocomplete="off" />
+            <label for="nationalCode">کد ملی</label>
+        </p-floatlabel>
+    </div>
+    <div class="col-12">
+        <p-floatlabel variant="on">
+            <input class="w-full" pInputText id="mobile" formControlName="mobile" autocomplete="off" />
+            <label for="mobile">شماره موبایل</label>
+        </p-floatlabel>
+    </div>
+    <div class="col-12">
+        <p-floatlabel variant="on">
+            <input class="w-full" pInputText id="trackingCode" formControlName="trackingCode" autocomplete="off" />
+            <label for="trackingCode">کد پیگیری</label>
+        </p-floatlabel>
+    </div>
+    <div class="col-12 text-center">
+        <p-button (onClick)="submit()" >ثبت</p-button>
+    </div>
+</form>

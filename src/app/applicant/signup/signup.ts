@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/module.d';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ApplicantService } from '@app/core/applicant-service';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
@@ -17,9 +17,10 @@ import { finalize } from 'rxjs';
   providers: []
 })
 export class Signup extends GenericComponent {
-  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
   protected signupForm: FormGroup;
   private applicantService = inject(ApplicantService);
+  private regId;
   /**
    *
    */
@@ -31,27 +32,35 @@ export class Signup extends GenericComponent {
     });
 
   }
-
-  route(address: string) {
-    this.router.navigate([address])
+  ngOnInit() {
+    this.regId = this.activatedRoute.snapshot.params['id'];
+    if (!this.regId) {
+      this.notify.error('ثبت نام مورد نظر یافت نشد');
+      this.route('/')
+      return;
+    }
   }
+
   submit() {
     if (this.signupForm.invalid) {
       this.signupForm.markAllAsDirty();
-      this.notify.warn('موارد مشخص شده را برطرف نمایید')
+      this.notify.warn('موارد مشخص شده را برطرف نمایید');
       return;
     }
     const mobile = this.signupForm.get('mobile')?.value;
     const nationalCode = this.signupForm.get('nationalCode')?.value;
     this.spinnerService.show();
-    this.applicantService.signup({ nationalCode: nationalCode, mobile: mobile })
+    this.applicantService.signup(this.regId, { nationalCode: nationalCode, mobile: mobile })
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
           localStorage.setItem("jwtToken", data.tokenString);
+          this.route('/applicant/dashboard');
         }, error: (err: HttpErrorResponse) => {
           if (err.status == 0)
             this.notify.disconnect();
+          else if (err.status == 404)
+            this.notify.error('ثبت نام مورد نظر یافت نشد');
           else
             this.notify.error(err.error);
         }

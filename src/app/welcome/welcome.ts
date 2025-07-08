@@ -10,7 +10,7 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [RouterModule, SHARE_IMPORTS,RegTile],
+  imports: [RouterModule, SHARE_IMPORTS, RegTile],
   templateUrl: './welcome.html',
   styleUrl: './welcome.scss'
 })
@@ -18,7 +18,7 @@ export class Welcome extends GenericComponent {
   private regService = inject(RegService);
   protected regs: RegDto[];
   protected description!: SafeHtml;
-  
+
 
   ngOnInit() {
     this.spinnerService.show();
@@ -32,5 +32,5 @@ export class Welcome extends GenericComponent {
         }
       })
   }
- 
+
 }
