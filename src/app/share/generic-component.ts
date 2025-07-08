@@ -9,6 +9,6 @@ export class GenericComponent {
 
     private router = inject(Router);
     route(address: string) {
-        this.router.navigate([address])
+        this.router.navigate([`${address}`])
     }
 }

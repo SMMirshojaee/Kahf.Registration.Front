@@ -11,14 +11,14 @@ export class RegService {
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/reg`;
 
-  getReg(): Observable<RegDto> {
-    return this.httpClient.get<RegDto>(`${this.address}/GetAll`);
+  getById(id: number): Observable<RegDto> {
+    return this.httpClient.get<RegDto>(`${this.address}/GetById/${id}`);
   }
   // getDefault(): Observable<RegDto> {
   //   return this.httpClient.get<RegDto>(`${this.address}/GetDefault`);
   // }
 
-  getActiveRegs(): Observable<RegDto[]>{
+  getActiveRegs(): Observable<RegDto[]> {
     return this.httpClient.get<RegDto[]>(`${this.address}/GetActiveRegs`);
   }
 }

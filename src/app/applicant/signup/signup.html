@@ -1,4 +1,9 @@
-
+@if(reg){
+<div class="grid mb-3">
+    <p-message icon="pi pi-id-card" size="large" class="w-full text-center" severity="success">پیش ثبت‌نام:
+        {{reg.title}}</p-message>
+</div>
+}
 <form [formGroup]="signupForm">
     <div class="col-12">
         <p-floatlabel variant="on">
@@ -13,15 +18,15 @@
         </p-floatlabel>
     </div>
     <div class="col-12 text-center">
-        <p-button (onClick)="submit()" >ثبت</p-button>
+        <p-button (onClick)="submit()">ثبت</p-button>
     </div>
 </form>
-<div class="col-12">
-    <small>
+<div class="col-12 mt-2">
+    <small class="text-center">
         چنانچه قبلا ثبت نام اولیه را انجام داده اید، با ورود به صحفه پیگیری از وضعیت ثبت نام خود مطلع شوید
     </small>
-    <div class="text-center">
-        <p-button size="small" class="col" severity="warn" (onClick)="route('applicant/followup')">ورود به صفحه
+    <div class="text-center mt-3">
+        <p-button size="small" class="col" severity="warn" (onClick)="route('applicant/followup/'+reg.id)">ورود به صفحه
             پیگیری</p-button>
     </div>
 </div>

@@ -3,9 +3,11 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ApplicantService } from '@app/core/applicant-service';
+import { RegService } from '@app/core/reg-service';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
 import { SigninDto } from '@app/share/models/applicant.dto';
+import { RegDto } from '@app/share/models/reg.dto';
 import { MobileValidator } from '@app/share/validators/mobile.validator';
 import { NationalCodeValidator } from '@app/share/validators/national-code.validator';
 import { finalize } from 'rxjs';
@@ -14,14 +16,16 @@ import { finalize } from 'rxjs';
   selector: 'app-followup',
   standalone: true,
   imports: [SHARE_IMPORTS],
-  templateUrl: './followup.html',
-  styleUrl: './followup.scss'
+  templateUrl: './signIn.html',
+  styleUrl: './signIn.scss'
 })
-export class Followup extends GenericComponent {
+export class signIn extends GenericComponent {
   private applicantService = inject(ApplicantService);
+  private regService = inject(RegService);
   private activatedRoute = inject(ActivatedRoute);
   protected followupForm: FormGroup;
   private regId;
+  protected reg: RegDto;
 
   constructor() {
     super();
@@ -39,6 +43,25 @@ export class Followup extends GenericComponent {
       this.route('/')
       return;
     }
+    let selectedRegString = localStorage.getItem('selectedReg');
+    if (selectedRegString) {
+      let selectedReg = JSON.parse(selectedRegString) as RegDto;
+      if (selectedReg.id == this.regId) {
+        this.reg = selectedReg;
+        return;
+      }
+    }
+    this.spinnerService.show();
+    this.regService.getById(this.regId)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: data => {
+          localStorage.setItem('selectedReg', JSON.stringify(data));
+          this.reg = data;
+        }, error: err => {
+          this.notify.defaultError();
+        }
+      })
   }
   submit() {
     if (this.followupForm.invalid) {

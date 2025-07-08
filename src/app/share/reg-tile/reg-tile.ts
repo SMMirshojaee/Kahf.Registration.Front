@@ -22,7 +22,7 @@ export class RegTile {
     this.description = this.sanitizer.bypassSecurityTrustHtml(this.decodeHtml(this.reg.description ?? ''));
   }
   route(address: string) {
-    // localStorage.setItem('selectedReg', JSON.stringify(this.reg));
+    localStorage.setItem('selectedReg', JSON.stringify(this.reg));
     this.router.navigate([address]);
   }
   private decodeHtml(html: string): string {
