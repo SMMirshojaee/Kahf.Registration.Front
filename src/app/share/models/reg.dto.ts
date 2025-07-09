@@ -1,4 +1,14 @@
 export class RegDto {
+    public constructor(raw: any) {
+        this.id = raw['id'];
+        this.title = raw['title'];
+        this.imageAddress = raw['imageAddress'];
+        this.description = raw['description'];
+        this.startDate = raw['startDate'];
+        this.endDate = raw['endDate'];
+        this.isActive = raw['isActive'];
+        this.regSteps = raw['regSteps'];
+    }
     public id: number;
     public title: string;
     public imageAddress?: string;

@@ -8,14 +8,7 @@ export class ToastService {
 
   private messageService = inject(MessageService);
 
-  success(message: string, detail?: string) {
-    this.messageService.add({
-      key: 'toast',
-      severity: 'success',
-      summary: message,
-      detail: detail
-    });
-  }
+
   disconnect() {
     this.messageService.add({
       key: 'toast',
@@ -30,6 +23,22 @@ export class ToastService {
       severity: 'error',
       summary: 'خطا',
       detail: 'خطا در دریافت اطلاعات از سرور '
+    });
+  }
+  unauthorize(){
+    this.messageService.add({
+      key: 'toast',
+      severity: 'warn',
+      summary: 'دسترسی غیرمجاز',
+      detail: 'دسترسی شما به صفحه مورد نظر مسدود می باشد'
+    });
+  }
+  success(message: string, detail?: string) {
+    this.messageService.add({
+      key: 'toast',
+      severity: 'success',
+      summary: message,
+      detail: detail
     });
   }
   error(message: string, detail?: string) {

@@ -43,20 +43,17 @@ export class Signup extends GenericComponent {
       this.route('/')
       return;
     }
-    let selectedRegString = localStorage.getItem('selectedReg');
-    if (selectedRegString) {
-      let selectedReg = JSON.parse(selectedRegString) as RegDto;
-      if (selectedReg.id == this.regId) {
-        this.reg = selectedReg;
-        return;
-      }
+    let selectedReg = this.tokenService.getSelectedReg();
+    if (selectedReg?.id == this.regId) {
+      this.reg = selectedReg;
+      return;
     }
     this.spinnerService.show();
     this.regService.getById(this.regId)
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
-          localStorage.setItem('selectedReg', JSON.stringify(data));
+          this.tokenService.setSelectedReg(data);
           this.reg = data;
         }, error: err => {
           this.notify.defaultError();
@@ -77,7 +74,7 @@ export class Signup extends GenericComponent {
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
-          localStorage.setItem("jwtToken", data.tokenString);
+          this.tokenService.setTokenString(data.tokenString);
           this.route('/applicant/dashboard');
         }, error: (err: HttpErrorResponse) => {
           if (err.status == 0)

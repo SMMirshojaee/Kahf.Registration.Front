@@ -1,1 +1,47 @@
-<p>dashboard works!</p>
+@if (regSteps) {
+
+<p-accordion [value]="[applicantStatus.regStepId || regSteps[0].id]" [multiple]="true">
+    @for (step of regSteps; track $index) {
+    <p-accordion-panel [value]="step.id">
+        <p-accordion-header [ngClass]="getClass(step)">
+            <div class="col-auto">{{step.order}}- {{step.title}}</div>
+            @if (applicantStatus.regStepId>step.id) {
+            <div class="col text-left">
+                <i class="pi pi-check-square" style="font-size: 1.2rem"></i>
+            </div>
+            }@else if(applicantStatus.regStepId<step.id){ <div class="col text-left">
+                <i class="pi pi-clock" style="font-size: 1.2rem"></i>
+                </div>
+                }@else {
+                @if(this.applicantStatus.isNotChecked){
+                <div class="col text-left">
+                    <i class="pi pi-question-circle" style="font-size: 1.2rem"></i>
+                    صف بررسی
+                </div>
+                } @else if(this.applicantStatus.isRejected){
+                <div class="col text-left">
+                    <i class="pi pi-ban" style="font-size: 1.2rem"></i>
+                    رد شده
+                </div>
+                }@else if(this.applicantStatus.isReserved){
+                <div class="col text-left">
+                    <i class="pi pi-exclamation-circle" style="font-size: 1.2rem"></i>
+                    ذخیره
+                </div>
+                }@else if(this.applicantStatus.isAccepted){
+                <div class="col text-left">
+                    <i class="pi pi-check-square" style="font-size: 1.2rem"></i>
+                    تایید
+                </div>
+                }
+                }
+        </p-accordion-header>
+        <p-accordion-content>
+            <div class="pt-3">
+                {{step.description}}
+            </div>
+        </p-accordion-content>
+    </p-accordion-panel>
+    }
+</p-accordion>
+}

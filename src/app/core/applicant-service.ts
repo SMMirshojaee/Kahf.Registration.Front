@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@app/share/environment/environment';
-import { SigninDto, SignupDto } from '@app/share/models/applicant.dto';
+import { ApplicantDto, SigninDto, SignupDto } from '@app/share/models/applicant.dto';
 import { TokenDto } from '@app/share/models/token.dto';
 import { Observable } from 'rxjs';
 
@@ -17,5 +17,9 @@ export class ApplicantService {
   }
   singin(regId: number, signinForm: SigninDto): Observable<TokenDto> {
     return this.httpClient.put<TokenDto>(`${this.address}/singin/${regId}`, signinForm)
+  }
+
+  getStatus(): Observable<ApplicantDto> {
+    return this.httpClient.get<ApplicantDto>(`${this.address}/getStatus/`)
   }
 }

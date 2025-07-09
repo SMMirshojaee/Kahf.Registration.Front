@@ -12,19 +12,19 @@ import { SHARE_IMPORTS } from '@app/share/imports';
 export class Header extends GenericComponent {
 
   ngOnInit() {
-    let darkMode = localStorage.getItem('dark-mode')
-    if (darkMode.toLowerCase() == 'true')
+    let darkMode = this.tokenService.getDarkMode();
+    if (darkMode)
       this.toggleDarkMode();
   }
   toggleDarkMode() {
     const element = document.querySelector('html');
     if (element?.classList.contains('app-dark-style'))
-      localStorage.setItem('dark-mode', false.toString());
+      this.tokenService.setDarkMode(false);
     else
-      localStorage.setItem('dark-mode', true.toString());
+      this.tokenService.setDarkMode(true);
     element?.classList.toggle('app-dark-style');
   }
-  gotoRoute(address: string) {
-    this.route(address)
+  logout() {
+    this.tokenService.logout();
   }
 }
