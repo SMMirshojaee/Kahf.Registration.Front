@@ -1,0 +1,10 @@
+<div>
+    <div>{{field.title}}</div>
+    @for(option of optionsToShow; track $index){
+        <p-checkbox inputId="ingredient1" name="pizza" value="Cheese" [(ngModel)]="option.value" />
+        <label for="ingredient1" class="ml-2"> {{option.title}} </label>
+    }
+</div>
+@if(field.description){
+<span>{{field.description}}</span>
+}

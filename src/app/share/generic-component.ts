@@ -8,8 +8,8 @@ export class GenericComponent {
     protected spinnerService = inject(NgxSpinnerService);
     protected notify = inject(ToastService);
     protected tokenService = inject(TokenService);
-
     private router = inject(Router);
+
     route(address: string) {
         this.router.navigate([`${address}`])
     }

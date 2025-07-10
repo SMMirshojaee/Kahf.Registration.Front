@@ -12,6 +12,8 @@ import { MessageModule } from 'primeng/message';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { NgPersianDatepickerModule } from "ng-persian-datepicker";
 import { AccordionModule } from 'primeng/accordion';
+import { TextareaModule } from 'primeng/textarea';
+import { FileUploadModule } from 'primeng/fileupload';
 
 export const SHARE_IMPORTS = [
     ButtonModule,
@@ -28,5 +30,7 @@ export const SHARE_IMPORTS = [
     NgxSpinnerModule,
     NgPersianDatepickerModule,
     CardModule,
-    AccordionModule
+    AccordionModule,
+    TextareaModule,
+    FileUploadModule 
 ]

@@ -5,6 +5,7 @@ import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
 import { ApplicantDto } from '@app/share/models/applicant.dto';
 import { RegStepDto } from '@app/share/models/reg.dto';
+import { StepEnum } from '@app/share/models/step.enum';
 import { finalize, forkJoin } from 'rxjs';
 
 @Component({
@@ -20,6 +21,7 @@ export class Dashboard extends GenericComponent {
   protected applicantStatus: ApplicantDto = { regStepId: 0 } as ApplicantDto;
   private currentRegStep: RegStepDto;
   protected currentRegStepOrder: number = 0;
+  protected STEP_ENUM = StepEnum;
 
   ngOnInit() {
     this.spinnerService.show();
@@ -51,7 +53,7 @@ export class Dashboard extends GenericComponent {
       klass = ' ';
     else
       if (this.applicantStatus.isNotChecked)
-        klass = 'bg-blue-50';
+        klass = 'bg-blue-200';
       else if (this.applicantStatus.isRejected)
         klass = 'bg-red-500';
       else if (this.applicantStatus.isReserved)
@@ -60,5 +62,12 @@ export class Dashboard extends GenericComponent {
         klass = 'bg-green-300'
       else klass = '';
     return klass;
+  }
+  fillForm(step: RegStepDto) {
+    this.route(`/applicant/fill-form/${step.id}`);
+  }
+
+  payExpense(step: RegStepDto) {
+    this.route(`/applicant/pay/${step.id}`);
   }
 }

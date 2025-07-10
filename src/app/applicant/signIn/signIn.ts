@@ -74,7 +74,6 @@ export class signIn extends GenericComponent {
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
-          debugger
           this.tokenService.setTokenString(data.tokenString);
           this.route('/applicant/dashboard');
         }, error: (err: HttpErrorResponse) => {

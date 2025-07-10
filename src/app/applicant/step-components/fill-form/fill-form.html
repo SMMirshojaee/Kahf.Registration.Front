@@ -1,0 +1,23 @@
+@for (field of fields; track $index) {
+@if(field.fieldTypeId==FIELD_TYPE_ENUM.CheckBox){
+<field-checkbox [field]="field"></field-checkbox>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Date){
+<field-date [field]="field"></field-date>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.DropDown){
+<field-dropdown [field]="field"></field-dropdown>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Image){
+<field-image [field]="field"></field-image>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Mobile){
+<field-mobile [field]="field"></field-mobile>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.NationalCode){
+<field-nationalcode [field]="field"></field-nationalcode>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Phone){
+<field-phone [field]="field"></field-phone>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Radio){
+<field-radio [field]="field"></field-radio>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Text){
+<field-text [field]="field"></field-text>
+}@else if(field.fieldTypeId==FIELD_TYPE_ENUM.TextArea){
+<field-textarea [field]="field"></field-textarea>
+}
+}

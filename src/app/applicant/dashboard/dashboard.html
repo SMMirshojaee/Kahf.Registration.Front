@@ -40,6 +40,26 @@
             <div class="pt-3">
                 {{step.description}}
             </div>
+            <p-divider></p-divider>
+            <div class="text-center">
+                @if(step.stepId==STEP_ENUM.FillForm){
+                    <div>
+                        <strong>جهت پر کردن فرم روی دکمه زیر کلیک کنید</strong>
+                    </div>
+                    <div class="mt-3">
+                        <p-button severity="success" class="mt-2" (onClick)="fillForm(step)">پرکردن فرم</p-button>
+                    </div>
+                }@else if(step.stepId==STEP_ENUM.PayExpense){
+                    <div>
+                        <strong>برای پرداخت هزینه روی دکمه زیر کلیک نمایید</strong>
+                    </div>
+                    <div class="mt-3">
+                        <p-button severity="success" class="mt-2" (onClick)="payExpense(step)">پرداخت</p-button>
+                    </div>
+                }@else(){
+                }
+
+            </div>
         </p-accordion-content>
     </p-accordion-panel>
     }

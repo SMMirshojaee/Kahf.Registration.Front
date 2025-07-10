@@ -1,10 +1,18 @@
-<div class=" flex col-12">
-    <p-button size="small" class="col-auto" icon="pi pi-home" [rounded]="true" (onClick)="route('')"></p-button>
-    <p-button size="small" class="col-auto" icon="pi pi-power-off" [rounded]="true" (onClick)="logout()"></p-button>
-    <span class="col text-center">
-        گروه زیارت جمعی
-        <span class="text-primary">کهف الحصین</span>
-    </span>
-    <p-button size="small" severity="contrast" class="col-auto text-left" icon="pi pi-eye" [rounded]="true"
+<div class="header">
+    <div class="col text-center">
+        <strong class="large">‌گروه زیارت جمعی</strong>
+        &nbsp;
+        <strong class="text-red-700">کهف الحصین</strong>
+    </div>
+    <div class="col-auto">
+
+    </div>
+</div>
+<div class="menu">
+    <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-home"
+        (onClick)="route('')"></p-button>
+    <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-power-off"
+        (onClick)="logout()"></p-button>
+    <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-eye"
         (onClick)="toggleDarkMode()"></p-button>
 </div>
