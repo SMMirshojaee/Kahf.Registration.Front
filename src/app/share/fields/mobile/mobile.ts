@@ -15,6 +15,7 @@ import { MobileValidator } from '@app/share/validators/mobile.validator';
 })
 export class MobileField extends GenericField {
   @Input({ required: true }) field: FieldDto;
+  @Input({ required: true }) formControl: FormControl;
   @Input() readonly: boolean;
   @Input() value: ApplicantFormValueDto = new ApplicantFormValueDto();
   mobileValue: FormControl;

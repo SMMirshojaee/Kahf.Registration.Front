@@ -9,10 +9,13 @@
     </div>
 </div>
 <div class="menu">
+    <p-scrolltop [threshold]="300" icon="pi pi-arrow-up"
+        [buttonProps]="{ severity: 'help',   raised: true, size:'large' }" />
     <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-home"
         (onClick)="route('')"></p-button>
     <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-power-off"
         (onClick)="logout()"></p-button>
     <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-eye"
         (onClick)="toggleDarkMode()"></p-button>
+    
 </div>

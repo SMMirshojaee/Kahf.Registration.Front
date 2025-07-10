@@ -8,6 +8,10 @@ export class FieldDto {
     public mandatory: boolean;
     public hidden: boolean;
     public fieldOptions: FieldOptionDto[];
+    //فیلدهای زیر فقط در هنگام نمایش فرم مورد استفاده قرار میگیرن و در کلاس اصلی حضور ندارن
+    public optionsToShow: { value: string, title: string, id: number }[];
+    public minDate: number;
+    public maxDate: number;
 }
 
 export class FieldOptionDto {

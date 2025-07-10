@@ -26,3 +26,7 @@ $primary-color: #11afa8;
     padding-right: 0.7rem;
     text-align: center;
 }
+::ng-deep .p-scrolltop.p-button{
+    right: 10px  !important;
+    bottom: 14px !important;
+}

@@ -3,6 +3,7 @@ import { SHARE_IMPORTS } from '@app/share/imports';
 import { FieldDto } from '@app/share/models/field.dto';
 import { GenericField } from '../field-generic';
 import { ApplicantFormValueDto } from '@app/share/models/applicant-form-value.dto';
+import { FormControl } from '@angular/forms';
 
 @Component({
   standalone: true,
@@ -13,6 +14,7 @@ import { ApplicantFormValueDto } from '@app/share/models/applicant-form-value.dt
 })
 export class TextareaField  extends GenericField {
   @Input({ required: true }) field: FieldDto;
+  @Input({ required: true }) formControl: FormControl;
   @Input() readonly: boolean;
   @Input() value: ApplicantFormValueDto=new ApplicantFormValueDto();
 }

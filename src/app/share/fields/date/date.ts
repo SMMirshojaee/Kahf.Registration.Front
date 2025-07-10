@@ -15,7 +15,7 @@ import { IActiveDate } from 'ng-persian-datepicker';
   styleUrl: './date.scss'
 })
 export class DateField extends GenericField {
-  @Input({ required: true }) field: FieldDto;
+  @Input({ required: true }) field: FieldDto;@Input({ required: true }) formControl: FormControl;
   @Input() readonly: boolean;
   @Input() value: ApplicantFormValueDto = new ApplicantFormValueDto();
   dateValue: FormControl;

@@ -5,7 +5,6 @@ export enum FieldTypeEnum {
     Radio = 4,
     Image = 5,
     Mobile = 6,
-    Phone = 8,
     NationalCode = 9,
     Date = 10,
     DropDown = 13,

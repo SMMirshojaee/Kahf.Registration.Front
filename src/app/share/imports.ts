@@ -14,6 +14,7 @@ import { NgPersianDatepickerModule } from "ng-persian-datepicker";
 import { AccordionModule } from 'primeng/accordion';
 import { TextareaModule } from 'primeng/textarea';
 import { FileUploadModule } from 'primeng/fileupload';
+import { ScrollTopModule } from 'primeng/scrolltop';
 
 export const SHARE_IMPORTS = [
     ButtonModule,
@@ -32,5 +33,6 @@ export const SHARE_IMPORTS = [
     CardModule,
     AccordionModule,
     TextareaModule,
-    FileUploadModule 
+    FileUploadModule,
+    ScrollTopModule 
 ]
