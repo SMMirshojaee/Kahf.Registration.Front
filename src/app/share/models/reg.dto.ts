@@ -26,13 +26,16 @@ export class RegStepDto {
     public title: string;
     public description?: string;
     public order: number;
-    public regStepStatuses: RegStepStatusDto;
+    public memberLimit: number;
+    public addMemberDescription: string;
+    public regStepStatuses: RegStepStatusDto[];
 }
 
 export class RegStepStatusDto {
     public id: number;
     public regStepId: number;
     public title: string;
+    public isWaiting: boolean;
     public isNotChecked: boolean;
     public isAccepted: boolean;
     public isReserved: boolean;

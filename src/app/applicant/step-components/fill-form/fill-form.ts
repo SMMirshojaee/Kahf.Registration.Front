@@ -29,13 +29,13 @@ export class FillForm extends GenericComponent implements OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private confirmationService = inject(ConfirmationService);
   private applicantId: number;
+  protected memberId?: number;
   private regStepId: number;
   protected fields: FieldDto[];
-  protected values: ApplicantFormValueDto[];
   protected FIELD_TYPE_ENUM = FieldTypeEnum;
   protected formGroup: FormGroup;
   protected formControl: FormControl;
-
+  protected formIsDisable = false;
   private interval;
   ngOnDestroy() {
     clearInterval(this.interval);
@@ -44,19 +44,22 @@ export class FillForm extends GenericComponent implements OnDestroy {
   ngOnInit() {
     this.applicantId = this.tokenService.getApplicantInfo().applicantid;
     this.regStepId = this.activatedRoute.snapshot.params['id'];
+    this.memberId = this.activatedRoute.snapshot.params['memberId'];
     this.spinnerService.show();
     forkJoin({
-      fields: this.fieldService.getByRegStepId(this.regStepId),
-      values: this.applicantFormValueService.GetByRegStepId(this.regStepId)
+      fields: this.fieldService.getByRegStepId(this.regStepId, this.memberId),
+      values: this.applicantFormValueService.GetByRegStepId(this.regStepId, this.memberId)
     })
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
           let previousValues = data.values;
+          this.formIsDisable = previousValues?.length > 0;
           this.fields = data.fields;
           this.formGroup = new FormGroup({});
+
           this.fields.forEach(field => {
-            let previousValue = previousValues.filter(e => e.fieldId == field.id);
+            let previousValue = previousValues?.filter(e => e.fieldId == field.id);
             let formControl = new FormControl();
             if (field.mandatory)
               formControl.addValidators(Validators.required);
@@ -64,7 +67,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
               case FieldTypeEnum.CheckBox:
                 let cbOptions = field.fieldOptions.filter(e => e.type == 'Option');
                 field.optionsToShow = cbOptions;
-                if (previousValue) {
+                if (previousValue.length) {
                   let value = previousValue.map(e => e.fieldOptionId);
                   formControl.patchValue(value);
                 }
@@ -80,14 +83,18 @@ export class FillForm extends GenericComponent implements OnDestroy {
                   let maxDate = Jalali.parse(maxDateString.value).valueOf();
                   field.maxDate = maxDate;
                 }
-                if (previousValue) {
-                  formControl.patchValue(Jalali.parse(previousValue[0].value).valueOf());
+                if (previousValue.length) {
+                  try {
+                    let date = Jalali.gregorian(previousValue[0].value).valueOf()
+                    formControl.patchValue(date);
+                  } catch (error) {
+                  }
                 }
                 break;
               case FieldTypeEnum.DropDown:
                 let ddOptions = field.fieldOptions.filter(e => e.type == 'Option');
                 field.optionsToShow = ddOptions;
-                if (previousValue) {
+                if (previousValue.length) {
                   formControl.patchValue(previousValue[0].fieldOptionId);
                 }
                 break;
@@ -96,43 +103,47 @@ export class FillForm extends GenericComponent implements OnDestroy {
                 let maxSizeInMBOption = field.fieldOptions.find(e => e.type == 'MaxSizeInMB');
                 if (maxSizeInMBOption)
                   maxSizeInMB = parseInt(maxSizeInMBOption.value);
-                field.maxSizeInMB = maxSizeInMB
+                field.maxSizeInMB = maxSizeInMB;
+                if (previousValue.length) {
+
+                }
                 break;
               case FieldTypeEnum.Radio:
                 let rOptions = field.fieldOptions.filter(e => e.type == 'Option');
                 field.optionsToShow = rOptions;
-                if (previousValue) {
+                if (previousValue.length) {
                   formControl.patchValue(previousValue[0].fieldOptionId);
                 }
                 break;
               case FieldTypeEnum.Mobile:
                 formControl.addValidators(MobileValidator);
-                if (previousValue) {
+                if (previousValue.length) {
                   formControl.patchValue(previousValue[0].value);
                 }
                 break;
               case FieldTypeEnum.NationalCode:
                 formControl.addValidators(NationalCodeValidator);
-                if (previousValue) {
+                if (previousValue.length) {
                   formControl.patchValue(previousValue[0].value);
                 }
                 break;
               case FieldTypeEnum.Text:
                 formControl.addValidators(Validators.maxLength(500));
-                if (previousValue) {
+                if (previousValue.length) {
                   formControl.patchValue(previousValue[0].value);
                 }
                 break;
               case FieldTypeEnum.TextArea:
                 formControl.addValidators(Validators.maxLength(2000))
-                if (previousValue) {
+                if (previousValue.length) {
                   formControl.patchValue(previousValue[0].value);
                 }
                 break;
             }
             this.formGroup.addControl(`field_${field.id}`, formControl);
           });
-          this.values = data.values;
+          if (this.formIsDisable)
+            this.formGroup.disable();
         }, error: (err: HttpErrorResponse) => {
 
         }
@@ -274,41 +285,54 @@ export class FillForm extends GenericComponent implements OnDestroy {
       return;
     }
     this.spinnerService.show();
-    this.applicantFormValueService.insert(this.applicantId, this.regStepId, applicantFormValues)
-      .pipe(finalize(() => this.spinnerService.hide()))
+    this.applicantFormValueService.insert(this.regStepId, applicantFormValues, this.memberId)
+      // .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
           clearInterval(this.interval);
           // this.notify.success('اطلاعات شما با موفقیت ثبت شد. با ما در ارتباط باشید');
-          let message = data ? `کد رهگیری ثبت نام شما: ${data}. این کد را نزد خود نگه دارید. برای پیگیری فرایند های ثبت نام به این کد نیاز دارید` :
-            '';
-          this.confirmationService.confirm({
-            message: message,
-            header: 'اطلاعات شما با موفقیت ثبت شد',
-            icon: 'pi pi-info-circle',
-            closable: false,
-            rejectButtonStyleClass: 'p-button-text',
-            acceptButtonProps: {
-              label: 'برو به داشبورد',
-              severity: 'primary',
-              text: false
-            },
-            accept: () => {
-              this.route('dashboard');
-            }
-          })
-          imageFields.forEach(imageField => {
-            this.applicantFormValueService.upload(imageField.fileName, imageField.imageFile)
+          if (imageFields.length) {
+            this.notify.info('در حال بارگذاری عکس ها...');
+            let uploads = [];
+            imageFields.forEach(imageField => {
+              uploads.push(this.applicantFormValueService.upload(imageField.fileName, imageField.imageFile,this.memberId))
+            })
+            forkJoin(uploads)
+              .pipe(finalize(() => this.showFinal(data)))
               .subscribe({
                 next: () => { },
                 error: () => { this.notify.error('خطا در بارگذاری عکس!') }
-              });
-          })
+              })
+          } else {
+
+            this.showFinal(data)
+          }
         }, error: (err: HttpErrorResponse) => {
           if (err.status == 300)
             this.notify.error('شما قبلا این فرم را پر کرده اید!');
+          this.spinnerService.hide()
         }
       })
+  }
+  showFinal(trackingCode: string) {
+    this.spinnerService.hide();
+    let message = trackingCode ? `کد رهگیری ثبت نام شما: ${trackingCode}. این کد را نزد خود نگه دارید. برای پیگیری فرایند های ثبت نام به این کد نیاز دارید` :
+      '';
+    this.confirmationService.confirm({
+      message: message,
+      header: 'اطلاعات شما با موفقیت ثبت شد',
+      icon: 'pi pi-check-circle',
+      closable: false,
+      rejectVisible: false,
+      acceptButtonProps: {
+        label: 'برو به داشبورد',
+        severity: 'primary',
+        text: false
+      },
+      accept: () => {
+        this.route('/applicant/dashboard');
+      }
+    })
   }
   generateRandomText(length: number): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

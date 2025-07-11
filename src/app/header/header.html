@@ -4,18 +4,17 @@
         &nbsp;
         <strong class="text-red-700">کهف الحصین</strong>
     </div>
-    <div class="col-auto">
-
-    </div>
 </div>
 <div class="menu shadow-5 shadow-up">
-    <p-scrolltop [threshold]="300" icon="pi pi-arrow-up"
+    <p-scrolltop [threshold]="1700" icon="pi pi-arrow-up"
         [buttonProps]="{ severity: 'help',   raised: true, size:'large' }" />
-    <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-home"
-        (onClick)="route('')"></p-button>
+    @if(isLogin){
     <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-power-off"
         (onClick)="logout()"></p-button>
+    }
+    <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-home"
+        (onClick)="gotoHome()"></p-button>
     <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-eye"
         (onClick)="toggleDarkMode()"></p-button>
-    
+
 </div>

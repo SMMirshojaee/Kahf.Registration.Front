@@ -30,9 +30,9 @@ export class signIn extends GenericComponent {
   constructor() {
     super();
     this.followupForm = new FormGroup({
-      nationalCode: new FormControl('0011227168', [Validators.required, NationalCodeValidator]),
-      mobile: new FormControl('09128486146', [Validators.required, MobileValidator]),
-      trackingCode: new FormControl('12345', [Validators.required, Validators.minLength(5), Validators.maxLength(5)])
+      nationalCode: new FormControl('', [Validators.required, NationalCodeValidator]),
+      mobile: new FormControl('', [Validators.required, MobileValidator]),
+      trackingCode: new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(5)])
     });
 
   }

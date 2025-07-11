@@ -11,7 +11,9 @@ export class FieldService {
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/field`;
 
-  getByRegStepId(regStepId: number): Observable<FieldDto[]> {
+  getByRegStepId(regStepId: number, memberId?: number): Observable<FieldDto[]> {
+    if (memberId)
+      return this.httpClient.get<FieldDto[]>(`${this.address}/getByRegStepId/${regStepId}/${memberId}`);
     return this.httpClient.get<FieldDto[]>(`${this.address}/getByRegStepId/${regStepId}`);
   }
 }

@@ -1,4 +1,12 @@
 @if(formGroup){
+<div class="mb-3">
+    @if(memberId){
+    <strong>فرم همراه</strong>
+    }@else{
+    <strong>فرم زائر اصلی</strong>
+    }
+</div>
+<p-divider></p-divider>
 <form [formGroup]="formGroup">
     @for (field of fields; track $index) {
     <div class="mb-4">
@@ -6,7 +14,7 @@
         <!-- <p-divider></p-divider> -->
         }
         @if(field.description){
-        <span>{{field.description}}</span>
+        <div class="pb-3 text-gray-500" style="font-size: small;">{{field.description}}</div>
         }
         @if(field.fieldTypeId==FIELD_TYPE_ENUM.CheckBox){
         <div class="">
@@ -25,8 +33,8 @@
         </div>
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Date){
         <div class="">
-            <ng-persian-datepicker uiInitViewMode="year" [dateMin]="field.minDate" [dateMax]="field.maxDate" [dateInitValue]="false"
-                [uiTodayBtnEnable]="false">
+            <ng-persian-datepicker uiInitViewMode="year" [dateMin]="field.minDate" [dateMax]="field.maxDate"
+                [dateInitValue]="false" [uiTodayBtnEnable]="false">
                 <label for="field_{{field.id}}">
                     @if(field.mandatory){<span class="text-red-500">*</span>}
                     {{field.title}}
@@ -51,9 +59,10 @@
                 @if(field.mandatory){<span class="text-red-500">*</span>}
                 {{field.title}}(حداکثر: {{field.maxSizeInMB}}MB)
             </label>
-            <input (change)="imageSelected($event,field)" accept="Image/*" id="field_{{field.id}}" [hidden]="true"
-                #fileInput type="file" formControlName="field_{{field.id}}">
-            <p-button icon="pi pi-upload" styleClass="upload-button" (onClick)="fileInput.click()">انتخاب
+            <input [disabled]="formIsDisable" (change)="imageSelected($event,field)" accept="Image/*"
+                id="field_{{field.id}}" [hidden]="true" #fileInput type="file" formControlName="field_{{field.id}}">
+            <p-button [disabled]="formIsDisable" icon="pi pi-upload" styleClass="upload-button"
+                (onClick)="fileInput.click()">انتخاب
                 فایل</p-button>
             @if(field.imageBase64){
             <div class="mt-2">
@@ -115,12 +124,14 @@
         }
     </div>
     }
-</form>
-<p-divider></p-divider>
-<div class="grid">
-    <div class="col-12  text-center">
-        <p-button (onClick)="checkForm()">ثبت</p-button>
+    @if(!formIsDisable){
+    <p-divider></p-divider>
+    <div class="grid">
+        <div class="col-12  text-center">
+            <p-button (onClick)="checkForm()">ثبت</p-button>
+        </div>
     </div>
-</div>
+    }
+</form>
 }
-<p-confirmdialog position="bottom"/>
+<p-confirmdialog position="bottom" />

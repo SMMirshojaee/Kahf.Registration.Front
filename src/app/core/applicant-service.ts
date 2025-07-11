@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@app/share/environment/environment';
-import { ApplicantDto, SigninDto, SignupDto } from '@app/share/models/applicant.dto';
+import { ApplicantDto, MemberInfoDto, SigninDto, SignupDto } from '@app/share/models/applicant.dto';
 import { TokenDto } from '@app/share/models/token.dto';
 import { Observable } from 'rxjs';
 
@@ -21,5 +21,12 @@ export class ApplicantService {
 
   getStatus(): Observable<ApplicantDto> {
     return this.httpClient.get<ApplicantDto>(`${this.address}/getStatus/`)
+  }
+  getMembers(): Observable<MemberInfoDto[]> {
+    return this.httpClient.get<MemberInfoDto[]>(`${this.address}/getMembers`)
+  }
+
+  addMember(regStepId: number, addMemberForm: SignupDto): Observable<MemberInfoDto> {
+    return this.httpClient.post<MemberInfoDto>(`${this.address}/addMember/${regStepId}`, addMemberForm)
   }
 }

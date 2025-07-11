@@ -17,7 +17,8 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { ScrollTopModule } from 'primeng/scrolltop';
 import { SelectModule } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
 export const SHARE_IMPORTS = [
     ButtonModule,
     CheckboxModule,
@@ -38,5 +39,7 @@ export const SHARE_IMPORTS = [
     FileUploadModule,
     ScrollTopModule,
     SelectModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    TableModule,
+    DialogModule
 ]

@@ -1,7 +1,11 @@
 <div class="grid">
-    @for (reg of regs; track $index) {
-        <div class="col-12">
-            <reg-tile [reg]="reg"></reg-tile>
-        </div>
+    @if(regs?.length){
+        @for (reg of regs; track $index) {
+            <div class="col-12">
+                <reg-tile [reg]="reg"></reg-tile>
+            </div>
+        }
+    }@else{
+        <p-message>زائر گرامی. در حال حاضر هیج ثبت نام فعالی در سامانه وجود ندارد!</p-message>
     }
 </div>

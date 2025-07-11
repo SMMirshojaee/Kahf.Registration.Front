@@ -1,4 +1,6 @@
 export class SignupDto {
+    public firstName: string;
+    public lastName: string;
     public nationalCode: string;
     public mobile: string;
 }
@@ -12,8 +14,19 @@ export class ApplicantDto {
     public statusId: number;
     public regStepId: number;
     public title: string;
+    public isWaiting: boolean;
     public isNotChecked: boolean;
     public isAccepted: boolean;
     public isReserved: boolean;
     public isRejected: boolean;
+    //
+    public statusTitle?: string;
+}
+export class MemberInfoDto {
+    public id: number;
+    public statusId: number;
+    public firstName: string;
+    public lastName: string;
+    public nationalNumber: string;
+    public phoneNumber: string;
 }

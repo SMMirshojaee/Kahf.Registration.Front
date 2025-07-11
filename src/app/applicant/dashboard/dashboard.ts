@@ -1,11 +1,15 @@
+import { HttpErrorResponse } from '@angular/common/module.d';
 import { Component, inject } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ApplicantService } from '@app/core/applicant-service';
 import { RegStepService } from '@app/core/reg-step-service';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
-import { ApplicantDto } from '@app/share/models/applicant.dto';
-import { RegStepDto } from '@app/share/models/reg.dto';
+import { ApplicantDto, MemberInfoDto, SignupDto } from '@app/share/models/applicant.dto';
+import { RegStepDto, RegStepStatusDto } from '@app/share/models/reg.dto';
 import { StepEnum } from '@app/share/models/step.enum';
+import { MobileValidator } from '@app/share/validators/mobile.validator';
+import { NationalCodeValidator } from '@app/share/validators/national-code.validator';
 import { finalize, forkJoin } from 'rxjs';
 
 @Component({
@@ -18,23 +22,42 @@ export class Dashboard extends GenericComponent {
   private applicantService = inject(ApplicantService);
   private regStepService = inject(RegStepService);
   protected regSteps: RegStepDto[];
-  protected applicantStatus: ApplicantDto = { regStepId: 0 } as ApplicantDto;
-  private currentRegStep: RegStepDto;
+  protected applicantInfo: ApplicantDto = { regStepId: 0 } as ApplicantDto;
+  protected currentRegStep: RegStepDto;
+  protected applicantStatus: RegStepStatusDto;
   protected currentRegStepOrder: number = 0;
   protected STEP_ENUM = StepEnum;
+  protected members: MemberInfoDto[];
+  protected showAddMemberDialog: boolean;
+  protected addMemberFormGroup: FormGroup;
 
   ngOnInit() {
+    this.addMemberFormGroup = new FormGroup({
+      firstName: new FormControl('', [Validators.required]),
+      lastName: new FormControl('', [Validators.required]),
+      nationalCode: new FormControl('', [Validators.required, NationalCodeValidator]),
+      mobile: new FormControl('', [Validators.required, MobileValidator])
+    })
     this.spinnerService.show();
     forkJoin({
       regSteps: this.regStepService.getAll(),
       status: this.applicantService.getStatus(),
+      members: this.applicantService.getMembers(),
     })
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
           this.regSteps = data.regSteps;
-          this.applicantStatus = data.status;
-          this.currentRegStep = this.regSteps.find(e => e.id == this.applicantStatus.regStepId);
+          this.applicantInfo = data.status;
+          this.members = data.members;
+          if (!this.applicantInfo.statusId) {
+            this.applicantInfo.regStepId = this.regSteps[0].id;
+            this.applicantInfo.statusId = this.regSteps[0].regStepStatuses.find(e => e.isWaiting).id;
+            this.applicantInfo.isWaiting = true;
+          }
+          this.applicantInfo.statusTitle = this.regSteps.find(e => e.id == this.applicantInfo.regStepId).regStepStatuses.find(e => e.id == this.applicantInfo.statusId).title;
+          this.currentRegStep = this.regSteps.find(e => e.id == this.applicantInfo.regStepId);
+          this.applicantStatus = this.currentRegStep.regStepStatuses.find(e => e.id == this.applicantInfo.statusId);
           if (this.currentRegStep)
             this.currentRegStepOrder = this.currentRegStep.order;
         }, error: () => {
@@ -52,19 +75,74 @@ export class Dashboard extends GenericComponent {
     else if (this.currentRegStepOrder < step.order)
       klass = ' ';
     else
-      if (this.applicantStatus.isNotChecked)
+      if (this.applicantInfo.isWaiting)
         klass = 'bg-blue-200';
-      else if (this.applicantStatus.isRejected)
+      else if (this.applicantInfo.isNotChecked)
+        klass = 'bg-blue-200';
+      else if (this.applicantInfo.isRejected)
         klass = 'bg-red-500';
-      else if (this.applicantStatus.isReserved)
+      else if (this.applicantInfo.isReserved)
         klass = 'bg-cyan-300'
-      else if (this.applicantStatus.isAccepted)
+      else if (this.applicantInfo.isAccepted)
         klass = 'bg-green-300'
       else klass = '';
     return klass;
   }
-  fillForm(step: RegStepDto) {
-    this.route(`/applicant/fill-form/${step.id}`);
+
+  addMember() {
+    if (this.currentRegStep.memberLimit > this.members.length) {
+      this.openModel();
+
+    } else {
+      this.notify.warn('شما به سقف تعداد همراهان رسیده اید')
+    }
+  }
+
+  submitMember() {
+    if (this.addMemberFormGroup.invalid) {
+      this.addMemberFormGroup.markAllAsDirty();
+      this.notify.warn('موارد مشخص شده را رفع نمایید')
+      return;
+    }
+
+    this.spinnerService.show();
+
+    const firstName = this.addMemberFormGroup.get('firstName')?.value;
+    const lastName = this.addMemberFormGroup.get('lastName')?.value;
+    const mobile = this.addMemberFormGroup.get('mobile')?.value;
+    const nationalCode = this.addMemberFormGroup.get('nationalCode')?.value;
+
+    this.applicantService.addMember(this.currentRegStep.id, { firstName: firstName, lastName: lastName, nationalCode: nationalCode, mobile: mobile } as SignupDto)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: data => {
+          this.members.unshift(data);
+          this.closeModal();
+        }, error: (err: HttpErrorResponse) => {
+          if (err.status == 403)
+            this.notify.error('امکان ثبت همراه در این مرحله وجود ندارد');
+          else if (err.status == 409)
+            this.notify.error('این کد ملی قبلا در سامانه ثبت شده است');
+          else if (err.status == 507)
+            this.notify.error('تعداد همراهان شما به سقف مجاز رسیده است');
+          else
+            this.notify.defaultError();
+        }
+      })
+
+  }
+  openModel() {
+    this.showAddMemberDialog = true;
+  }
+  closeModal() {
+    this.showAddMemberDialog = false;
+  }
+
+  fillForm(step: RegStepDto, member?: MemberInfoDto) {
+    if (member)
+      this.route(`/applicant/fill-form/${step.id}/${member.id}`);
+    else
+      this.route(`/applicant/fill-form/${step.id}`);
   }
 
   payExpense(step: RegStepDto) {

@@ -7,6 +7,18 @@
 <form [formGroup]="signupForm">
     <div class="col-12">
         <p-floatlabel variant="on">
+            <input class="w-full" pInputText id="firstName" formControlName="firstName" autocomplete="off" />
+            <label for="firstName">نام</label>
+        </p-floatlabel>
+    </div>
+    <div class="col-12">
+        <p-floatlabel variant="on">
+            <input class="w-full" pInputText id="lastName" formControlName="lastName" autocomplete="off" />
+            <label for="lastName">نام خانوادگی</label>
+        </p-floatlabel>
+    </div>
+    <div class="col-12">
+        <p-floatlabel variant="on">
             <input class="w-full" pInputText id="nationalCode" formControlName="nationalCode" autocomplete="off" />
             <label for="nationalCode">کد ملی</label>
         </p-floatlabel>

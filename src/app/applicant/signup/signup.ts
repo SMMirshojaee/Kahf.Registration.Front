@@ -6,6 +6,7 @@ import { ApplicantService } from '@app/core/applicant-service';
 import { RegService } from '@app/core/reg-service';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
+import { SignupDto } from '@app/share/models/applicant.dto';
 import { RegDto } from '@app/share/models/reg.dto';
 import { MobileValidator } from '@app/share/validators/mobile.validator';
 import { NationalCodeValidator } from '@app/share/validators/national-code.validator';
@@ -31,8 +32,10 @@ export class Signup extends GenericComponent {
   constructor() {
     super();
     this.signupForm = new FormGroup({
-      nationalCode: new FormControl('0011227168', [Validators.required, NationalCodeValidator]),
-      mobile: new FormControl('09128486146', [Validators.required, MobileValidator])
+      firstName: new FormControl('', [Validators.required]),
+      lastName: new FormControl('', [Validators.required]),
+      nationalCode: new FormControl('', [Validators.required, NationalCodeValidator]),
+      mobile: new FormControl('', [Validators.required, MobileValidator])
     });
 
   }
@@ -67,10 +70,12 @@ export class Signup extends GenericComponent {
       this.notify.warn('موارد مشخص شده را برطرف نمایید');
       return;
     }
+    const firstName = this.signupForm.get('firstName')?.value;
+    const lastName = this.signupForm.get('lastName')?.value;
     const mobile = this.signupForm.get('mobile')?.value;
     const nationalCode = this.signupForm.get('nationalCode')?.value;
     this.spinnerService.show();
-    this.applicantService.signup(this.regId, { nationalCode: nationalCode, mobile: mobile })
+    this.applicantService.signup(this.regId, { firstName: firstName, lastName: lastName, nationalCode: nationalCode, mobile: mobile } as SignupDto)
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {

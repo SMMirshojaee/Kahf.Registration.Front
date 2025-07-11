@@ -1,62 +1,133 @@
+<div class="m-2 text-center">
+    <p-message severity="info" icon="pi pi-info-circle">شما در این صفحه می‌توانید از وضعیت خود در ثبت‌نام با خبر
+        شوید</p-message>
+</div>
 @if (regSteps) {
 
-<p-accordion [value]="[applicantStatus.regStepId || regSteps[0].id]" [multiple]="true">
+<p-accordion [value]="[applicantInfo.regStepId || regSteps[0].id]" [multiple]="true">
     @for (step of regSteps; track $index) {
     <p-accordion-panel [value]="step.id">
         <p-accordion-header [ngClass]="getClass(step)">
             <div class="col-auto">{{step.order}}- {{step.title}}</div>
-            @if (applicantStatus.regStepId>step.id) {
+            @if (applicantInfo.regStepId>step.id) {
             <div class="col text-left">
                 <i class="pi pi-check-square" style="font-size: 1.2rem"></i>
             </div>
-            }@else if(applicantStatus.regStepId<step.id){ <div class="col text-left">
+            }@else if(applicantInfo.regStepId<step.id){ <div class="col text-left">
                 <i class="pi pi-clock" style="font-size: 1.2rem"></i>
                 </div>
                 }@else {
-                @if(this.applicantStatus.isNotChecked){
+                @if(this.applicantInfo.isWaiting){
+                <div class="col text-left">
+                    <i class="pi pi-hourglass" style="font-size: 1.2rem"></i>
+                    {{this.applicantInfo.statusTitle}}
+                </div>
+                }
+                @else if(this.applicantInfo.isNotChecked){
                 <div class="col text-left">
                     <i class="pi pi-question-circle" style="font-size: 1.2rem"></i>
-                    صف بررسی
+                    {{this.applicantInfo.statusTitle}}
                 </div>
-                } @else if(this.applicantStatus.isRejected){
+                } @else if(this.applicantInfo.isRejected){
                 <div class="col text-left">
                     <i class="pi pi-ban" style="font-size: 1.2rem"></i>
-                    رد شده
+                    {{this.applicantInfo.statusTitle}}
                 </div>
-                }@else if(this.applicantStatus.isReserved){
+                }@else if(this.applicantInfo.isReserved){
                 <div class="col text-left">
                     <i class="pi pi-exclamation-circle" style="font-size: 1.2rem"></i>
-                    ذخیره
+                    {{this.applicantInfo.statusTitle}}
                 </div>
-                }@else if(this.applicantStatus.isAccepted){
+                }@else if(this.applicantInfo.isAccepted){
                 <div class="col text-left">
                     <i class="pi pi-check-square" style="font-size: 1.2rem"></i>
-                    تایید
+                    {{this.applicantInfo.statusTitle}}
                 </div>
                 }
                 }
         </p-accordion-header>
         <p-accordion-content>
-            <div class="pt-3">
-                {{step.description}}
+            @if(step.description){
+            <div class="p-3">
+                <p-card>
+                    <div class="text-right font-bold">
+                        توضیحات مرحله:
+                    </div>
+                    {{step.description}}
+                </p-card>
             </div>
-            <p-divider></p-divider>
+            }
+            <!-- <p-divider></p-divider> -->
             <div class="text-center">
+                @if(applicantInfo.regStepId==step.id){
+
                 @if(step.stepId==STEP_ENUM.FillForm){
-                    <div>
-                        <strong>جهت پر کردن فرم روی دکمه زیر کلیک کنید</strong>
-                    </div>
+                @if(!this.applicantStatus || this.applicantStatus.isWaiting){
+                <div>
+                    <strong>جهت پر کردن فرم روی دکمه زیر کلیک کنید</strong>
+                </div>
+                <div class="mt-3">
+                    <p-button severity="success" class="mt-2" (onClick)="fillForm(step)">پرکردن فرم</p-button>
+                </div>
+                }
+                @else {
+                <div>
+                    <strong>شما قبلا فرم را پرکرده اید. جهت مشاهده فرم خود روی دکمه زیر کلیک کنید</strong>
+                </div>
+                <div class="m-3">
+                    <p-button severity="info" size="small" class="mt-2" (onClick)="fillForm(step)">مشاهده فرم</p-button>
+                </div>
+                @if(currentRegStep.memberLimit){
+                <p-card>
+                    <div class="text-right font-bold">همراهان:</div>
+                    <div>{{currentRegStep.addMemberDescription}}</div>
+                    <div>جهت افزودن همراه جدید روی دکمه زیر کلید نمایید</div>
+                    <div><p-button size="small" (onClick)="addMember()">افزودن همراه</p-button></div>
+                    @if(members?.length){
                     <div class="mt-3">
-                        <p-button severity="success" class="mt-2" (onClick)="fillForm(step)">پرکردن فرم</p-button>
+                        <p-table [value]="members" stripedRows size="small" [tableStyle]="{'width': '30rem'}">
+                            <ng-template #header>
+                                <tr>
+                                    <th></th>
+                                    <th>نام</th>
+                                    <th>نام خانوادگی</th>
+                                    <th>شماره ملی</th>
+                                    <th>موبایل</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template #body let-member>
+                                <tr>
+                                    <td>
+                                        @if(!member.statusId && (!this.applicantStatus ||
+                                        this.applicantStatus.isNotChecked)){
+                                        <p-button (onClick)="fillForm(step,member)" size="small">پرکردن فرم</p-button>
+                                        }@else{
+                                        <p-button (onClick)="fillForm(step,member)" size="small" severity="info">مشاهده
+                                            فرم</p-button>
+                                        }
+                                    </td>
+                                    <td>{{member.firstName}}</td>
+                                    <td>{{member.lastName}}</td>
+                                    <td>{{member.nationalNumber}}</td>
+                                    <td>{{member.mobile}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
                     </div>
+                    }
+                </p-card>
+                }
+                }
+
                 }@else if(step.stepId==STEP_ENUM.PayExpense){
-                    <div>
-                        <strong>برای پرداخت هزینه روی دکمه زیر کلیک نمایید</strong>
-                    </div>
-                    <div class="mt-3">
-                        <p-button severity="success" class="mt-2" (onClick)="payExpense(step)">پرداخت</p-button>
-                    </div>
+                <div>
+                    <strong>برای پرداخت هزینه روی دکمه زیر کلیک نمایید</strong>
+                </div>
+                <div class="mt-3">
+                    <p-button severity="success" class="mt-2" (onClick)="payExpense(step)">پرداخت</p-button>
+                </div>
                 }@else(){
+                }
                 }
 
             </div>
@@ -65,3 +136,40 @@
     }
 </p-accordion>
 }
+<p-dialog header="همراه جدید" [modal]="true" [(visible)]="showAddMemberDialog" [style]="{ width: '25rem' }">
+    <form [formGroup]="addMemberFormGroup">
+        <div class="col-12">
+            <p-floatlabel variant="on">
+                <input class="w-full" pInputText id="firstName" formControlName="firstName" autocomplete="off" />
+                <label for="firstName">نام</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-12">
+            <p-floatlabel variant="on">
+                <input class="w-full" pInputText id="lastName" formControlName="lastName" autocomplete="off" />
+                <label for="lastName">نام خانوادگی</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-12">
+            <p-floatlabel variant="on">
+                <input class="w-full" pInputText id="nationalCode" formControlName="nationalCode" autocomplete="off" />
+                <label for="nationalCode">کد ملی</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-12">
+            <p-floatlabel variant="on">
+                <input class="w-full" pInputText id="mobile" formControlName="mobile" autocomplete="off" />
+                <label for="mobile">شماره موبایل</label>
+            </p-floatlabel>
+        </div>
+        <p-divider></p-divider>
+        <div class="grid mt-4">
+            <div class="col text-right">
+                <p-button (onClick)="submitMember()">ثبت</p-button>
+            </div>
+            <div class="col text-left">
+                <p-button label="" severity="danger" (onClick)="closeModal()">انصراف</p-button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
