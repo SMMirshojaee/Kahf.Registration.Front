@@ -15,6 +15,8 @@ import { AccordionModule } from 'primeng/accordion';
 import { TextareaModule } from 'primeng/textarea';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ScrollTopModule } from 'primeng/scrolltop';
+import { SelectModule } from 'primeng/select';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 export const SHARE_IMPORTS = [
     ButtonModule,
@@ -34,5 +36,7 @@ export const SHARE_IMPORTS = [
     AccordionModule,
     TextareaModule,
     FileUploadModule,
-    ScrollTopModule 
+    ScrollTopModule,
+    SelectModule,
+    ConfirmDialogModule
 ]

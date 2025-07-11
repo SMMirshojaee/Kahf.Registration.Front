@@ -14,4 +14,15 @@ export class ApplicantFormValueService {
   GetByRegStepId(regStepId: number): Observable<ApplicantFormValueDto[]> {
     return this.httpClient.get<ApplicantFormValueDto[]>(`${this.address}/GetByRegStepId/${regStepId}`);
   }
+
+  insert(applicantId: number, regStepId: number, applicantFormValues: ApplicantFormValueDto[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.address}/insert/${applicantId}/${regStepId}`, applicantFormValues)
+  }
+
+  upload(fileName: string, image: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('image', image);
+
+    return this.httpClient.post(`${this.address}/upload/${fileName}`, formData);
+  }
 }

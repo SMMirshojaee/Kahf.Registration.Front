@@ -12,6 +12,11 @@ export class FieldDto {
     public optionsToShow: { value: string, title: string, id: number }[];
     public minDate: number;
     public maxDate: number;
+    public imageBase64: string;
+    public maxSizeInMB: number;
+    public imageFile: File;
+    public fileName: string;
+    public fileExtension: string;
 }
 
 export class FieldOptionDto {

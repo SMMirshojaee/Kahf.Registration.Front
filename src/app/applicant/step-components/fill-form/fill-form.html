@@ -1,106 +1,126 @@
 @if(formGroup){
 <form [formGroup]="formGroup">
     @for (field of fields; track $index) {
-    @if(field.fieldTypeId==FIELD_TYPE_ENUM.CheckBox){
-    <!-- <field-checkbox  [field]="field"></field-checkbox> -->
-    <div>
-        <div>
-            @if(field.mandatory){<span class="text-red-500">*</span>}
-            {{field.title}}</div>
-        <div class="grid">
-            @for(option of field.optionsToShow; track $index){
-            <div class="col-6">
-                <p-checkbox inputId="field_{{field.id}}_{{option.id}}" name="pizza" [value]="option.id"
-                    formControlName="field_{{field.id}}" />
-                <label for="field_{{field.id}}_{{option.id}}" class="ml-2"> {{option.title}} </label>
+    <div class="mb-4">
+        @if($index!=0){
+        <!-- <p-divider></p-divider> -->
+        }
+        @if(field.description){
+        <span>{{field.description}}</span>
+        }
+        @if(field.fieldTypeId==FIELD_TYPE_ENUM.CheckBox){
+        <div class="">
+            <div>
+                @if(field.mandatory){<span class="text-red-500">*</span>}
+                {{field.title}}</div>
+            <div class="grid">
+                @for(option of field.optionsToShow; track $index){
+                <div class="col-6">
+                    <p-checkbox inputId="field_{{field.id}}_{{option.id}}" name="pizza" [value]="option.id"
+                        formControlName="field_{{field.id}}" />
+                    <label for="field_{{field.id}}_{{option.id}}" class="ml-2"> {{option.title}} </label>
+                </div>
+                }
+            </div>
+        </div>
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Date){
+        <div class="">
+            <ng-persian-datepicker uiInitViewMode="year" [dateMin]="field.minDate" [dateMax]="field.maxDate" [dateInitValue]="false"
+                [uiTodayBtnEnable]="false">
+                <label for="field_{{field.id}}">
+                    @if(field.mandatory){<span class="text-red-500">*</span>}
+                    {{field.title}}
+                </label>
+                <input class="w-full" formControlName="field_{{field.id}}" pInputText id="field_{{field.id}}"
+                    autocomplete="off" />
+            </ng-persian-datepicker>
+        </div>
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.DropDown){
+        <p-floatlabel class=" card flex justify-center" variant="on">
+            <p-select [appendTo]="'self'" id="field_{{field.id}}" [options]="field.optionsToShow" optionLabel="title"
+                optionValue="id" [checkmark]="true" [showClear]="true" class="w-full"
+                formControlName="field_{{field.id}}" />
+            <label for="field_{{field.id}}">
+                @if(field.mandatory){<span class="text-red-500">*</span>}
+                {{field.title}}
+            </label>
+        </p-floatlabel>
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Image){
+        <div class="">
+            <label for="field_{{field.id}}">
+                @if(field.mandatory){<span class="text-red-500">*</span>}
+                {{field.title}}(حداکثر: {{field.maxSizeInMB}}MB)
+            </label>
+            <input (change)="imageSelected($event,field)" accept="Image/*" id="field_{{field.id}}" [hidden]="true"
+                #fileInput type="file" formControlName="field_{{field.id}}">
+            <p-button icon="pi pi-upload" styleClass="upload-button" (onClick)="fileInput.click()">انتخاب
+                فایل</p-button>
+            @if(field.imageBase64){
+            <div class="mt-2">
+                <img class="shadow-5" width="100%" [src]="field.imageBase64">
             </div>
             }
         </div>
-    </div>
-    @if(field.description){
-    <span>{{field.description}}</span>
-    }
-    }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Date){
-    <!-- <field-date [field]="field"></field-date> -->
-    <ng-persian-datepicker [dateMin]="field.minDate" [dateMax]="field.maxDate" [dateInitValue]="false"
-        [uiTodayBtnEnable]="false" (dateOnSelect)="onDateSelect($event)">
-        <label for="field_{{field.id}}">
-            @if(field.mandatory){<span class="text-red-500">*</span>}
-            {{field.title}}
-        </label>
-        <input class="w-full" formControlName="field_{{field.id}}" pInputText id="field_{{field.id}}"
-            autocomplete="off" />
-    </ng-persian-datepicker>
-
-    }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.DropDown){
-    <!-- <field-dropdown [field]="field"></field-dropdown> -->
-    }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Image){
-    <!-- <field-image [field]="field"></field-image> -->
-    <!-- <p>
-        <p-fileupload mode="basic" formControlName="field_{{field.id}}" chooseLabel="Choose" chooseIcon="pi pi-upload"
-            name="demo[]" url="https://www.primefaces.org/cdn/api/upload.php" accept="image/*" maxFileSize="5000000" />
-    </p> -->
-    }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Mobile){
-    <!-- <field-mobile [field]="field"></field-mobile> -->
-    <p-floatlabel class="mb-4" variant="on">
-        <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
-            autocomplete="off" />
-        <label for="field_{{field.id}}">
-            @if(field.mandatory){<span class="text-red-500">*</span>}
-            {{field.title}}
-        </label>
-    </p-floatlabel>
-    }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.NationalCode){
-    <!-- <field-nationalcode [field]="field"></field-nationalcode> -->
-    <input  class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}" autocomplete="off" />
-    <label for="field_{{field.id}}">
-        @if(field.mandatory){<span class="text-red-500">*</span>}
-        {{field.title}}
-    </label>
-    }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Radio){
-    <!-- <field-radio [field]="field"></field-radio> -->
-    <div class="grid">
-        <div class="col-12">
-            @if(field.mandatory){<span class="text-red-500">*</span>}
-            {{field.title}}</div>
-        @for (option of field.optionsToShow; track $index) {
-        <div class="col-6">
-            <p-radiobutton inputId="field_{{field.id}}_{{option.id}}" [value]="option.id"
-                formControlName="field_{{field.id}}" />
-            <label for="field_{{field.id}}_{{option.id}}" class="ml-2">{{ option.title }}</label>
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Mobile){
+        <p-floatlabel class="" variant="on">
+            <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
+                autocomplete="off" />
+            <label for="field_{{field.id}}">
+                @if(field.mandatory){<span class="text-red-500">*</span>}
+                {{field.title}}
+            </label>
+        </p-floatlabel>
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.NationalCode){
+        <div class="">
+            <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
+                autocomplete="off" />
+            <label for="field_{{field.id}}">
+                @if(field.mandatory){<span class="text-red-500">*</span>}
+                {{field.title}}
+            </label>
         </div>
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Radio){
+        <div class="grid ">
+            <div class="col-12">
+                @if(field.mandatory){<span class="text-red-500">*</span>}
+                {{field.title}}
+            </div>
+            @for (option of field.optionsToShow; track $index) {
+            <div class="col-6">
+                <p-radiobutton inputId="field_{{field.id}}_{{option.id}}" [value]="option.id"
+                    formControlName="field_{{field.id}}" />
+                <label for="field_{{field.id}}_{{option.id}}" class="mr-2">{{ option.title }}</label>
+            </div>
+            }
+        </div>
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Text){
+        <p-floatlabel class="" variant="on">
+            <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
+                autocomplete="off" />
+            <label for="field_{{field.id}}">
+                @if(field.mandatory){<span class="text-red-500">*</span>}
+                {{field.title}}
+            </label>
+        </p-floatlabel>
+
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.TextArea){
+        <p-floatlabel class="" variant="on">
+            <textarea formControlName="field_{{field.id}}" pTextarea id="field_{{field.id}}" rows="5" cols="30"
+                style="resize: none" class="h-full w-full"></textarea>
+            <label for="field_{{field.id}}">
+                @if(field.mandatory){<span class="text-red-500">*</span>}
+                {{field.title}}
+            </label>
+        </p-floatlabel>
         }
     </div>
-    }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Text){
-    <!-- <field-text [field]="field"></field-text> -->
-    <p-floatlabel class="mb-4" variant="on">
-        <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
-            autocomplete="off" />
-        <label for="field_{{field.id}}">
-            @if(field.mandatory){<span class="text-red-500">*</span>}
-            {{field.title}}
-            field_{{field.id}}
-        </label>
-    </p-floatlabel>
-
-    }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.TextArea){
-    <!-- <field-textarea [field]="field"></field-textarea> -->
-    <p-floatlabel variant="on">
-        <textarea formControlName="field_{{field.id}}" pTextarea id="field_{{field.id}}" rows="5" cols="30"
-            style="resize: none" class="h-full w-full"></textarea>
-        <label for="field_{{field.id}}">
-            @if(field.mandatory){<span class="text-red-500">*</span>}
-            {{field.title}}
-        </label>
-    </p-floatlabel>
-
-    }
     }
 </form>
 <p-divider></p-divider>
 <div class="grid">
     <div class="col-12  text-center">
-        <p-button (onClick)="submit()">ثبت</p-button>
+        <p-button (onClick)="checkForm()">ثبت</p-button>
     </div>
 </div>
 }
+<p-confirmdialog position="bottom"/>

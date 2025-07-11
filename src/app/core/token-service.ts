@@ -8,12 +8,13 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class TokenService {
+
   private route = inject(Router);
 
   private _applicantInfo: ApplicantInfo;
   private _selectedReg: RegDto;
   private _darkMode: boolean;
-  
+
   logout() {
     localStorage.clear();
     this.route.navigate(['/']);
@@ -24,13 +25,15 @@ export class TokenService {
   }
   setSelectedReg(reg: RegDto) {
     this._selectedReg = reg;
-    return localStorage.setItem('selectedReg', JSON.stringify(reg))
+    localStorage.setItem('selectedReg', JSON.stringify(reg))
   }
   setDarkMode(state: boolean) {
     this._darkMode = state;
-    return localStorage.setItem('dark-mode', state.toString())
+    localStorage.setItem('dark-mode', state.toString())
   }
-
+  setFormFields(applicantId: number, regStepId: number, values: any) {
+    localStorage.setItem(`formFieldValues_${applicantId}_${regStepId}`, JSON.stringify(values));
+  }
 
   getDarkMode(): boolean {
     if (!this._darkMode) {
