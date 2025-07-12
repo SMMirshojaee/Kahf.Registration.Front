@@ -13,7 +13,7 @@
         @if($index!=0){
         <!-- <p-divider></p-divider> -->
         }
-        
+
         @if(field.fieldTypeId==FIELD_TYPE_ENUM.CheckBox){
         <div>
             <div>
@@ -33,7 +33,7 @@
             </div>
         </div>
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Date){
-        <div class="">
+        <div>
             <ng-persian-datepicker uiInitViewMode="year" [dateMin]="field.minDate" [dateMax]="field.maxDate"
                 [dateInitValue]="false" [uiTodayBtnEnable]="false">
                 <label for="field_{{field.id}}">
@@ -55,11 +55,12 @@
             </label>
         </p-floatlabel>
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Image){
-        <div class="">
+        <div>
             <label for="field_{{field.id}}">
                 @if(field.mandatory){<span class="text-red-500">*</span>}
                 {{field.title}}(حداکثر: {{field.maxSizeInMB}}MB)
             </label>
+            @if(!formIsDisable){
             <input [disabled]="formIsDisable" (change)="imageSelected($event,field)" accept="Image/*"
                 id="field_{{field.id}}" [hidden]="true" #fileInput type="file" formControlName="field_{{field.id}}">
             <p-button [disabled]="formIsDisable" icon="pi pi-upload" styleClass="upload-button"
@@ -70,9 +71,15 @@
                 <img class="shadow-5" width="100%" [src]="field.imageBase64">
             </div>
             }
+            }
+            @else if(field.imageSource) {
+            <div>
+                <img class="shadow-5" width="100%" [src]="field.imageSource">
+            </div>
+            }
         </div>
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Mobile){
-        <p-floatlabel class="" variant="on">
+        <p-floatlabel variant="on">
             <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
                 autocomplete="off" />
             <label for="field_{{field.id}}">
@@ -81,7 +88,7 @@
             </label>
         </p-floatlabel>
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.NationalCode){
-        <div class="">
+        <div>
             <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
                 autocomplete="off" />
             <label for="field_{{field.id}}">
@@ -104,7 +111,7 @@
             }
         </div>
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Text){
-        <p-floatlabel class="" variant="on">
+        <p-floatlabel variant="on">
             <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
                 autocomplete="off" />
             <label for="field_{{field.id}}">
@@ -114,7 +121,7 @@
         </p-floatlabel>
 
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.TextArea){
-        <p-floatlabel class="" variant="on">
+        <p-floatlabel variant="on">
             <textarea formControlName="field_{{field.id}}" pTextarea id="field_{{field.id}}" rows="5" cols="30"
                 style="resize: none" class="h-full w-full"></textarea>
             <label for="field_{{field.id}}">
@@ -124,8 +131,8 @@
         </p-floatlabel>
         }
         @if(field.description){
-            <div class="pb-3 text-gray-500" style="font-size: small;">{{field.description}}</div>
-            }
+        <div class="pb-3 text-gray-500" style="font-size: small;">{{field.description}}</div>
+        }
     </div>
     }
     @if(!formIsDisable){

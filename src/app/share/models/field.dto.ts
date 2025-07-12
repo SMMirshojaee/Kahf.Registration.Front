@@ -17,6 +17,7 @@ export class FieldDto {
     public imageFile: File;
     public fileName: string;
     public fileExtension: string;
+    public imageSource: string;
 }
 
 export class FieldOptionDto {

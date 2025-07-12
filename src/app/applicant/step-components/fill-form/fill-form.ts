@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ApplicantFormValueService } from '@app/core/applicant-form-value-service';
 import { FieldService } from '@app/core/field-service';
+import { environment } from '@app/share/environment/environment';
 import { FIELD_IMPORTS } from '@app/share/fields/fields-import';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
@@ -105,7 +106,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
                   maxSizeInMB = parseInt(maxSizeInMBOption.value);
                 field.maxSizeInMB = maxSizeInMB;
                 if (previousValue.length) {
-
+                  field.imageSource = `${environment.repositoryAddress}/${(this.memberId ?? this.applicantId)}/${previousValue[0].value}`;
                 }
                 break;
               case FieldTypeEnum.Radio:
@@ -295,7 +296,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
             this.notify.info('در حال بارگذاری عکس ها...');
             let uploads = [];
             imageFields.forEach(imageField => {
-              uploads.push(this.applicantFormValueService.upload(imageField.fileName, imageField.imageFile,this.memberId))
+              uploads.push(this.applicantFormValueService.upload(imageField.fileName, imageField.imageFile, this.memberId))
             })
             forkJoin(uploads)
               .pipe(finalize(() => this.showFinal(data)))
