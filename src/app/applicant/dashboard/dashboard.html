@@ -88,14 +88,14 @@
                         <p-table [value]="members" stripedRows size="small" [tableStyle]="{'width': '30rem'}">
                             <ng-template #header>
                                 <tr>
-                                    <th></th>
+                                    <th>عملیات</th>
                                     <th>نام</th>
                                     <th>نام خانوادگی</th>
                                     <th>شماره ملی</th>
                                     <th>موبایل</th>
                                 </tr>
                             </ng-template>
-                            <ng-template #body let-member>
+                            <ng-template #body let-member let-index="rowIndex">
                                 <tr>
                                     <td>
                                         @if(!member.statusId && (!this.applicantStatus ||
@@ -105,6 +105,7 @@
                                         <p-button (onClick)="fillForm(step,member)" size="small" severity="info">مشاهده
                                             فرم</p-button>
                                         }
+                                        <p-button class="pr-2" size="small" severity="danger" (onClick)="removeMember(member,index)">حذف</p-button>
                                     </td>
                                     <td>{{member.firstName}}</td>
                                     <td>{{member.lastName}}</td>
@@ -172,4 +173,21 @@
             </div>
         </div>
     </form>
+</p-dialog>
+<p-dialog header="حذف همراه" [modal]="true" [(visible)]="showRemoveDialog" [style]="{ width: '25rem' }">
+    @if(selectedMemberToRemove){
+
+        <div class="col-12 mt-4">
+            <span>آیا از حذف '{{selectedMemberToRemove.firstName}} {{selectedMemberToRemove.lastName}}' انتخاب شده اطمینان دارید؟</span>
+            <div>این عملیات برگشت پذیر نمیباشد!</div>
+        </div>
+        <div class="grid mt-4">
+        <div class="col text-right">
+            <p-button (onClick)="confirmRemoveMember()">بله</p-button>
+        </div>
+        <div class="col text-left">
+            <p-button label="" severity="danger" (onClick)="closeRemoveModal()">انصراف</p-button>
+        </div>
+    </div>
+}
 </p-dialog>

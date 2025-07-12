@@ -25,7 +25,7 @@ export class ToastService {
       detail: 'خطا در دریافت اطلاعات از سرور '
     });
   }
-  unauthorize(){
+  unauthorize() {
     this.messageService.add({
       key: 'toast',
       severity: 'warn',
@@ -39,6 +39,13 @@ export class ToastService {
       severity: 'success',
       summary: message,
       detail: detail
+    });
+  }
+  defaultSuccess() {
+    this.messageService.add({
+      key: 'toast',
+      severity: 'success',
+      summary: "عملیات با موفقیت انجام شد",
     });
   }
   error(message: string, detail?: string) {

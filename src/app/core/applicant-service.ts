@@ -29,4 +29,9 @@ export class ApplicantService {
   addMember(regStepId: number, addMemberForm: SignupDto): Observable<MemberInfoDto> {
     return this.httpClient.post<MemberInfoDto>(`${this.address}/addMember/${regStepId}`, addMemberForm)
   }
+
+  removeMember(memberId: number): Observable<any> {
+    return this.httpClient.delete<any>(`${this.address}/removeMember/${memberId}`)
+
+  }
 }

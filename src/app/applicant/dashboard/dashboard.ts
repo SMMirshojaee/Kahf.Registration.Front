@@ -30,7 +30,9 @@ export class Dashboard extends GenericComponent {
   protected members: MemberInfoDto[];
   protected showAddMemberDialog: boolean;
   protected addMemberFormGroup: FormGroup;
-
+  protected selectedMemberToRemove: MemberInfoDto;
+  private selectedMemberIndexToRemove: number;
+  protected showRemoveDialog: boolean;
   ngOnInit() {
     this.addMemberFormGroup = new FormGroup({
       firstName: new FormControl('', [Validators.required]),
@@ -97,7 +99,27 @@ export class Dashboard extends GenericComponent {
       this.notify.warn('شما به سقف تعداد همراهان رسیده اید')
     }
   }
-
+  removeMember(member: MemberInfoDto, index: number) {
+    this.showRemoveDialog = true;
+    this.selectedMemberToRemove = member;
+    this.selectedMemberIndexToRemove = index;
+  }
+  confirmRemoveMember() {
+    this.spinnerService.show();
+    this.applicantService.removeMember(this.selectedMemberToRemove.id)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: () => {
+          this.members.splice(this.selectedMemberIndexToRemove, 1);
+          this.notify.defaultSuccess();
+          this.closeRemoveModal();
+        },
+        error: (err: HttpErrorResponse) => this.notify.defaultError()
+      })
+  }
+  closeRemoveModal() {
+    this.showRemoveDialog = false;
+  }
   submitMember() {
     if (this.addMemberFormGroup.invalid) {
       this.addMemberFormGroup.markAllAsDirty();
