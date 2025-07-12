@@ -14,10 +14,15 @@
     </ng-template>
     <ng-template #title> {{reg.title}} </ng-template>
     <!-- <ng-template #subtitle> Card subtitle </ng-template> -->
-    <p>
+    <!-- <p>
         <span class="col-12">تاریخ شروع: {{reg.startDate|persianDate}}</span>
         <span class="col-12">تاریخ پایان: {{reg.endDate|persianDate}}</span>
-    </p>
+    </p> -->
+    <div class="flex gap-4 mt-1">
+        <p-button class="col" (onClick)="route('applicant/signup/'+ reg.id)">ثبت‌نام</p-button>
+        <p-button class="col text-left" severity="warn"
+            (onClick)="route('applicant/signin/'+ reg.id)">ورود</p-button>
+    </div>
     <p-accordion value="0">
         <p-accordion-panel value="0">
             <p-accordion-header>آیین نامه</p-accordion-header>
@@ -29,10 +34,6 @@
     </p-accordion>
 
     <ng-template #footer>
-        <div class="flex gap-4 mt-1">
-            <p-button class="col" (onClick)="route('applicant/signup/'+ reg.id)">ثبت‌نام</p-button>
-            <p-button class="col text-left" severity="warn"
-                (onClick)="route('applicant/signin/'+ reg.id)">ورود</p-button>
-        </div>
+       
     </ng-template>
 </p-card>

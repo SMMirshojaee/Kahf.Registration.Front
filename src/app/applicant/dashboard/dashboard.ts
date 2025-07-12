@@ -135,7 +135,11 @@ export class Dashboard extends GenericComponent {
     const nationalCode = this.addMemberFormGroup.get('nationalCode')?.value;
 
     this.applicantService.addMember(this.currentRegStep.id, { firstName: firstName, lastName: lastName, nationalCode: nationalCode, mobile: mobile } as SignupDto)
-      .pipe(finalize(() => this.spinnerService.hide()))
+      .pipe(finalize(() => {
+        this.spinnerService.hide();
+        this.addMemberFormGroup.reset();
+      }
+      ))
       .subscribe({
         next: data => {
           this.members.unshift(data);
@@ -155,9 +159,11 @@ export class Dashboard extends GenericComponent {
   }
   openModel() {
     this.showAddMemberDialog = true;
+    this.addMemberFormGroup.reset();
   }
   closeModal() {
     this.showAddMemberDialog = false;
+    this.addMemberFormGroup.reset();
   }
 
   fillForm(step: RegStepDto, member?: MemberInfoDto) {
