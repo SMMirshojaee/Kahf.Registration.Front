@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
+import { Location } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -10,6 +11,7 @@ import { SHARE_IMPORTS } from '@app/share/imports';
   styleUrl: './header.scss'
 })
 export class Header extends GenericComponent {
+  private location = inject(Location);
   get isLogin(): boolean {
     if (this.tokenService.getActor())
       return true;
@@ -38,6 +40,9 @@ export class Header extends GenericComponent {
     else
       this.route('');
 
+  }
+  goBack() {
+    this.location.back();
   }
   logout() {
     this.tokenService.logout();

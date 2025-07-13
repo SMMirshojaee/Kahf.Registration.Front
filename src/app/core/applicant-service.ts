@@ -32,6 +32,8 @@ export class ApplicantService {
 
   removeMember(memberId: number): Observable<any> {
     return this.httpClient.delete<any>(`${this.address}/removeMember/${memberId}`)
-
+  }
+  finishFormStep(regStepId: number): Observable<any> {
+    return this.httpClient.put<any>(`${this.address}/finishFormStep/${regStepId}`, null)
   }
 }

@@ -51,6 +51,9 @@ export class FillForm extends GenericComponent implements OnDestroy {
     this.applicantId = applicantInfo.applicantid;
     this.regStepId = this.activatedRoute.snapshot.params['id'];
     this.memberId = this.activatedRoute.snapshot.params['memberId'];
+    let disable = this.activatedRoute.snapshot.params['disable'];
+    if (disable.toLowerCase() == 'true')
+      this.formIsDisable = true;
     if (!this.memberId) {
       this.baseData = {
         firstName: applicantInfo.firstName,
@@ -75,7 +78,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
       .subscribe({
         next: data => {
           let previousValues = data.values;
-          this.formIsDisable = previousValues?.length > 0;
+          this.formIsDisable ||= previousValues?.length > 0;
           this.fields = data.fields;
           this.formGroup = new FormGroup({});
 

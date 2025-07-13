@@ -1,14 +1,13 @@
 <div class="m-2 text-center">
     @if(applicantStatus){
-
-        <p-message [severity]="
+    <p-message [severity]="
         (applicantStatus.isWaiting || applicantStatus.isNotChecked?'info':
         applicantStatus.isRejected?'error':
         applicantStatus.isAccepted?'success':'warn')
         " icon="pi pi-info-circle">
         {{applicantStatus.publicMessage}}
     </p-message>
-}
+    }
 </div>
 @if (regSteps) {
 
@@ -77,7 +76,7 @@
                     <strong>جهت پر کردن فرم روی دکمه زیر کلیک کنید</strong>
                 </div>
                 <div class="mt-3">
-                    <p-button severity="success" class="mt-2" (onClick)="fillForm(step.id)">پرکردن فرم</p-button>
+                    <p-button severity="success" class="mt-2" (onClick)="fillForm(step.id,false)">پرکردن فرم</p-button>
                 </div>
                 }
                 @else {
@@ -85,15 +84,21 @@
                     <strong>شما قبلا فرم را پرکرده اید. جهت مشاهده فرم خود روی دکمه زیر کلیک کنید</strong>
                 </div>
                 <div class="m-3">
-                    <p-button severity="info" size="small" class="mt-2" (onClick)="fillForm(step.id)">مشاهده
+                    <p-button severity="info" size="small" class="mt-2" (onClick)="fillForm(step.id,true)">مشاهده
                         فرم</p-button>
                 </div>
+                }
+
                 @if(currentRegStep.memberLimit){
                 <p-card>
                     <div class="text-right font-bold">همراهان:</div>
-                    <div>{{currentRegStep.addMemberDescription}}</div>
-                    <div>جهت افزودن همراه جدید روی دکمه زیر کلید نمایید</div>
+                    <div class="text-justify">{{currentRegStep.addMemberDescription}}</div>
+                    @if(this.applicantStatus.isWaiting){
+                    <div class="mt-2">
+                        <strong>جهت افزودن همراه جدید روی دکمه زیر کلید نمایید</strong>
+                    </div>
                     <div><p-button size="small" (onClick)="addMember()">افزودن همراه</p-button></div>
+                    }
                     @if(members?.length){
                     <div class="mt-3">
                         <p-table [value]="members" stripedRows size="small" [tableStyle]="{'width': '30rem'}">
@@ -110,28 +115,39 @@
                                 <tr>
                                     <td>
                                         @if(!member.statusId && (!this.applicantStatus ||
-                                        this.applicantStatus.isNotChecked)){
-                                        <p-button (onClick)="fillForm(step.id,member)" size="small">پرکردن
-                                            فرم</p-button>
+                                        this.applicantStatus.isWaiting)){
+                                        <p-button (onClick)="fillForm(step.id,false,member)" size="small"
+                                            icon="pi pi-pen-to-square"></p-button>
                                         }@else{
-                                        <p-button (onClick)="fillForm(step.id,member)" size="small"
-                                            severity="info">مشاهده
-                                            فرم</p-button>
+                                        <p-button (onClick)="fillForm(step.id,true,member)" size="small" severity="info"
+                                            icon="pi pi-eye"></p-button>
                                         }
+                                        @if(!this.applicantStatus || this.applicantStatus.isWaiting){
                                         <p-button class="pr-2" size="small" severity="danger"
-                                            (onClick)="removeMember(member,index)">حذف</p-button>
+                                            [disabled]="!this.applicantStatus.isWaiting"
+                                            (onClick)="removeMember(member,index)" icon="pi pi-trash"></p-button>
+                                        }
                                     </td>
                                     <td>{{member.firstName}}</td>
                                     <td>{{member.lastName}}</td>
                                     <td>{{member.nationalNumber}}</td>
-                                    <td>{{member.mobile}}</td>
+                                    <td>{{member.phoneNumber}}</td>
                                 </tr>
                             </ng-template>
                         </p-table>
                     </div>
                     }
+                    @if(this.applicantStatus.isWaiting){
+                    <div class="mt-3">
+                        چنانچه همراهی ندارید یا اطلاعات همراهان خود را کامل کرده اید، لطفا روی دکمه زیر کلیک نمایید.
+                        <div><strong class="text-red-500">بررسی اطلاعات شما و ادامه فرایند ثبت‌نام منوط به کلیک کردن روی
+                                دکمه زیر می باشد</strong></div>
+                    </div>
+                    <div class="mt-3">
+                        <p-button severity="danger" (onClick)="openFinishModal()">اتمام فرایند</p-button>
+                    </div>
+                    }
                 </p-card>
-                }
                 }
 
                 }@else if(step.stepId==STEP_ENUM.PayExpense){
@@ -192,9 +208,9 @@
     @if(selectedMemberToRemove){
 
     <div class="col-12 mt-4">
-        <span>آیا از حذف '{{selectedMemberToRemove.firstName}} {{selectedMemberToRemove.lastName}}' انتخاب شده اطمینان
+        <span>آیا از حذف '{{selectedMemberToRemove.firstName}} {{selectedMemberToRemove.lastName}}' اطمینان
             دارید؟</span>
-        <div>این عملیات برگشت پذیر نمیباشد!</div>
+        <div>این عملیات برگشت ناپذیر می‌باشد!</div>
     </div>
     <div class="grid mt-4">
         <div class="col text-right">
@@ -205,4 +221,25 @@
         </div>
     </div>
     }
+</p-dialog>
+<p-dialog header="اتمام فرایند {{currentRegStep.title}}" [modal]="true" [(visible)]="showFinishDialog"
+    [style]="{ width: '25rem' }">
+    <div class="col-12 mt-4">
+        <div>زائر گرامی!</div>
+        <div>
+            با انتخاب این گزینه، شما اعلام می‌دارید که تمامی اطلاعات مربوط به خود و همراهان‌تان را به‌طور کامل و صحیح
+            وارد کرده‌اید.
+            لطفاً توجه داشته باشید که پس از تأیید، امکان تغییر یا ویرایش اطلاعات وجود نخواهد داشت.
+            آیا از صحت اطلاعات ثبت‌شده اطمینان دارید؟
+        </div>
+    </div>
+    <div class="grid mt-4">
+        <div class="col text-right">
+            <p-button (onClick)="confirmFinish()">بله</p-button>
+        </div>
+        <div class="col text-left">
+            <p-button label="" severity="danger" (onClick)="closeFinishModal()">انصراف</p-button>
+        </div>
+    </div>
+
 </p-dialog>

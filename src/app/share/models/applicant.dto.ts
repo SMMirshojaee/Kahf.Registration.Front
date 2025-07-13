@@ -29,4 +29,6 @@ export class MemberInfoDto {
     public lastName: string;
     public nationalNumber: string;
     public phoneNumber: string;
+    //
+    public formIsDisable: boolean;
 }

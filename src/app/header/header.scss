@@ -45,3 +45,7 @@ $primary-color: #11afa8;
     background: black !important;
 
 }
+.flipped-icon {
+    transform: scaleX(-1);
+    display: inline-block; /* لازمه برای transform کار کنه */
+  }

@@ -33,6 +33,7 @@ export class Dashboard extends GenericComponent {
   protected selectedMemberToRemove: MemberInfoDto;
   private selectedMemberIndexToRemove: number;
   protected showRemoveDialog: boolean;
+  protected showFinishDialog: boolean;
   ngOnInit() {
     this.addMemberFormGroup = new FormGroup({
       firstName: new FormControl('', [Validators.required]),
@@ -143,7 +144,7 @@ export class Dashboard extends GenericComponent {
       .subscribe({
         next: data => {
           this.members.unshift(data);
-          this.fillForm(this.currentRegStep.id, data);
+          this.fillForm(this.currentRegStep.id, false, data);
           this.closeModal();
         }, error: (err: HttpErrorResponse) => {
           if (err.status == 403)
@@ -167,16 +168,40 @@ export class Dashboard extends GenericComponent {
     this.addMemberFormGroup.reset();
   }
 
-  fillForm(stepId: number, member?: MemberInfoDto) {
+  fillForm(stepId: number, formIsDisable: boolean, member?: MemberInfoDto) {
     if (member) {
       localStorage.setItem('baseData', JSON.stringify(member));
-      this.route(`/applicant/fill-form/${stepId}/${member.id}`);
+      this.route(`/applicant/fill-form/${stepId}/${formIsDisable}/${member.id}`);
     }
     else
-      this.route(`/applicant/fill-form/${stepId}`);
+      this.route(`/applicant/fill-form/${stepId}/${formIsDisable}`);
   }
 
   payExpense(step: RegStepDto) {
     this.route(`/applicant/pay/${step.id}`);
+  }
+
+  openFinishModal() {
+    this.showFinishDialog = true;
+  }
+  closeFinishModal() {
+    this.showFinishDialog = false;
+  }
+  confirmFinish() {
+    this.spinnerService.show();
+    this.applicantService.finishFormStep(this.currentRegStep.id)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: () => {
+          this.notify.defaultSuccess();
+          this.closeFinishModal();
+          this.ngOnInit();
+        }, error: (err: HttpErrorResponse) => {
+          if (err.status == 403)
+            this.notify.error('شما هنوز اطلاعات مربوط به خود را وارد نکرده اید.')
+          else
+            this.notify.defaultError();
+        }
+      });
   }
 }
