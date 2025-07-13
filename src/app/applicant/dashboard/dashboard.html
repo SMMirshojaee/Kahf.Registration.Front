@@ -222,6 +222,7 @@
     </div>
     }
 </p-dialog>
+@if(currentRegStep){
 <p-dialog header="اتمام فرایند {{currentRegStep.title}}" [modal]="true" [(visible)]="showFinishDialog"
     [style]="{ width: '25rem' }">
     <div class="col-12 mt-4">
@@ -241,5 +242,5 @@
             <p-button label="" severity="danger" (onClick)="closeFinishModal()">انصراف</p-button>
         </div>
     </div>
-
 </p-dialog>
+}

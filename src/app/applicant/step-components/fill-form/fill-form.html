@@ -7,7 +7,7 @@
     <div class="mb-4">
         <strong>فرم زائر اصلی</strong>
     </div>
-}
+    }
     @if(baseData){
 
     <div class="mb-4">
@@ -53,9 +53,15 @@
             <div class="grid">
                 @for(option of field.optionsToShow; track $index){
                 <div class="col-6">
-                    <p-checkbox inputId="field_{{field.id}}_{{option.id}}" name="pizza" [value]="option.id"
+                    <p-checkbox inputId="field_{{field.id}}_{{option.id}}" [value]="option.id"
                         formControlName="field_{{field.id}}" />
-                    <label for="field_{{field.id}}_{{option.id}}" class="ml-2"> {{option.title}} </label>
+                    <label for="field_{{field.id}}_{{option.id}}" class="ml-2">
+                        {{option.title}}
+                    </label>
+                    @if(option.value){
+                    <i class="pi pi-info-circle text-blue-500" style="font-size: small;"
+                        (click)="openInfoModal(option)"></i>
+                    }
                 </div>
                 }
             </div>
@@ -135,7 +141,11 @@
             <div class="col-6">
                 <p-radiobutton inputId="field_{{field.id}}_{{option.id}}" [value]="option.id"
                     formControlName="field_{{field.id}}" />
-                <label for="field_{{field.id}}_{{option.id}}" class="mr-2">{{ option.title }}</label>
+                <label for="field_{{field.id}}_{{option.id}}" class="mr-2 ml-2">{{ option.title }}</label>
+                @if(option.value){
+                <i class="pi pi-info-circle text-blue-500" style="font-size: small;"
+                    (click)="openInfoModal(option)"></i>
+                }
             </div>
             }
         </div>
@@ -174,4 +184,17 @@
     }
 </form>
 }
-<p-confirmdialog position="bottom" />
+<p-confirmdialog key="submitConfirmModal" position="bottom" />
+
+@if (informationModal) {
+
+<p-dialog [header]="informationModal.title" [modal]="true" [(visible)]="showInfoModal" [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <p class="mb-8 text-justify">
+        {{informationModal.value}}
+    </p>
+    <ng-template #footer>
+        <p-button class="mt-3" (onClick)="showInfoModal=false">متوجه شدم</p-button>
+    </ng-template>
+</p-dialog>
+}

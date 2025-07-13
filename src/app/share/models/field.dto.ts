@@ -9,7 +9,7 @@ export class FieldDto {
     public hidden: boolean;
     public fieldOptions: FieldOptionDto[];
     //فیلدهای زیر فقط در هنگام نمایش فرم مورد استفاده قرار میگیرن و در کلاس اصلی حضور ندارن
-    public optionsToShow: { value: string, title: string, id: number }[];
+    public optionsToShow: { value?: string, title: string, id: number }[];
     public minDate: number;
     public maxDate: number;
     public imageBase64: string;
@@ -25,7 +25,7 @@ export class FieldOptionDto {
     public fieldId: number;
     public title: string;
     public type: string;
-    public value: string;
+    public value?: string;
 }
 
 export class FieldTypeDto {

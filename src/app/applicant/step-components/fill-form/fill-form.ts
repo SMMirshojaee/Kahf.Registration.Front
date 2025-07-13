@@ -38,6 +38,8 @@ export class FillForm extends GenericComponent implements OnDestroy {
   protected formGroup: FormGroup;
   protected formControl: FormControl;
   protected formIsDisable = false;
+  protected showInfoModal = false;
+  protected informationModal: { value?: string, title: string, id: number };
   private interval;
 
   protected baseData: { firstName: string, lastName: string, nationalCode: string }
@@ -218,6 +220,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
     }
     this.confirmationService.confirm({
       message: 'آیا از صحت اطلاعاتی که وارد کردید مطمئن هستید؟',
+      key: 'submitConfirmModal',
       header: 'تایید نهایی',
       icon: 'pi pi-info-circle',
       rejectButtonStyleClass: 'p-button-text',
@@ -366,6 +369,11 @@ export class FillForm extends GenericComponent implements OnDestroy {
     // اگر از FormControl استفاده می‌کنی، مقدار رو هم به‌روز کن:
     this.formGroup.controls[`field_${fieldId}`].setValue(event.target.value, { emitEvent: false });
   }
+
+  openInfoModal(information: { value?: string, title: string, id: number }) {
+    this.informationModal = information;
+    this.showInfoModal = true;
+  }
   private generateRandomText(length: number): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -374,4 +382,5 @@ export class FillForm extends GenericComponent implements OnDestroy {
     }
     return result;
   }
+
 }
