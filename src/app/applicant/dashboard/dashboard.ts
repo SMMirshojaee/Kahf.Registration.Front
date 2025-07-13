@@ -143,6 +143,7 @@ export class Dashboard extends GenericComponent {
       .subscribe({
         next: data => {
           this.members.unshift(data);
+          this.fillForm(this.currentRegStep.id, data);
           this.closeModal();
         }, error: (err: HttpErrorResponse) => {
           if (err.status == 403)
@@ -166,11 +167,13 @@ export class Dashboard extends GenericComponent {
     this.addMemberFormGroup.reset();
   }
 
-  fillForm(step: RegStepDto, member?: MemberInfoDto) {
-    if (member)
-      this.route(`/applicant/fill-form/${step.id}/${member.id}`);
+  fillForm(stepId: number, member?: MemberInfoDto) {
+    if (member) {
+      localStorage.setItem('baseData', JSON.stringify(member));
+      this.route(`/applicant/fill-form/${stepId}/${member.id}`);
+    }
     else
-      this.route(`/applicant/fill-form/${step.id}`);
+      this.route(`/applicant/fill-form/${stepId}`);
   }
 
   payExpense(step: RegStepDto) {

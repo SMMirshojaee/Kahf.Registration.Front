@@ -19,6 +19,8 @@ import { SelectModule } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+
 export const SHARE_IMPORTS = [
     ButtonModule,
     CheckboxModule,
@@ -41,5 +43,6 @@ export const SHARE_IMPORTS = [
     SelectModule,
     ConfirmDialogModule,
     TableModule,
-    DialogModule
+    DialogModule,
+    ToggleSwitchModule
 ]

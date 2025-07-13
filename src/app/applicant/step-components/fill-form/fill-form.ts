@@ -9,6 +9,7 @@ import { FIELD_IMPORTS } from '@app/share/fields/fields-import';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
 import { ApplicantFormValueDto } from '@app/share/models/applicant-form-value.dto';
+import { MemberInfoDto } from '@app/share/models/applicant.dto';
 import { FieldTypeEnum } from '@app/share/models/field-type.enum';
 import { FieldDto } from '@app/share/models/field.dto';
 import { MobileValidator } from '@app/share/validators/mobile.validator';
@@ -38,14 +39,33 @@ export class FillForm extends GenericComponent implements OnDestroy {
   protected formControl: FormControl;
   protected formIsDisable = false;
   private interval;
+
+  protected baseData: { firstName: string, lastName: string, nationalCode: string }
+
   ngOnDestroy() {
     clearInterval(this.interval);
     this.tokenService.setFormFields(this.applicantId, this.regStepId, this.formGroup.value);
   }
   ngOnInit() {
-    this.applicantId = this.tokenService.getApplicantInfo().applicantid;
+    const applicantInfo = this.tokenService.getApplicantInfo();
+    this.applicantId = applicantInfo.applicantid;
     this.regStepId = this.activatedRoute.snapshot.params['id'];
     this.memberId = this.activatedRoute.snapshot.params['memberId'];
+    if (!this.memberId) {
+      this.baseData = {
+        firstName: applicantInfo.firstName,
+        lastName: applicantInfo.lastName,
+        nationalCode: applicantInfo.nationalcode
+      }
+    } else {
+      const memberData = JSON.parse(localStorage.getItem('baseData')) as MemberInfoDto;
+      if (memberData)
+        this.baseData = {
+          firstName: memberData.firstName,
+          lastName: memberData.lastName,
+          nationalCode: memberData.nationalNumber
+        }
+    }
     this.spinnerService.show();
     forkJoin({
       fields: this.fieldService.getByRegStepId(this.regStepId, this.memberId),
@@ -335,7 +355,15 @@ export class FillForm extends GenericComponent implements OnDestroy {
       }
     })
   }
-  generateRandomText(length: number): string {
+  convertToEnglishDigits(event: any, fieldId: number): void {
+    const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+    const englishDigits = '0123456789';
+
+    event.target.value = event.target.value.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
+    // اگر از FormControl استفاده می‌کنی، مقدار رو هم به‌روز کن:
+    this.formGroup.controls[`field_${fieldId}`].setValue(event.target.value, { emitEvent: false });
+  }
+  private generateRandomText(length: number): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {

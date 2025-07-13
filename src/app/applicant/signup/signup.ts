@@ -91,4 +91,12 @@ export class Signup extends GenericComponent {
         }
       })
   }
+  convertToEnglishDigits(event: any, fieldName: string): void {
+    const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+    const englishDigits = '0123456789';
+
+    event.target.value = event.target.value.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
+    // اگر از FormControl استفاده می‌کنی، مقدار رو هم به‌روز کن:
+    this.signupForm.controls[fieldName].setValue(event.target.value, { emitEvent: false });
+  }
 }

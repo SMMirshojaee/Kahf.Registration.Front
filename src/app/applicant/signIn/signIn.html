@@ -7,13 +7,15 @@
 <form [formGroup]="followupForm">
     <div class="col-12">
         <p-floatlabel variant="on">
-            <input class="w-full" pInputText id="nationalCode" formControlName="nationalCode" autocomplete="off" />
+            <input class="w-full" pInputText id="nationalCode" formControlName="nationalCode" autocomplete="off" 
+            (input)="convertToEnglishDigits($event,'nationalCode')"/>
             <label for="nationalCode">کد ملی</label>
         </p-floatlabel>
     </div>
     <div class="col-12">
         <p-floatlabel variant="on">
-            <input class="w-full" pInputText id="mobile" formControlName="mobile" autocomplete="off" />
+            <input class="w-full" pInputText id="mobile" formControlName="mobile" autocomplete="off" 
+            (input)="convertToEnglishDigits($event,'mobile')"/>
             <label for="mobile">شماره موبایل</label>
         </p-floatlabel>
     </div>

@@ -1,11 +1,39 @@
-@if(formGroup){
 <div class="mb-3">
     @if(memberId){
-    <strong>فرم همراه</strong>
+    <div class="mb-4">
+        <strong>فرم همراه</strong>
+    </div>
     }@else{
-    <strong>فرم زائر اصلی</strong>
+    <div class="mb-4">
+        <strong>فرم زائر اصلی</strong>
+    </div>
+}
+    @if(baseData){
+
+    <div class="mb-4">
+        <p-floatlabel variant="on">
+            <input disabled class="w-full" pInputText id="firstName" [value]="baseData.firstName" autocomplete="off" />
+            <label for="firstName">نام</label>
+        </p-floatlabel>
+    </div>
+    <div class="mb-4">
+        <p-floatlabel variant="on">
+            <input disabled class="w-full" pInputText id="lastName" [value]="baseData.lastName" autocomplete="off" />
+            <label for="lastName">نام خانوادگی</label>
+        </p-floatlabel>
+    </div>
+    <div class="mb-4">
+        <p-floatlabel variant="on">
+            <input disabled class="w-full" pInputText id="nationalCode" [value]="baseData.nationalCode"
+                autocomplete="off" />
+            <label for="nationalCode">کدملی
+            </label>
+        </p-floatlabel>
+    </div>
     }
 </div>
+@if(formGroup){
+
 <p-divider></p-divider>
 <form [formGroup]="formGroup">
     @for (field of fields; track $index) {
@@ -56,7 +84,8 @@
         </p-floatlabel>
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Image){
         <div>
-            <label for="field_{{field.id}}">
+            <label for="field_{{field.id}}"
+                [ngClass]="{'text-red-500':formGroup.controls['field_'+field.id].dirty && formGroup.controls['field_'+field.id].invalid}">
                 @if(field.mandatory){<span class="text-red-500">*</span>}
                 {{field.title}}(حداکثر: {{field.maxSizeInMB}}MB)
             </label>
@@ -81,7 +110,7 @@
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Mobile){
         <p-floatlabel variant="on">
             <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
-                autocomplete="off" />
+                autocomplete="off" (input)="convertToEnglishDigits($event,field.id)" />
             <label for="field_{{field.id}}">
                 @if(field.mandatory){<span class="text-red-500">*</span>}
                 {{field.title}}
@@ -90,7 +119,7 @@
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.NationalCode){
         <div>
             <input class="w-full" pInputText id="field_{{field.id}}" formControlName="field_{{field.id}}"
-                autocomplete="off" />
+                autocomplete="off" (input)="convertToEnglishDigits($event,field.id)" />
             <label for="field_{{field.id}}">
                 @if(field.mandatory){<span class="text-red-500">*</span>}
                 {{field.title}}

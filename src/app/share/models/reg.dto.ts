@@ -35,6 +35,7 @@ export class RegStepStatusDto {
     public id: number;
     public regStepId: number;
     public title: string;
+    public publicMessage: string;
     public isWaiting: boolean;
     public isNotChecked: boolean;
     public isAccepted: boolean;

@@ -1,5 +1,5 @@
-
 $primary-color: #11afa8;
+
 .menu {
     position: fixed;
     bottom: 0;
@@ -13,7 +13,8 @@ $primary-color: #11afa8;
     padding-right: 0.7rem;
     text-align: center;
 }
-.header{
+
+.header {
     position: fixed;
     top: 0;
     background-color: $primary-color;
@@ -26,10 +27,21 @@ $primary-color: #11afa8;
     padding-right: 0.7rem;
     text-align: center;
 }
-::ng-deep .p-scrolltop.p-button{
-    right: 10px  !important;
+
+::ng-deep .p-scrolltop.p-button {
+    right: 10px !important;
     bottom: 4.5rem !important;
 }
+
 .shadow-up {
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2) !important;
-  }
+}
+
+::ng-deep .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider{
+    background: white !important;
+}
+
+::ng-deep .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-slider{
+    background: black !important;
+
+}

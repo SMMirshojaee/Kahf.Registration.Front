@@ -1,8 +1,16 @@
-<div class="header shadow-5">
+<div class="header shadow-5 grid">
     <div class="col text-center">
         <strong class="large">‌گروه زیارت جمعی</strong>
         &nbsp;
         <strong class="text-red-700">کهف الحصین</strong>
+    </div>
+    <div class="col-auto pt-2 pl-2 text-left">
+        <p-toggleswitch (onChange)="toggleDarkMode()"  name="darkmode" >
+            <ng-template #handle let-checked="checked">
+                <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-moon' : 'pi-asterisk']"></i>
+            </ng-template>
+        </p-toggleswitch>
+
     </div>
 </div>
 <div class="menu shadow-5 shadow-up">
@@ -14,7 +22,7 @@
     }
     <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-home"
         (onClick)="gotoHome()"></p-button>
-    <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-eye"
-        (onClick)="toggleDarkMode()"></p-button>
+    <!-- <p-button size="large" severity="secondary" class="col-auto pl-4" icon="pi pi-moon"
+        (onClick)="toggleDarkMode()"></p-button> -->
 
 </div>

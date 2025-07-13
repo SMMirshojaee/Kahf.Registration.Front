@@ -22,10 +22,12 @@ export class Header extends GenericComponent {
   }
   toggleDarkMode() {
     const element = document.querySelector('html');
-    if (element?.classList.contains('app-dark-style'))
+    if (element?.classList.contains('app-dark-style')) {
       this.tokenService.setDarkMode(false);
-    else
+    }
+    else {
       this.tokenService.setDarkMode(true);
+    }
     element?.classList.toggle('app-dark-style');
   }
   gotoHome() {
