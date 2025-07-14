@@ -347,6 +347,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
       '';
     this.confirmationService.confirm({
       message: message,
+      key: 'submitConfirmModal',
       header: 'اطلاعات شما با موفقیت ثبت شد',
       icon: 'pi pi-check-circle',
       closable: false,
