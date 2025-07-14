@@ -1,11 +1,11 @@
 @import '../../../styles.scss';
 ::ng-deep p-card.bg-second {
     font-weight: bold;
-    .p-card p-component{
-        border-radius: 1.5rem;
+    .p-card.p-component{
+        border-radius: 1.5rem !important;
     }
     .p-card-body {
         background: $second-color;
-        border-radius: 1.5rem;
+        border-radius: 1.5rem  !important;
     }
 }

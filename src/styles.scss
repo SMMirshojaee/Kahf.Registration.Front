@@ -15,7 +15,7 @@ $second-color: #ffbe00;
     --p-primary-color: #11afa8 !important
 }
 
-* {
+*:not(i):not(.pi):not(.fa):not(.material-icons) {
     font-family: IRANsans;
 }
 
@@ -30,4 +30,8 @@ $second-color: #ffbe00;
 body {
     margin-top: 4rem;
     margin-bottom: 4rem;
+
+    background-image: url(/images/tile.png);
+    background-repeat: repeat;
+    background-size: 50px 40px;
 }

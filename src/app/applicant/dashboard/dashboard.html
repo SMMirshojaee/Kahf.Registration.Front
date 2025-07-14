@@ -1,13 +1,22 @@
 <div>
     <p-card class="bg-second">
-        <div class="col">
-            نام: {{baseData.firstName}}
-        </div>
-        <div class="col">
-            نام خانوادگی: {{baseData.lastName}}
-        </div>
-        <div class="col">
-            کدملی: {{baseData.nationalCode}}
+        <div class="grid">
+
+            <div class="col-4 m-auto">
+                <img src="/images/user.png" style="width:100%">
+            </div>
+            <div class="col">
+
+                <div class="col">
+                    نام: {{baseData.firstName}}
+                </div>
+                <div class="col">
+                    نام خانوادگی: {{baseData.lastName}}
+                </div>
+                <div class="col">
+                    کدملی: {{baseData.nationalCode}}
+                </div>
+            </div>
         </div>
     </p-card>
 </div>
