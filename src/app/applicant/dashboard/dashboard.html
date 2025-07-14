@@ -1,3 +1,16 @@
+<div>
+    <p-card class="bg-second">
+        <div class="col">
+            نام: {{baseData.firstName}}
+        </div>
+        <div class="col">
+            نام خانوادگی: {{baseData.lastName}}
+        </div>
+        <div class="col">
+            کدملی: {{baseData.nationalCode}}
+        </div>
+    </p-card>
+</div>
 <div class="m-2 text-center">
     @if(applicantStatus){
     <p-message [severity]="
@@ -144,7 +157,7 @@
                                 دکمه زیر می باشد</strong></div>
                     </div>
                     <div class="mt-3">
-                        <p-button severity="danger" (onClick)="openFinishModal()">اتمام فرایند</p-button>
+                        <p-button severity="danger" (onClick)="openFinishModal()">ثبت نهایی</p-button>
                     </div>
                     }
                 </p-card>

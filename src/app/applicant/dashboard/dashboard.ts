@@ -34,7 +34,14 @@ export class Dashboard extends GenericComponent {
   private selectedMemberIndexToRemove: number;
   protected showRemoveDialog: boolean;
   protected showFinishDialog: boolean;
+  protected baseData: { firstName: string, lastName: string, nationalCode: string }
   ngOnInit() {
+    const applicantInfo = this.tokenService.getApplicantInfo();
+    this.baseData = {
+      firstName: applicantInfo.firstName,
+      lastName: applicantInfo.lastName,
+      nationalCode: applicantInfo.nationalcode
+    };
     this.addMemberFormGroup = new FormGroup({
       firstName: new FormControl('', [Validators.required]),
       lastName: new FormControl('', [Validators.required]),

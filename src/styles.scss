@@ -1,10 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 @font-face {
     font-family: IRANsans;
-    src: url('/Fonts/IRANSansWeb.woff');
+    src: url('/Fonts/FaNum/IRANSansWeb_FaNum.woff');
 }
 
 $primary-color: #11afa8;
+$second-color: #ffbe00;
+
+.bg-second {
+    background: $second-color;
+}
 
 :root {
     --p-primary-color: #11afa8 !important
