@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { ApplicantFormValueService } from '@app/core/applicant-form-value-service';
 import { FieldService } from '@app/core/field-service';
 import { environment } from '@app/share/environment/environment';
-import { FIELD_IMPORTS } from '@app/share/fields/fields-import';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
 import { ApplicantFormValueDto } from '@app/share/models/applicant-form-value.dto';
@@ -20,7 +19,7 @@ import { finalize, forkJoin } from 'rxjs';
 
 @Component({
   standalone: true,
-  imports: [SHARE_IMPORTS, FIELD_IMPORTS],
+  imports: [SHARE_IMPORTS],
   templateUrl: './fill-form.html',
   styleUrl: './fill-form.scss',
   providers: [ConfirmationService]

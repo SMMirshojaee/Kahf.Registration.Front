@@ -1,9 +1,0 @@
-<ng-persian-datepicker [dateMin]="minDate" [dateMax]="maxDate" [dateInitValue]="false" [uiTodayBtnEnable]="false"
-(dateOnSelect)="onSelect($event)">
-    <label for="in_label">
-        @if(field.mandatory){<span class="text-red-500">*</span>}
-        {{field.title}}
-    </label>
-    <input  class="w-full" [formControl]="dateValue"  pInputText id="in_label"autocomplete="off" />
-  </ng-persian-datepicker>
-  {{dateValue.value}}

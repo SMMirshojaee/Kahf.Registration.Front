@@ -1,15 +1,15 @@
 <div class="col-12">
     <p-floatlabel variant="on" class="mt-2">
         <input class="w-full" pInputText id="username" autocomplete="off" 
-        (input)="convertToEnglishDigits($event)"/>
+        (input)="convertToEnglishDigits($event)" [(ngModel)]="username" />
         <label for="username">username</label>
     </p-floatlabel>
     <p-floatlabel variant="on" class="mt-2">
         <input class="w-full" pInputText id="password" autocomplete="off" 
-        (input)="convertToEnglishDigits($event)" type="password"/>
+        (input)="convertToEnglishDigits($event)" type="password" [(ngModel)]="password"/>
         <label for="password">password</label>
     </p-floatlabel>
 </div>
 <div class="col-12 text-center">
-    <p-button >ورود</p-button>
+    <p-button (onClick)="login()" >ورود</p-button>
 </div>

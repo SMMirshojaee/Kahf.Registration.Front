@@ -1,0 +1,39 @@
+<!-- <div class="col-12 grid">
+    <div class="col-12"><strong></strong></div>
+    <div class="col-12">تاریخ شروع: {{reg.startDate|persianDate}}</div>
+    <div class="col-12">تاریخ پایان: {{reg.endDate|persianDate}}</div>
+</div>
+<div class="col-12 grid">
+    <p-button class="col" (onClick)="route('applicant/signup')">ثبت نام</p-button>
+    <p-button class="col text-left" severity="warn" (onClick)="route('applicant/followup')">پیگیری</p-button>
+</div> -->
+<p-card [style]="{ width: '100%', overflow: 'hidden' }">
+    <ng-template #header>
+        <img alt="Card" class="w-full" src="/images/{{reg.imageAddress}}" />
+        <!-- <img alt="Card" class="w-full" src="https://primefaces.org/cdn/primeng/images/card-ng.jpg" /> -->
+    </ng-template>
+    <ng-template #title> <strong style="font-size: medium;">{{reg.title}}</strong> </ng-template>
+    <!-- <ng-template #subtitle> Card subtitle </ng-template> -->
+    <!-- <p>
+        <span class="col-12">تاریخ شروع: {{reg.startDate|persianDate}}</span>
+        <span class="col-12">تاریخ پایان: {{reg.endDate|persianDate}}</span>
+    </p> -->
+
+    <p-accordion value="0">
+        <p-accordion-panel value="0">
+            <p-accordion-header>آیین نامه</p-accordion-header>
+            <p-accordion-content>
+                <div [innerHTML]="description" class="text-justify" style="font-size: small;">
+                </div>
+            </p-accordion-content>
+        </p-accordion-panel>
+    </p-accordion>
+
+    <div class="flex gap-4 mt-1">
+        <p-button class="col text-left" severity="warn"
+            (onClick)="route('/admin/dashboard/'+ reg.id.toString())">ورود</p-button>
+    </div>
+    <ng-template #footer>
+
+    </ng-template>
+</p-card>

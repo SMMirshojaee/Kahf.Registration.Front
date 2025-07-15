@@ -15,8 +15,14 @@ import { GenericComponent } from './share/generic-component';
 })
 export class App extends GenericComponent {
 
-
   ngOnInit() {
+  }
+
+  getClass() {
+    let actor = this.tokenService.getActor()?.toLowerCase();
+    if (actor == 'admin' || actor == 'superadmin')
+      return '';
+    else return 'lg:col-4';
   }
 
 }

@@ -1,14 +1,13 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { ToastService } from './toast-service';
 import { TokenService } from './token-service';
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
   const notify = inject(ToastService);
   const tokenService = inject(TokenService);
-  if (req.url.toLowerCase().includes('api/applicant/signup') || req.url.toLowerCase().includes('api/reg/getdefault'))
+  if (req.url.toLowerCase().includes('api/applicant/signup') || req.url.toLowerCase().includes('api/reg/getdefault') ||
+    req.url.toLowerCase().includes('/api/user/login'))
     return next(req);
   const token = tokenService.getTokenString();
   if (token) {

@@ -2,7 +2,7 @@
     <app-header></app-header>
 </div>
 <!-- <p-divider></p-divider> -->
-<div class="col-12 lg:col-4 m-auto">
+<div class="col-12 m-auto" [ngClass]="getClass()">
     <p-card>
         <router-outlet />
     </p-card>
