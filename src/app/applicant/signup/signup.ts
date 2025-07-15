@@ -10,6 +10,7 @@ import { SignupDto } from '@app/share/models/applicant.dto';
 import { RegDto } from '@app/share/models/reg.dto';
 import { MobileValidator } from '@app/share/validators/mobile.validator';
 import { NationalCodeValidator } from '@app/share/validators/national-code.validator';
+import { ConfirmationService } from 'primeng/api';
 import { finalize } from 'rxjs';
 @Component({
   selector: 'app-signup',
@@ -17,10 +18,11 @@ import { finalize } from 'rxjs';
   imports: [SHARE_IMPORTS],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
-  providers: []
+  providers: [ConfirmationService]
 })
 export class Signup extends GenericComponent {
   private activatedRoute = inject(ActivatedRoute);
+  private confirmationService = inject(ConfirmationService);
   protected signupForm: FormGroup;
   private applicantService = inject(ApplicantService);
   private regService = inject(RegService);
@@ -40,6 +42,17 @@ export class Signup extends GenericComponent {
 
   }
   ngOnInit() {
+    this.confirmationService.confirm({
+      message: 'زائر گرامی در نظر داشته باشید جهت تکمیل فرم ثبت نام می‌بایست اطلاعاتی نظیر تصویر کارت ملی و عکس پرسنلی و تصویر گذرنامه خود و همراهان را آپلود نمایید. از آنجایی که بعد از وارد نمودن اطلاعات، امکان ویرایش آن ها وجود ندارد قویا توصیه می‌کنیم این مدارک را آماده نمونه و سپس اقدام به ثبت‌نام نمایید',
+      header: 'توجه',
+      icon: 'pi pi-exclamation-triangle text-orange-500',
+      rejectVisible: false,
+      acceptButtonProps: {
+        label: 'متوجه شدم',
+        severity: 'primary',
+        text: false
+      }
+    });
     this.regId = this.activatedRoute.snapshot.params['id'];
     if (!this.regId) {
       this.notify.error('ثبت نام مورد نظر یافت نشد');

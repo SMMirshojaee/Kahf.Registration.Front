@@ -52,7 +52,7 @@
             </div>
             <div class="grid">
                 @for(option of field.optionsToShow; track $index){
-                <div class="col-6">
+                <div class="col-12">
                     <p-checkbox inputId="field_{{field.id}}_{{option.id}}" [value]="option.id"
                         formControlName="field_{{field.id}}" />
                     <label for="field_{{field.id}}_{{option.id}}" class="ml-2">
@@ -174,14 +174,16 @@
         }
     </div>
     }
-    @if(!formIsDisable){
     <p-divider></p-divider>
     <div class="grid">
         <div class="col-12  text-center">
-            <p-button (onClick)="checkForm()">ثبت</p-button>
+            @if(!formIsDisable){
+                <p-button (onClick)="checkForm()">ثبت</p-button>
+            }@else {
+                <p-button (onClick)="route('/applicant/dashboard')">بازگشت</p-button>
+            }
         </div>
     </div>
-    }
 </form>
 }
 <p-confirmdialog key="submitConfirmModal" position="bottom" />
