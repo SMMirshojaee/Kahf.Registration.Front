@@ -3,9 +3,11 @@ import { Component, ViewChild, inject } from '@angular/core';
 import { ApplicantService } from '@app/core/applicant-service';
 import { FieldService } from '@app/core/field-service';
 import { RegStepService } from '@app/core/reg-step-service';
+import { environment } from '@app/share/environment/environment';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
 import { ApplicantWithFormValueDto } from '@app/share/models/applicant-form-value.dto';
+import { FieldTypeEnum } from '@app/share/models/field-type.enum';
 import { FieldDto } from '@app/share/models/field.dto';
 import { RegStepDto } from '@app/share/models/reg.dto';
 import { PersianDatePipe } from '@app/share/persian-date-pipe';
@@ -24,13 +26,18 @@ export class ViewFormStep extends GenericComponent {
   private regStepService = inject(RegStepService);
   private regStepId: number;
   protected applicants: ApplicantWithFormValueDto[];
-  private fields: FieldDto[];
+  protected allFields: FieldDto[];
+  protected fieldsToShow: FieldDto[];
   protected selectedRegStep: RegStepDto;
   protected searchValue: string;
   protected showChangeStatusDialog = false;
   protected selectedApplicant: ApplicantWithFormValueDto;
   private selectedApplicantIndex: number;
   protected newStatusId: number;
+  protected showFormModal = false;
+  protected FIELD_TYPE_ENUM = FieldTypeEnum;
+  protected formData = {};
+
   @ViewChild('dt1') private table: Table;
   ngOnInit() {
     this.regStepId = this.activatedRoute.snapshot.params['id'];
@@ -44,7 +51,7 @@ export class ViewFormStep extends GenericComponent {
       .subscribe({
         next: data => {
           this.applicants = data.applicants.filter(e => !e.leaderId);
-          this.fields = data.fields;
+          this.allFields = data.fields;
           this.selectedRegStep = data.statuses;
           this.checkForm();
         },
@@ -54,7 +61,37 @@ export class ViewFormStep extends GenericComponent {
       })
   }
   gotoForm(applicant: ApplicantWithFormValueDto) {
+    this.formData = {};
+    this.formData['firstName'] = applicant.firstName;
+    this.formData['lastName'] = applicant.lastName;
+    this.formData['nationalNumber'] = applicant.nationalNumber;
+    this.formData['phoneNumber'] = applicant.phoneNumber;
 
+    this.fieldsToShow = this.allFields.filter(e => e.forLeader);
+    this.fieldsToShow.forEach(field => {
+      let answers = applicant.applicantFormValues.filter(e => e.fieldId == field.id);
+      if (!answers || answers.length == 0) {
+        this.formData[`${field.id}`] = null;
+        return;
+      }
+      if (field.fieldTypeId == FieldTypeEnum.Radio || field.fieldTypeId == FieldTypeEnum.DropDown) {
+        let answerOption = field.fieldOptions.find(e => e.id == answers[0].fieldOptionId);
+        this.formData[`${field.id}`] = answerOption?.title;
+      } else if (field.fieldTypeId == FieldTypeEnum.CheckBox) {
+        let answerText = '';
+        answers.forEach(answer => {
+          let answerOption = field.fieldOptions.find(e => e.id == answer.fieldOptionId);
+          answerText += answerOption?.title + ' , ';
+        });
+        this.formData[`${field.id}`] = answerText;
+      } else if (field.fieldTypeId == FieldTypeEnum.Image) {
+        this.formData[`${field.id}`] = `${environment.repositoryAddress}/${applicant.id}/${answers[0].value}`;
+      }
+      else
+        this.formData[`${field.id}`] = answers[0]?.value;
+    });
+
+    this.showFormModal = true;
   }
   openChangeStatusDialog(applicant: ApplicantWithFormValueDto, index: number) {
     this.selectedApplicant = applicant;
@@ -63,7 +100,7 @@ export class ViewFormStep extends GenericComponent {
     this.showChangeStatusDialog = true;
   }
   checkForm() {
-    let mandatoryFields = this.fields.filter(e => e.mandatory);
+    let mandatoryFields = this.allFields.filter(e => e.mandatory && e.forLeader);
     this.applicants.forEach(applicant => {
       let answeredFieldIds = applicant.applicantFormValues.map(e => e.fieldId);
       applicant.notFilledMandoryFields = mandatoryFields.filter(item => !answeredFieldIds.includes(item.id))
@@ -102,7 +139,7 @@ export class ViewFormStep extends GenericComponent {
     return this.applicantService.getWithFormValuesWithRegStepId(this.regStepId);
   }
   getFields() {
-    return this.fieldService.getByRegStepId(this.regStepId);
+    return this.fieldService.getAll(this.regStepId);
   }
   getRegStepStatuses() {
     return this.regStepService.getById(this.regStepId);

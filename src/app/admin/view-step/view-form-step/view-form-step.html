@@ -70,7 +70,6 @@
 </p-table>
 <p-dialog header="تغییر وضعیت زائر" [modal]="true" [(visible)]="showChangeStatusDialog">
     @if(selectedApplicant){
-
     <div>
         نام و نام خانوادگی : {{selectedApplicant.firstName}}-{{selectedApplicant.lastName}}
     </div>
@@ -82,11 +81,32 @@
     <div>
         <p-selectbutton [options]="selectedRegStep.regStepStatuses" [(ngModel)]="newStatusId" optionLabel="title"
             optionValue="id" />
-
     </div>
     <div class="flex justify-end gap-2 mt-2">
         <p-button label="Cancel" severity="secondary" (click)="showChangeStatusDialog = false" />
         <p-button label="Save" (click)="changeStatus()" />
     </div>
+    }
+</p-dialog>
+
+<p-dialog header="فرم زائر اصلی" [modal]="true" [(visible)]="showFormModal">
+    @if(formData){
+    <div>نام: {{formData['firstName']}}</div>
+    <div>نام خانوادگی: {{formData['lastName']}}</div>
+    <div>کدملی: {{formData['nationalNumber']}}</div>
+    <div>موبایل: {{formData['phoneNumber']}}</div>
+    @for (field of fieldsToShow; track $index) {
+    <div>
+        {{field.title}}:
+        @if(field.fieldTypeId==FIELD_TYPE_ENUM.Image){
+        <div><img src="{{formData[field.id]}}" style="    max-width: 20rem;"></div>
+        }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Date){
+            {{formData[field.id]|persianDate}}
+        } @else{
+
+        {{formData[field.id]}}
+        }
+    </div>
+    }
     }
 </p-dialog>

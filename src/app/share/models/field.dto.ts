@@ -6,6 +6,8 @@ export class FieldDto {
     public title: string;
     public description: string;
     public mandatory: boolean;
+    public forLeader: boolean;
+    public forMember: boolean;
     public hidden: boolean;
     public fieldOptions: FieldOptionDto[];
     //فیلدهای زیر فقط در هنگام نمایش فرم مورد استفاده قرار میگیرن و در کلاس اصلی حضور ندارن

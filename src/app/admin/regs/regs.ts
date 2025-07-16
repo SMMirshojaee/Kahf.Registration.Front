@@ -5,6 +5,7 @@ import { SHARE_IMPORTS } from '@app/share/imports';
 import { RegDto } from '@app/share/models/reg.dto';
 import { RegTile } from '../components/reg-tile/reg-tile';
 import { GenericComponent } from '@app/share/generic-component';
+import { finalize } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -17,17 +18,21 @@ export class Regs extends GenericComponent {
   protected regs: RegDto[];
 
   ngOnInit() {
-    this.getRegs();
-  }
-
-  getRegs() {
-    return this.regService.getAll()
+    this.spinnerService.show();
+    this.getRegs()
+      .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
           this.regs = data;
         }, error: (err: HttpErrorResponse) => {
           this.notify.defaultError();
         }
-      })
+      });
+  }
+
+  getRegs() {
+
+    return this.regService.getAll()
+
   }
 }

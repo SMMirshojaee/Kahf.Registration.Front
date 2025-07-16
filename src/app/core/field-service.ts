@@ -18,5 +18,9 @@ export class FieldService {
     return this.httpClient.get<FieldDto[]>(`${this.address}/getByRegStepId/${regStepId}`);
   }
 
+  getAll(regStepId: number): Observable<FieldDto[]>{
+    return this.httpClient.get<FieldDto[]>(`${this.address}/getAll/${regStepId}`);
+
+  }
 
 }
