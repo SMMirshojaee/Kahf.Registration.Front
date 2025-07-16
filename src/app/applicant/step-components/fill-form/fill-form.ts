@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/module.d';
 import { Component, OnDestroy, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { ApplicantFormValueService } from '@app/core/applicant-form-value-service';
 import { FieldService } from '@app/core/field-service';
 import { environment } from '@app/share/environment/environment';
@@ -27,7 +26,6 @@ import { finalize, forkJoin } from 'rxjs';
 export class FillForm extends GenericComponent implements OnDestroy {
   private fieldService = inject(FieldService);
   private applicantFormValueService = inject(ApplicantFormValueService);
-  private activatedRoute = inject(ActivatedRoute);
   private confirmationService = inject(ConfirmationService);
   private applicantId: number;
   protected memberId?: number;

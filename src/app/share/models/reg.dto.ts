@@ -20,6 +20,17 @@ export class RegDto {
 }
 
 export class RegStepDto {
+    public constructor(raw: any) {
+        this.id = raw['id'];
+        this.regId = raw['regId'];
+        this.stepId = raw['stepId'];
+        this.title = raw['title'];
+        this.description = raw['description'];
+        this.order = raw['order'];
+        this.memberLimit = raw['memberLimit'];
+        this.addMemberDescription = raw['addMemberDescription'];
+        this.regStepStatuses = raw['regStepStatuses'];
+    }
     public id: number;
     public regId: number;
     public stepId: number;

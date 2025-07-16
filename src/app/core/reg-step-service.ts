@@ -14,4 +14,12 @@ export class RegStepService {
   getAll(): Observable<RegStepDto[]> {
     return this.httpClient.get<RegStepDto[]>(`${this.address}/getAll`);
   }
+
+  getByRegId(regId: number): Observable<RegStepDto[]> {
+    return this.httpClient.get<RegStepDto[]>(`${this.address}/getByRegId/${regId}`);
+  }
+
+  getById(regStepId: number): Observable<RegStepDto> {
+    return this.httpClient.get<RegStepDto>(`${this.address}/getById/${regStepId}`);
+  }
 }

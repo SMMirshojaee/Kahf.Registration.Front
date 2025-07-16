@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/module.d';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { ApplicantService } from '@app/core/applicant-service';
 import { RegService } from '@app/core/reg-service';
 import { GenericComponent } from '@app/share/generic-component';
@@ -21,7 +20,6 @@ import { finalize } from 'rxjs';
   providers: [ConfirmationService]
 })
 export class Signup extends GenericComponent {
-  private activatedRoute = inject(ActivatedRoute);
   private confirmationService = inject(ConfirmationService);
   protected signupForm: FormGroup;
   private applicantService = inject(ApplicantService);

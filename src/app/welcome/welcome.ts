@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/module.d';
 import { Component, inject } from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { RegService } from '@app/core/reg-service';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
@@ -19,7 +19,6 @@ export class Welcome extends GenericComponent {
   private regService = inject(RegService);
   protected regs: RegDto[];
   protected description!: SafeHtml;
-  private activatedRoute = inject(ActivatedRoute);
 
   ngOnInit() {
     let regId = this.activatedRoute.snapshot.params['id'];

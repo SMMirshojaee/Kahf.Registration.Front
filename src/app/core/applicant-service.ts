@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@app/share/environment/environment';
-import { ApplicantDto, MemberInfoDto, SigninDto, SignupDto } from '@app/share/models/applicant.dto';
+import { ApplicantWithFormValueDto } from '@app/share/models/applicant-form-value.dto';
+import { ApplicantDto, ApplicantInfoDto, MemberInfoDto, SigninDto, SignupDto } from '@app/share/models/applicant.dto';
 import { TokenDto } from '@app/share/models/token.dto';
 import { Observable } from 'rxjs';
 
@@ -9,6 +10,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApplicantService {
+
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/applicant`;
 
@@ -35,5 +37,17 @@ export class ApplicantService {
   }
   finishFormStep(regStepId: number): Observable<any> {
     return this.httpClient.put<any>(`${this.address}/finishFormStep/${regStepId}`, null)
+  }
+
+  getByRegId(regId: number): Observable<ApplicantInfoDto[]> {
+    return this.httpClient.get<ApplicantInfoDto[]>(`${this.address}/getByRegId/${regId}`);
+  }
+
+  getWithFormValuesWithRegStepId(regStepId: number): Observable<ApplicantWithFormValueDto[]> {
+    return this.httpClient.get<ApplicantWithFormValueDto[]>(`${this.address}/GetWithFormValuesWithRegStepId/${regStepId}`)
+  }
+
+  changeApplicantStatus(applicantId: number, statusId: number): Observable<void> {
+    return this.httpClient.get<void>(`${this.address}/changeApplicantStatus/${applicantId}/${statusId}`)
   }
 }

@@ -20,7 +20,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-
+import { ChartModule } from 'primeng/chart';
+import { DockModule } from 'primeng/dock';
+import { TooltipModule } from 'primeng/tooltip';
+import { MenubarModule } from 'primeng/menubar';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectButtonModule } from 'primeng/selectbutton';
 export const SHARE_IMPORTS = [
     ButtonModule,
     CheckboxModule,
@@ -44,5 +50,12 @@ export const SHARE_IMPORTS = [
     ConfirmDialogModule,
     TableModule,
     DialogModule,
-    ToggleSwitchModule
+    ToggleSwitchModule,
+    ChartModule,
+    DockModule,
+    TooltipModule,
+    MenubarModule,
+    IconFieldModule,
+    InputIconModule,
+    SelectButtonModule,
 ]

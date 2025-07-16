@@ -1,4 +1,6 @@
+import { ApplicantInfoDto } from "./applicant.dto";
 import { FieldDto, FieldOptionDto } from "./field.dto";
+import { RegStepStatusDto } from "./reg.dto";
 
 export class ApplicantFormValueDto {
     public id: number;
@@ -10,4 +12,21 @@ export class ApplicantFormValueDto {
     public deleted: boolean;
     public field: FieldDto;
     public fieldOption: FieldOptionDto;
+}
+export class ApplicantWithFormValueDto {
+    public id: number;
+    public createdDate: Date;
+    public regId: number;
+    public statusId: number;
+    public nationalNumber: string;
+    public phoneNumber: string;
+    public firstName: string;
+    public lastName: string;
+    public leaderId: number;
+    public trackingCode: number;
+    public inverseLeader: ApplicantInfoDto[];
+    public applicantFormValues: ApplicantFormValueDto[];
+    public status: RegStepStatusDto;
+    //
+    public notFilledMandoryFields: any[];
 }

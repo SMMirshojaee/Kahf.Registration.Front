@@ -1,3 +1,4 @@
+
 export class SignupDto {
     public firstName: string;
     public lastName: string;
@@ -8,6 +9,19 @@ export class SigninDto {
     public nationalCode: string;
     public mobile: string;
     public trackingCode: string;
+}
+export class ApplicantInfoDto {
+    public id: number;
+    public createdDate: Date;
+    public regId: number;
+    public statusId: number;
+    public nationalNumber: string;
+    public phoneNumber: string;
+    public firstName: string;
+    public lastName: string;
+    public leaderId: number;
+    public trackingCode: number;
+    public inverseLeader: ApplicantInfoDto[];
 }
 export class ApplicantDto {
     public createdDate: Date;

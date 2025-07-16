@@ -1,0 +1,22 @@
+<div class="grid mb-3">
+    <div class="col">تعداد کل ثبتنامی ها: {{statistics['totalCount']}}</div>
+    <div class="col">تعداد کل زائرین اصلی: {{statistics['leadersCount']}}</div>
+    <div class="col">تعداد کل همراهان: {{statistics['membersCount']}}</div>
+</div>
+<!-- <p-menubar [model]="menu" styleClass="sticky-menu bg-red-100 mb-1" /> -->
+<div class="grid">
+    @for (regStep of regSteps; track $index) {
+    <div class="col-4">
+        <p-card styleClass="bg-primary">
+            <div>مرحله: {{regStep.title}} - {{regStep.stepId | step }}</div>
+            <div>تعداد افراد این مرحله: {{statistics['step_'+regStep.id]}}</div>
+            @for (status of regStep.regStepStatuses; track $index) {
+            <div>{{status.title}}: {{statistics['status_'+status.id]}}</div>
+            }
+            <div class="mt-2">
+                <p-button severity="warn" (onClick)="viewApplicants(regStep)">مشاهده زائرین</p-button>
+            </div>
+        </p-card>
+    </div>
+    }
+</div>

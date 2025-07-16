@@ -1,0 +1,21 @@
+::ng-deep .sticky-menu {
+  position: sticky;
+  top: 3.5rem;
+  z-index: 1000;
+}
+
+.p-menubar-mobile {
+  position: sticky;
+  top: 3.5rem;
+  z-index: 1000;
+}
+
+/* dropdown داخل موبایل باید بالاتر نمایش داده بشه */
+.p-menubar-mobile .p-submenu-list {
+  z-index: 2000 !important;
+}
+
+/* اگه منوی موبایل روی چیزی پنهان میشه */
+.p-menubar-root {
+  overflow: visible !important;
+}

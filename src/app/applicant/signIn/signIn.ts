@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/module.d';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { ApplicantService } from '@app/core/applicant-service';
 import { RegService } from '@app/core/reg-service';
 import { GenericComponent } from '@app/share/generic-component';
@@ -22,7 +21,6 @@ import { finalize } from 'rxjs';
 export class signIn extends GenericComponent {
   private applicantService = inject(ApplicantService);
   private regService = inject(RegService);
-  private activatedRoute = inject(ActivatedRoute);
   protected followupForm: FormGroup;
   private regId;
   protected reg: RegDto;

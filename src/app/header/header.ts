@@ -33,10 +33,11 @@ export class Header extends GenericComponent {
     element?.classList.toggle('app-dark-style');
   }
   gotoHome() {
-    if (this.tokenService.getActor()?.toLowerCase() == 'applicant')
+    let actor = this.tokenService.getActor()?.toLowerCase();
+    if (actor == 'applicant')
       this.route('/applicant/dashboard');
-    else if (this.tokenService.getActor()?.toLowerCase() == 'admin')
-      this.route('/admin/dashboard');
+    else if (actor == 'admin' || actor == 'superadmin')
+      this.route('/admin/regs');
     else
       this.route('');
 

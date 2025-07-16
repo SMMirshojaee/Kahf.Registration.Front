@@ -6,13 +6,13 @@ import { Utils } from 'jalali-ts';
   standalone: true,
 })
 export class PersianDatePipe implements PipeTransform {
-  transform(value: string | Date): string {
+  transform(value: string | Date, showHour?: boolean): string {
     if (!value)
       return value.toString();
     let date = new Date(value);
     let jalaliDate = Utils.toJalali(date);
 
-    return `${jalaliDate.year}/${jalaliDate.month}/${jalaliDate.date}`;
+    return `${jalaliDate.year}/${jalaliDate.month}/${jalaliDate.date}${(!showHour ? '' :' '+ date.getHours() + ':' + date.getMinutes())}`;
   }
 
 }
