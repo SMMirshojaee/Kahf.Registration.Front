@@ -1,4 +1,3 @@
-import { ApplicantInfoDto } from "./applicant.dto";
 import { FieldDto, FieldOptionDto } from "./field.dto";
 import { RegStepStatusDto } from "./reg.dto";
 
@@ -24,7 +23,7 @@ export class ApplicantWithFormValueDto {
     public lastName: string;
     public leaderId: number;
     public trackingCode: number;
-    public inverseLeader: ApplicantInfoDto[];
+    public inverseLeader: ApplicantWithFormValueDto[];
     public applicantFormValues: ApplicantFormValueDto[];
     public status: RegStepStatusDto;
     //

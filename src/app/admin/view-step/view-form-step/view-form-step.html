@@ -48,7 +48,8 @@
             <td><i (click)="openChangeStatusDialog(applicant,index)"
                     class="cursor-pointer text-orange-500 pl-2 pi pi-arrow-right-arrow-left"></i>
                 {{applicant.status?.title}} </td>
-            <td>@if(applicant.inverseLeader.length){<i class="pi pi-eye cursor-pointer text-primary pr-2"></i>}
+            <td>@if(applicant.inverseLeader.length){<i (click)="openMembersDialog(applicant)"
+                    class="pi pi-eye cursor-pointer text-primary pr-2"></i>}
                 {{applicant.inverseLeader.length}}</td>
             <td>{{applicant.firstName}}</td>
             <td>{{applicant.lastName}}</td>
@@ -83,13 +84,13 @@
             optionValue="id" />
     </div>
     <div class="flex justify-end gap-2 mt-2">
-        <p-button label="Cancel" severity="secondary" (click)="showChangeStatusDialog = false" />
-        <p-button label="Save" (click)="changeStatus()" />
+        <p-button label="انصراف" severity="secondary" (click)="showChangeStatusDialog = false" />
+        <p-button label="اعمال تغییرات" (click)="changeStatus()" />
     </div>
     }
 </p-dialog>
 
-<p-dialog header="فرم زائر اصلی" [modal]="true" [(visible)]="showFormModal">
+<p-dialog header="فرم زائر اصلی" [modal]="true" [(visible)]="showFormModal" closeOnEscape="true">
     @if(formData){
     <div>نام: {{formData['firstName']}}</div>
     <div>نام خانوادگی: {{formData['lastName']}}</div>
@@ -101,7 +102,9 @@
         @if(field.fieldTypeId==FIELD_TYPE_ENUM.Image){
         <div><img src="{{formData[field.id]}}" style="    max-width: 20rem;"></div>
         }@else if(field.fieldTypeId==FIELD_TYPE_ENUM.Date){
-            {{formData[field.id]|persianDate}}
+        @if(formData[field.id]){
+        {{formData[field.id]|persianDate}}
+        }
         } @else{
 
         {{formData[field.id]}}
@@ -109,4 +112,19 @@
     </div>
     }
     }
+</p-dialog>
+<p-dialog header="همراهان" [modal]="true" [(visible)]="showMembersDialog" closeOnEscape="true"
+    [style]="{'min-width':'50vw'}">
+    @if(selectedApplicant){
+    @for (member of selectedApplicant.inverseLeader; track $index) {
+    <div class="grid">
+        <div class="col">{{member.firstName}}</div>
+        <div class="col">{{member.lastName}}</div>
+        <div class="col">{{member.nationalNumber}}</div>
+        <div class="col">{{member.phoneNumber}}</div>
+        <div class="col"><i class="pi pi-address-book cursor-pointer text-primary" (click)="gotoForm(member,true)"></i></div>
+    </div>
+    }
+    }
+
 </p-dialog>

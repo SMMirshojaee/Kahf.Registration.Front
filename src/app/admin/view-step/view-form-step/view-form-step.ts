@@ -26,6 +26,7 @@ export class ViewFormStep extends GenericComponent {
   private regStepService = inject(RegStepService);
   private regStepId: number;
   protected applicants: ApplicantWithFormValueDto[];
+  private members: ApplicantWithFormValueDto[];
   protected allFields: FieldDto[];
   protected fieldsToShow: FieldDto[];
   protected selectedRegStep: RegStepDto;
@@ -35,6 +36,7 @@ export class ViewFormStep extends GenericComponent {
   private selectedApplicantIndex: number;
   protected newStatusId: number;
   protected showFormModal = false;
+  protected showMembersDialog = false;
   protected FIELD_TYPE_ENUM = FieldTypeEnum;
   protected formData = {};
 
@@ -50,6 +52,7 @@ export class ViewFormStep extends GenericComponent {
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
+          this.members = data.applicants.filter(e => e.leaderId);
           this.applicants = data.applicants.filter(e => !e.leaderId);
           this.allFields = data.fields;
           this.selectedRegStep = data.statuses;
@@ -60,14 +63,25 @@ export class ViewFormStep extends GenericComponent {
         }
       })
   }
-  gotoForm(applicant: ApplicantWithFormValueDto) {
+  openMembersDialog(applicant: ApplicantWithFormValueDto) {
+    this.selectedApplicant = applicant;
+
+    this.showMembersDialog = true;
+  }
+  gotoForm(applicant: ApplicantWithFormValueDto, isMember: boolean = false) {
     this.formData = {};
     this.formData['firstName'] = applicant.firstName;
     this.formData['lastName'] = applicant.lastName;
     this.formData['nationalNumber'] = applicant.nationalNumber;
     this.formData['phoneNumber'] = applicant.phoneNumber;
-
+    if (isMember) {
+      let member = this.members.find(e => e.id == applicant.id);
+      applicant.applicantFormValues = member.applicantFormValues;
+    }
     this.fieldsToShow = this.allFields.filter(e => e.forLeader);
+    if (isMember)
+      this.fieldsToShow = this.allFields.filter(e => e.forMember);
+
     this.fieldsToShow.forEach(field => {
       let answers = applicant.applicantFormValues.filter(e => e.fieldId == field.id);
       if (!answers || answers.length == 0) {
