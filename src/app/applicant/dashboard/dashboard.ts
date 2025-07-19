@@ -184,8 +184,8 @@ export class Dashboard extends GenericComponent {
       this.route(`/applicant/fill-form/${stepId}/${formIsDisable}`);
   }
 
-  payExpense(step: RegStepDto) {
-    this.route(`/applicant/pay/${step.id}`);
+  payExpense(regStep: RegStepDto) {
+    this.route(`/applicant/pay/${regStep.id}`);
   }
 
   openFinishModal() {

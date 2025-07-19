@@ -1,1 +1,8 @@
-<p>pay-expense works!</p>
+@if(amount){
+<p-message>
+    مبلغ قابل پرداخت : {{amount|number}} ریال
+</p-message>
+<div>
+    <p-button (onClick)="getUrl()">پرداخت</p-button>
+</div>
+}
