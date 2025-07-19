@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { UserService } from '@app/core/admin/user-service';
 import { GenericComponent } from '@app/share/generic-component';
 import { SHARE_IMPORTS } from '@app/share/imports';
+import { finalize } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -26,7 +27,9 @@ export class Login extends GenericComponent {
     if (!this.username || !this.password) {
       this.notify.warn('همه فیلد ها رو وارد کن');
     } else {
+      this.spinnerService.show();
       this.userService.login(this.username, this.password)
+        .pipe(finalize(() => this.spinnerService.hide()))
         .subscribe({
           next: data => {
             this.tokenService.setTokenString(data);

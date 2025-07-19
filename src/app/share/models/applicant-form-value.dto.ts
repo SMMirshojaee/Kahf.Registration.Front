@@ -23,6 +23,7 @@ export class ApplicantWithFormValueDto {
     public lastName: string;
     public leaderId: number;
     public trackingCode: number;
+    public description: string;
     public inverseLeader: ApplicantWithFormValueDto[];
     public applicantFormValues: ApplicantFormValueDto[];
     public status: RegStepStatusDto;

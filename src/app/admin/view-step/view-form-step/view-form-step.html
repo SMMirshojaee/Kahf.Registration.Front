@@ -93,7 +93,22 @@
     }
 </p-dialog>
 
-<p-dialog header="فرم زائر اصلی" [modal]="true" [(visible)]="showFormModal" closeOnEscape="true">
+<p-dialog [modal]="true" [(visible)]="showFormModal" closeOnEscape="true">
+    <ng-template #header>
+        <div class="grid">
+            <div class="col-12">
+                @if(isMember){
+                    فرم همراه
+                }@else {
+                    فرم زائر اصلی
+                }
+            </div>
+            <div class="col-12">
+                <textarea [(ngModel)]="applicantDescription" name="applicantDescription" pTextarea style="width: 100%;font-size: x-small;"></textarea>
+                <p-button icon="pi pi-save" (onClick)="saveDescription($event)" size="small"></p-button>
+            </div>
+        </div>
+    </ng-template>
     @if(formData){
     <div>نام: {{formData['firstName']}}</div>
     <div>نام خانوادگی: {{formData['lastName']}}</div>
@@ -126,9 +141,11 @@
         <div class="col">{{member.lastName}}</div>
         <div class="col">{{member.nationalNumber}}</div>
         <div class="col">{{member.phoneNumber}}</div>
-        <div class="col"><i class="pi pi-address-book cursor-pointer text-primary" (click)="gotoForm(member,true)"></i></div>
+        <div class="col"><i class="pi pi-address-book cursor-pointer text-primary" (click)="gotoForm(member,true)"></i>
+        </div>
     </div>
     }
     }
 
 </p-dialog>
+<p-confirmpopup />

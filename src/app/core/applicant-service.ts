@@ -10,7 +10,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApplicantService {
-
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/applicant`;
 
@@ -49,5 +48,9 @@ export class ApplicantService {
 
   changeApplicantStatus(applicantId: number, statusId: number): Observable<void> {
     return this.httpClient.get<void>(`${this.address}/changeApplicantStatus/${applicantId}/${statusId}`)
+  }
+
+  saveDescription(applicantId: number, description: string): Observable<any> {
+    return this.httpClient.get(`${this.address}/saveDescription/${applicantId}?description=${description}`)
   }
 }

@@ -11,6 +11,7 @@ import { FieldTypeEnum } from '@app/share/models/field-type.enum';
 import { FieldDto } from '@app/share/models/field.dto';
 import { RegStepDto } from '@app/share/models/reg.dto';
 import { PersianDatePipe } from '@app/share/persian-date-pipe';
+import { ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { finalize, forkJoin } from 'rxjs';
 
@@ -18,12 +19,14 @@ import { finalize, forkJoin } from 'rxjs';
   standalone: true,
   imports: [SHARE_IMPORTS, PersianDatePipe],
   templateUrl: './view-form-step.html',
-  styleUrl: './view-form-step.scss'
+  styleUrl: './view-form-step.scss',
+  providers: [ConfirmationService]
 })
 export class ViewFormStep extends GenericComponent {
   private applicantService = inject(ApplicantService);
   private fieldService = inject(FieldService);
   private regStepService = inject(RegStepService);
+  private confirmationService = inject(ConfirmationService);
   private regStepId: number;
   protected applicants: ApplicantWithFormValueDto[];
   private members: ApplicantWithFormValueDto[];
@@ -36,9 +39,11 @@ export class ViewFormStep extends GenericComponent {
   private selectedApplicantIndex: number;
   protected newStatusId: number;
   protected showFormModal = false;
+  protected isMember = false;
   protected showMembersDialog = false;
   protected FIELD_TYPE_ENUM = FieldTypeEnum;
   protected formData = {};
+  protected applicantDescription = '';
 
   @ViewChild('dt1') private table: Table;
   ngOnInit() {
@@ -69,7 +74,10 @@ export class ViewFormStep extends GenericComponent {
     this.showMembersDialog = true;
   }
   gotoForm(applicant: ApplicantWithFormValueDto, isMember: boolean = false) {
+    this.isMember = isMember;
+    this.applicantDescription = applicant.description;
     this.formData = {};
+    this.formData['id'] = applicant.id;
     this.formData['firstName'] = applicant.firstName;
     this.formData['lastName'] = applicant.lastName;
     this.formData['nationalNumber'] = applicant.nationalNumber;
@@ -106,6 +114,39 @@ export class ViewFormStep extends GenericComponent {
     });
 
     this.showFormModal = true;
+  }
+  saveDescription(event: Event) {
+    this.confirmationService.confirm({
+      target: event.currentTarget as EventTarget,
+      message: 'از ثبت توضیحات برای کاربر مطمئن هستی؟',
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'انصراف',
+        severity: 'secondary',
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: 'بله',
+        severity: 'primary'
+      },
+      accept: () => {
+        let applicantId = this.formData['id'];
+        this.spinnerService.show();
+        this.applicantService.saveDescription(applicantId, this.applicantDescription)
+          .pipe(finalize(() => this.spinnerService.hide()))
+          .subscribe({
+            next: data => {
+              this.notify.defaultSuccess();
+              this.ngOnInit()
+            },
+            error: (err: HttpErrorResponse) => {
+              this.notify.defaultError();
+            }
+          })
+      },
+      reject: () => {
+      }
+    });
   }
   openChangeStatusDialog(applicant: ApplicantWithFormValueDto, index: number) {
     this.selectedApplicant = applicant;
@@ -149,6 +190,7 @@ export class ViewFormStep extends GenericComponent {
     this.table.clear()
     this.searchValue = ''
   }
+
   getApplicantsWithFormValues() {
     return this.applicantService.getWithFormValuesWithRegStepId(this.regStepId);
   }

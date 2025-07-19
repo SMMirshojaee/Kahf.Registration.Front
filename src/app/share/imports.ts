@@ -27,6 +27,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 export const SHARE_IMPORTS = [
     ButtonModule,
     CheckboxModule,
@@ -58,4 +59,5 @@ export const SHARE_IMPORTS = [
     IconFieldModule,
     InputIconModule,
     SelectButtonModule,
+    ConfirmPopupModule
 ]
