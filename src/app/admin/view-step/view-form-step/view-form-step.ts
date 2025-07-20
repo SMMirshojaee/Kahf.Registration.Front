@@ -197,12 +197,13 @@ export class ViewFormStep extends GenericComponent {
     this.changeApplicantStatus()
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
-        next: data => {
+        next: () => {
           this.notify.defaultSuccess();
           this.applicants[this.selectedApplicantIndex].statusId = this.newStatusId;
           this.applicants[this.selectedApplicantIndex].status = this.selectedRegStep.regStepStatuses.find(e => e.id == this.newStatusId);
           this.showChangeStatusDialog = false;
           this.table.clear();
+          this.ngOnInit();
         },
         error: (err: HttpErrorResponse) => {
           if (err.status == 500)

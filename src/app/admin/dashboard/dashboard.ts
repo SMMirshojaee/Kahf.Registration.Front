@@ -63,10 +63,7 @@ export class Dashboard extends GenericComponent {
 
   }
   viewApplicants(regStep: RegStepDto) {
-    if (regStep.stepId == 1) {
-      // this.tokenService.setSelectedRegStep(regStep);
-      this.route('admin/step/form/' + regStep.id);
-    }
+    this.route('admin/step/form/' + regStep.id);
   }
   getApplicants() {
     return this.applicantService.getByRegId(this.regId)
