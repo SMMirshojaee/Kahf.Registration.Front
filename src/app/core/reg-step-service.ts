@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RegStepService {
+
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/regStep`;
 
@@ -21,5 +22,9 @@ export class RegStepService {
 
   getById(regStepId: number): Observable<RegStepDto> {
     return this.httpClient.get<RegStepDto>(`${this.address}/getById/${regStepId}`);
+  }
+
+  getNextStep(currentRegStepId: number): Observable<RegStepDto> {
+    return this.httpClient.get<RegStepDto>(`${this.address}/getNextStep/${currentRegStepId}`);
   }
 }

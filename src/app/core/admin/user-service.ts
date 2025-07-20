@@ -14,4 +14,8 @@ export class UserService {
     return this.httpClient.get(`${this.address}/login/${username}/${password}`, { responseType: 'text' });
   }
 
+  sendSms(): Observable<string> {
+    return this.httpClient.get(`${this.address}/sendSms`, { responseType: 'text' });
+  }
+
 }

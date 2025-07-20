@@ -41,9 +41,14 @@ export class ViewFormStep extends GenericComponent {
   protected showFormModal = false;
   protected isMember = false;
   protected showMembersDialog = false;
+  protected showTransferModal = false;
   protected FIELD_TYPE_ENUM = FieldTypeEnum;
   protected formData = {};
   protected applicantDescription = '';
+  protected sendSmsCheckbox = false;
+  protected smsText = 'زائر گرامی. لطفا جهت مشاهده وضعیت خود، به سامانه ثبت‌نام مراجعه نمایید. با تشکر کهف الحصین';
+  protected nextStep: RegStepDto;
+  protected nextStatusId: number;
 
   @ViewChild('dt1') private table: Table;
   ngOnInit() {
@@ -148,10 +153,27 @@ export class ViewFormStep extends GenericComponent {
       }
     });
   }
+  openTransferModal() {
+    this.spinnerService.show();
+    this.regStepService.getNextStep(this.regStepId)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: data => {
+          this.nextStep = data;
+          this.showTransferModal = true;
+        },
+        error: (err: HttpErrorResponse) => {
+          this.notify.defaultError();
+        }
+      })
+
+  }
   openChangeStatusDialog(applicant: ApplicantWithFormValueDto, index: number) {
     this.selectedApplicant = applicant;
     this.selectedApplicantIndex = index;
     this.newStatusId = this.selectedApplicant.statusId;
+    this.smsText = 'زائر گرامی. لطفا جهت مشاهده وضعیت خود، به سامانه ثبت‌نام مراجعه نمایید. با تشکر کهف الحصین';
+    this.sendSmsCheckbox = false;
     this.showChangeStatusDialog = true;
   }
   checkForm() {
@@ -162,9 +184,13 @@ export class ViewFormStep extends GenericComponent {
     })
   }
   changeStatus() {
-    if (this.newStatusId == this.selectedApplicant.statusId) {
+    if (this.newStatusId == this.selectedApplicant.statusId && !this.sendSmsCheckbox) {
       this.notify.warn('وضعیت انتخاب شده با وضعیت قبلی یکی است');
       this.showChangeStatusDialog = false;
+      return;
+    }
+    if (this.sendSmsCheckbox && !this.smsText) {
+      this.notify.warn('متن پیامک نمیتواند خالی باشد');
       return;
     }
     this.spinnerService.show();
@@ -186,6 +212,33 @@ export class ViewFormStep extends GenericComponent {
       })
 
   }
+  transfer() {
+    if (!this.nextStatusId) {
+      this.notify.warn('وضعیت بعدی انتخاب نشده است!');
+      return
+    }
+    if (this.sendSmsCheckbox && !this.smsText) {
+      this.notify.warn('متن پیامک نمیتواند خالی باشد');
+      return;
+    }
+    this.spinnerService.show();
+    this.applicantService.transferToNextStep(this.regStepId, this.nextStatusId, this.sendSmsCheckbox, this.smsText)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: () => {
+          this.nextStatusId = null;
+          this.notify.defaultSuccess();
+          this.showTransferModal = false;
+          this.ngOnInit();
+        },
+        error: (err: HttpErrorResponse) => {
+          if (err.status == 400)
+            return this.notify.error(err.error);
+          this.notify.defaultError();
+        }
+      })
+
+  }
   clear() {
     this.table.clear()
     this.searchValue = ''
@@ -201,6 +254,6 @@ export class ViewFormStep extends GenericComponent {
     return this.regStepService.getById(this.regStepId);
   }
   changeApplicantStatus() {
-    return this.applicantService.changeApplicantStatus(this.selectedApplicant.id, this.newStatusId);
+    return this.applicantService.changeApplicantStatus(this.selectedApplicant.id, this.newStatusId, this.sendSmsCheckbox, this.smsText);
   }
 }

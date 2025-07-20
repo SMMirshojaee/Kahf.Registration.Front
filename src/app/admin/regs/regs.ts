@@ -6,6 +6,7 @@ import { RegDto } from '@app/share/models/reg.dto';
 import { RegTile } from '../components/reg-tile/reg-tile';
 import { GenericComponent } from '@app/share/generic-component';
 import { finalize } from 'rxjs';
+import { UserService } from '@app/core/admin/user-service';
 
 @Component({
   standalone: true,
@@ -15,6 +16,7 @@ import { finalize } from 'rxjs';
 })
 export class Regs extends GenericComponent {
   private regService = inject(RegService);
+  private userService = inject(UserService);
   protected regs: RegDto[];
 
   ngOnInit() {
@@ -29,7 +31,15 @@ export class Regs extends GenericComponent {
         }
       });
   }
+  sendSms() {
+    this.userService.sendSms().subscribe({
+      next: (data) => {
 
+      }, error: (error: HttpErrorResponse) => {
+
+      }
+    });
+  }
   getRegs() {
 
     return this.regService.getAll()

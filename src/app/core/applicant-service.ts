@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApplicantService {
+
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/applicant`;
 
@@ -46,11 +47,16 @@ export class ApplicantService {
     return this.httpClient.get<ApplicantWithFormValueDto[]>(`${this.address}/GetWithFormValuesWithRegStepId/${regStepId}`)
   }
 
-  changeApplicantStatus(applicantId: number, statusId: number): Observable<void> {
-    return this.httpClient.get<void>(`${this.address}/changeApplicantStatus/${applicantId}/${statusId}`)
+  changeApplicantStatus(applicantId: number, statusId: number, sendSms: boolean, smsText: string): Observable<void> {
+    smsText = sendSms ? smsText : null;
+    return this.httpClient.put<void>(`${this.address}/changeApplicantStatus/${applicantId}/${statusId}/${sendSms}`, JSON.stringify(smsText), { headers: { 'Content-Type': 'application/json' } })
   }
 
   saveDescription(applicantId: number, description: string): Observable<any> {
     return this.httpClient.get(`${this.address}/saveDescription/${applicantId}?description=${description}`)
+  }
+
+  transferToNextStep(regStepId: number, nextStatusId: number, sendSms: boolean, smsText: string): Observable<void> {
+    return this.httpClient.put<void>(`${this.address}/transferToNextStep/${regStepId}/${nextStatusId}/${sendSms}`, JSON.stringify(smsText), { headers: { 'Content-Type': 'application/json' } });
   }
 }

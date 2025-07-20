@@ -1,3 +1,29 @@
+<p-button (onClick)="openTransferModal()">انتقال همه موفق ها، به مرحله بعدی</p-button>
+<p-dialog header="انتقال به مرحله بعد" [modal]="true" [(visible)]="showTransferModal">
+    @if(nextStep){
+
+    <div class="mt-2">مرحله بعد: {{nextStep.title}}</div>
+    <div class="mt-2">انتقال به وضعیت:</div>
+    <div>
+        <p-selectbutton [options]="nextStep.regStepStatuses" [(ngModel)]="nextStatusId" optionLabel="title"
+            optionValue="id" />
+    </div>
+    <div class="mt-2">
+        <p-checkbox inputId="sendSms" binary="true" [(ngModel)]="sendSmsCheckbox"></p-checkbox>
+        <label for="sendSms" class=" pr-2">ارسال پیامک؟</label>
+    </div>
+    @if(sendSmsCheckbox){
+    <div class="mt-2">
+        <textarea pInputText style="width: 100%;font-size: small;" [(ngModel)]="smsText"></textarea>
+    </div>
+    }
+    <div class="flex justify-end gap-2 mt-2">
+        <p-button label="انصراف" severity="secondary" (click)="showTransferModal = false" />
+        <p-button label="اعمال تغییرات" (click)="transfer()" />
+    </div>
+    }
+</p-dialog>
+
 <p-table #dt1 [value]="applicants" dataKey="id" [size]="'small'" styleClass="text-sm"
     [globalFilterFields]="['firstName', 'lastName', 'nationalNumber', 'phoneNumber']" sortMode="multiple">
     <ng-template #caption>
@@ -48,9 +74,9 @@
         <tr>
             <td>{{index+1}}</td>
             <td><i (click)="openChangeStatusDialog(applicant,index)"
-                class="cursor-pointer text-orange-500 pl-2 pi pi-arrow-right-arrow-left"></i>
+                    class="cursor-pointer text-orange-500 pl-2 pi pi-arrow-right-arrow-left"></i>
                 {{applicant.status?.title}} </td>
-                <td>{{applicant.id}}</td>
+            <td>{{applicant.id}}</td>
             <td>@if(applicant.inverseLeader.length){<i (click)="openMembersDialog(applicant)"
                     class="pi pi-eye cursor-pointer text-primary pr-2"></i>}
                 {{applicant.inverseLeader.length}}</td>
@@ -86,6 +112,16 @@
         <p-selectbutton [options]="selectedRegStep.regStepStatuses" [(ngModel)]="newStatusId" optionLabel="title"
             optionValue="id" />
     </div>
+    <div class="mt-2">
+        <p-checkbox inputId="sendSms" binary="true" [(ngModel)]="sendSmsCheckbox"></p-checkbox>
+        <label for="sendSms" class=" pr-2">ارسال پیامک؟</label>
+    </div>
+    @if(sendSmsCheckbox){
+    <div class="mt-2">
+        <textarea pInputText style="width: 100%;font-size: small;" [(ngModel)]="smsText"></textarea>
+    </div>
+    }
+
     <div class="flex justify-end gap-2 mt-2">
         <p-button label="انصراف" severity="secondary" (click)="showChangeStatusDialog = false" />
         <p-button label="اعمال تغییرات" (click)="changeStatus()" />
@@ -98,13 +134,14 @@
         <div class="grid">
             <div class="col-12">
                 @if(isMember){
-                    فرم همراه
+                فرم همراه
                 }@else {
-                    فرم زائر اصلی
+                فرم زائر اصلی
                 }
             </div>
             <div class="col-12">
-                <textarea [(ngModel)]="applicantDescription" name="applicantDescription" pTextarea style="width: 100%;font-size: x-small;"></textarea>
+                <textarea [(ngModel)]="applicantDescription" name="applicantDescription" pTextarea
+                    style="width: 100%;font-size: x-small;"></textarea>
                 <p-button icon="pi pi-save" (onClick)="saveDescription($event)" size="small"></p-button>
             </div>
         </div>
