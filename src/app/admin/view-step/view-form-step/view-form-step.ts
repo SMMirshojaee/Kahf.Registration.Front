@@ -14,6 +14,8 @@ import { PersianDatePipe } from '@app/share/persian-date-pipe';
 import { ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { finalize, forkJoin } from 'rxjs';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   standalone: true,
@@ -252,6 +254,7 @@ export class ViewFormStep extends GenericComponent {
     this.showMessageModal = true;
     this.selectedApplicant = applicant;
   }
+
   getApplicantsWithFormValues() {
     return this.applicantService.getLeadersWithFormValuesAndMembersWithRegStepId(this.regStepId);
   }
@@ -263,5 +266,50 @@ export class ViewFormStep extends GenericComponent {
   }
   changeApplicantStatus() {
     return this.applicantService.changeApplicantStatus(this.selectedApplicant.id, this.newStatusId, this.sendSmsCheckbox, this.smsText);
+  }
+
+
+  exportToExcel(table: Table): void {
+    if (!table) return;
+
+    let htmlTable = table.el.nativeElement as HTMLTableElement
+    const data: string[][] = [];
+
+    const rows = htmlTable.querySelectorAll('tr');
+    rows.forEach((row) => {
+      const rowData: string[] = [];
+      const cells = row.querySelectorAll('th, td');
+      cells.forEach((cell) => {
+        const value = cell.textContent?.trim() || '';
+        rowData.push(value); // مقدار به عنوان رشته push میشه
+      });
+      data.push(rowData);
+    });
+
+    // ساخت شیت به صورت دستی با مقدارهای متنی
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data);
+
+    // حالا اطمینان حاصل می‌کنیم که همه سلول‌ها text هستند
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+    for (let R = range.s.r; R <= range.e.r; ++R) {
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+        const cell = ws[cellAddress];
+        if (cell) {
+          cell.t = 's';     // type string
+          cell.z = '@';     // format text
+          cell.v = cell.v.toString(); // تبدیل به رشته
+        }
+      }
+    }
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob: Blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+
+    FileSaver.saveAs(blob, 'export.xlsx');
   }
 }
