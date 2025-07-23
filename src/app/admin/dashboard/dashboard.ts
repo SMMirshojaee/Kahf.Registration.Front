@@ -55,9 +55,11 @@ export class Dashboard extends GenericComponent {
     this.statistics['membersCount'] = this.applicants.filter(e => e.leaderId).length;
 
     this.regSteps.forEach(step => {
-      this.statistics[`step_${step.id}`] = this.applicants.filter(e => step.regStepStatuses.map(s => s.id).includes(e.statusId) || (step.order == 1 && e.statusId == null)).length;
+      let stepLeaders = this.applicants.filter(e => !e.leaderId && step.regStepStatuses.map(s => s.id).includes(e.statusId) || (step.order == 1 && e.statusId == null));
+      this.statistics[`step_${step.id}`] = stepLeaders.length + stepLeaders.flatMap(e => e.inverseLeader).length;
       step.regStepStatuses.forEach(status => {
-        this.statistics[`status_${status.id}`] = this.applicants.filter(e => e.statusId == status.id).length;
+        let statusLeaders = stepLeaders.filter(e => e.statusId == status.id);
+        this.statistics[`status_${status.id}`] = statusLeaders.length + statusLeaders.flatMap(e => e.inverseLeader).length;;
       });
     });
 
