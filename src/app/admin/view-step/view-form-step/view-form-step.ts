@@ -50,6 +50,7 @@ export class ViewFormStep extends GenericComponent {
   protected smsText = 'زائر گرامی. لطفا جهت مشاهده وضعیت خود، به سامانه ثبت‌نام مراجعه نمایید. با تشکر کهف الحصین';
   protected nextStep: RegStepDto;
   protected nextStatusId: number;
+  protected showMessageModal: boolean;
 
   @ViewChild('dt1') private table: Table;
   ngOnInit() {
@@ -65,7 +66,7 @@ export class ViewFormStep extends GenericComponent {
       .subscribe({
         next: data => {
           this.applicants = data.applicants.filter(e => !e.leaderId);
-          this.members = [...this.applicants.flatMap(e=>e.inverseLeader)];
+          this.members = [...this.applicants.flatMap(e => e.inverseLeader)];
           this.allFields = data.fields;
           this.selectedRegStep = data.statuses;
           this.checkForm();
@@ -247,6 +248,10 @@ export class ViewFormStep extends GenericComponent {
     this.searchValue = ''
   }
 
+  openMessagesModal(applicant: ApplicantWithFormValueDto) {
+    this.showMessageModal = true;
+    this.selectedApplicant = applicant;
+  }
   getApplicantsWithFormValues() {
     return this.applicantService.getLeadersWithFormValuesAndMembersWithRegStepId(this.regStepId);
   }
