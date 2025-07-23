@@ -55,7 +55,7 @@ export class Dashboard extends GenericComponent {
     this.statistics['membersCount'] = this.applicants.filter(e => e.leaderId).length;
 
     this.regSteps.forEach(step => {
-      this.statistics[`step_${step.id}`] = this.applicants.filter(e => step.regStepStatuses.map(s => s.id).includes(e.statusId)).length;
+      this.statistics[`step_${step.id}`] = this.applicants.filter(e => step.regStepStatuses.map(s => s.id).includes(e.statusId) || (step.order == 1 && e.statusId == null)).length;
       step.regStepStatuses.forEach(status => {
         this.statistics[`status_${status.id}`] = this.applicants.filter(e => e.statusId == status.id).length;
       });
@@ -63,7 +63,7 @@ export class Dashboard extends GenericComponent {
 
   }
   viewApplicants(regStep: RegStepDto) {
-    this.route('admin/step/form/' + regStep.id);
+    this.route('admin/step/' + this.regId + '/' + regStep.id);
   }
   getApplicants() {
     return this.applicantService.getByRegId(this.regId)

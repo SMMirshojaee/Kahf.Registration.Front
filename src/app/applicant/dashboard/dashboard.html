@@ -135,7 +135,7 @@
                             </ng-template>
                             <ng-template #body let-member let-index="rowIndex">
                                 <tr>
-                                    <td>
+                                    <td style="min-width: 7rem;">
                                         @if(!member.statusId && (!this.applicantStatus ||
                                         this.applicantStatus.isWaiting)){
                                         <p-button (onClick)="fillForm(step.id,false,member)" size="small"
@@ -145,7 +145,7 @@
                                             icon="pi pi-eye"></p-button>
                                         }
                                         @if(!this.applicantStatus || this.applicantStatus.isWaiting){
-                                        <p-button class="pr-2" size="small" severity="danger"
+                                        <p-button class="pr-2 float-left" size="small" severity="danger"
                                             [disabled]="!this.applicantStatus.isWaiting"
                                             (onClick)="removeMember(member,index)" icon="pi pi-trash"></p-button>
                                         }

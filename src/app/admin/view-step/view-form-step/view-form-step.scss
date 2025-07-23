@@ -1,4 +1,8 @@
-::ng-deep .filter-div .p-inputtext{
+::ng-deep .filter-div .p-inputtext {
     font-size: 0.7rem !important;
-    padding: 5px ;
+    padding: 5px;
+}
+
+::ng-deep .p-dialog-content .p-inputtext {
+    padding: 2px 10px;
 }

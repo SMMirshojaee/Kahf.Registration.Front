@@ -43,8 +43,8 @@ export class ApplicantService {
     return this.httpClient.get<ApplicantInfoDto[]>(`${this.address}/getByRegId/${regId}`);
   }
 
-  getWithFormValuesWithRegStepId(regStepId: number): Observable<ApplicantWithFormValueDto[]> {
-    return this.httpClient.get<ApplicantWithFormValueDto[]>(`${this.address}/GetWithFormValuesWithRegStepId/${regStepId}`)
+  getLeadersWithFormValuesAndMembersWithRegStepId(regStepId: number): Observable<ApplicantWithFormValueDto[]> {
+    return this.httpClient.get<ApplicantWithFormValueDto[]>(`${this.address}/GetLeadersWithFormValuesAndMembersWithRegStepId/${regStepId}`)
   }
 
   changeApplicantStatus(applicantId: number, statusId: number, sendSms: boolean, smsText: string): Observable<void> {

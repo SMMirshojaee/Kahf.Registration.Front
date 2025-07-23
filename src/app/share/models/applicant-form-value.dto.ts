@@ -27,6 +27,14 @@ export class ApplicantWithFormValueDto {
     public inverseLeader: ApplicantWithFormValueDto[];
     public applicantFormValues: ApplicantFormValueDto[];
     public status: RegStepStatusDto;
+    public messages: MessageDto[];
     //
     public notFilledMandoryFields: any[];
+}
+
+export class MessageDto {
+    createdDate: Date;
+    text: string;
+    status: number;
+    userId: number;
 }

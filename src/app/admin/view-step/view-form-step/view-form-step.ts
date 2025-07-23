@@ -28,6 +28,7 @@ export class ViewFormStep extends GenericComponent {
   private regStepService = inject(RegStepService);
   private confirmationService = inject(ConfirmationService);
   private regStepId: number;
+  private regId: number;
   protected applicants: ApplicantWithFormValueDto[];
   private members: ApplicantWithFormValueDto[];
   protected allFields: FieldDto[];
@@ -52,7 +53,8 @@ export class ViewFormStep extends GenericComponent {
 
   @ViewChild('dt1') private table: Table;
   ngOnInit() {
-    this.regStepId = this.activatedRoute.snapshot.params['id'];
+    this.regStepId = this.activatedRoute.snapshot.params['regStepId'];
+    this.regId = this.activatedRoute.snapshot.params['regId'];
     this.spinnerService.show();
     forkJoin({
       applicants: this.getApplicantsWithFormValues(),
@@ -62,8 +64,8 @@ export class ViewFormStep extends GenericComponent {
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
         next: data => {
-          this.members = data.applicants.filter(e => e.leaderId);
           this.applicants = data.applicants.filter(e => !e.leaderId);
+          this.members = [...this.applicants.flatMap(e=>e.inverseLeader)];
           this.allFields = data.fields;
           this.selectedRegStep = data.statuses;
           this.checkForm();
@@ -246,10 +248,10 @@ export class ViewFormStep extends GenericComponent {
   }
 
   getApplicantsWithFormValues() {
-    return this.applicantService.getWithFormValuesWithRegStepId(this.regStepId);
+    return this.applicantService.getLeadersWithFormValuesAndMembersWithRegStepId(this.regStepId);
   }
   getFields() {
-    return this.fieldService.getAll(this.regStepId);
+    return this.fieldService.getAll(this.regId);
   }
   getRegStepStatuses() {
     return this.regStepService.getById(this.regStepId);
