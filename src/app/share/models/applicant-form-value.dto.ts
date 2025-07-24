@@ -30,6 +30,7 @@ export class ApplicantWithFormValueDto {
     public messages: MessageDto[];
     //
     public notFilledMandoryFields: any[];
+    public stepTitle?: string;
 }
 
 export class MessageDto {

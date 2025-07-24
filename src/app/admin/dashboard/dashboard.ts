@@ -30,7 +30,7 @@ export class Dashboard extends GenericComponent {
   protected selectedRegStep: RegStepDto;
 
   ngOnInit() {
-    this.regId = this.activateRoute.snapshot.params['id'];
+    this.regId = this.activateRoute.snapshot.params['regId'];
     this.spinnerService.show();
     forkJoin({
       applicants: this.getApplicants(),
@@ -55,7 +55,7 @@ export class Dashboard extends GenericComponent {
     this.statistics['membersCount'] = this.applicants.filter(e => e.leaderId).length;
 
     this.regSteps.forEach(step => {
-      let stepLeaders = this.applicants.filter(e => !e.leaderId && step.regStepStatuses.map(s => s.id).includes(e.statusId) || (step.order == 1 && e.statusId == null));
+      let stepLeaders = this.applicants.filter(e => !e.leaderId && (step.regStepStatuses.map(s => s.id).includes(e.statusId) || (step.order == 1 && e.statusId == null)));
       this.statistics[`step_${step.id}`] = stepLeaders.length + stepLeaders.flatMap(e => e.inverseLeader).length;
       step.regStepStatuses.forEach(status => {
         let statusLeaders = stepLeaders.filter(e => e.statusId == status.id);

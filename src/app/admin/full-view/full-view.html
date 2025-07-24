@@ -1,0 +1,116 @@
+<p-table #dt1 [value]="applicants" dataKey="id" [size]="'small'" styleClass="text-sm"
+    [globalFilterFields]="['firstName', 'lastName', 'nationalNumber', 'phoneNumber']" sortMode="multiple"
+    [stripedRows]="true">
+    <ng-template #caption>
+        <div class="flex">
+            <p-iconfield iconPosition="right" class="w-full">
+                <p-inputicon>
+                    <i class="pi pi-search"></i>
+                </p-inputicon>
+                <input pInputText [(ngModel)]="searchValue" type="text" class="w-5"
+                    (input)="dt1.filterGlobal($event.target['value'], 'contains')"
+                    placeholder="سرچ: نام - نام خانوادگی - کدملی - موبایل " />
+                @if(searchValue){
+                <i class="pi pi-filter-slash pr-2 cursor-pointer" (click)="clear()"></i>
+                }
+            </p-iconfield>
+            <i style="font-size: xx-large;" class="pi pi-file-excel text-primary cursor-pointer float-left"
+                (click)="exportToExcel()"></i>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th>ردیف</th>
+            <th pSortableColumn="stepTitle">مرحله<p-sortIcon field="stepTitle" /></th>
+            <th pSortableColumn="status.title">وضعیت زائر<p-sortIcon field="status.title" /></th>
+            <th pSortableColumn="id">آی دی<p-sortIcon field="id" /></th>
+            <th>آی دی سرگروه</th>
+            <th pSortableColumn="firstName">نام <p-sortIcon field="firstName" /></th>
+            <th pSortableColumn="lastName">نام خانوادگی <p-sortIcon field="lastName" /></th>
+            <th pSortableColumn="nationalNumber">کد ملی <p-sortIcon field="nationalNumber" /></th>
+            <th pSortableColumn="phoneNumber">شماره موبایل <p-sortIcon field="phoneNumber" /></th>
+            <th pSortableColumn="createdDate">تاریخ ثبت‌نام <p-sortIcon field="createdDate" /></th>
+            <th pSortableColumn="trackingCode">کد رهگیری <p-sortIcon field="trackingCode" /></th>
+            @for (field of fields; track $index) {
+            @if(field.fieldTypeId!=FIELD_TYPE_ENUMS.Image){
+            <th pSortableColumn="field_{{field.id}}">{{field.title}} <p-sortIcon field="field_{{field.id}}" /></th>
+            }
+            }
+        </tr>
+        <tr class="filter-div">
+            <th></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="stepTitle"></p-columnFilter></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="status.title"></p-columnFilter></th>
+            <th></th>
+            <th></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="firstName"></p-columnFilter></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="lastName" /></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="nationalNumber" /></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="phoneNumber"></p-columnFilter></th>
+            <th></th>
+            <th></th>
+            @for (field of fields; track $index) {
+            @if(field.fieldTypeId!=FIELD_TYPE_ENUMS.Image){
+            <th><p-columnFilter matchMode="contains" type="text" field="field_{{field.id}}"></p-columnFilter></th>
+            }
+            }
+        </tr>
+    </ng-template>
+    <ng-template #body let-applicant let-index="rowIndex">
+        <tr>
+            <td>{{index+1}}</td>
+            <td>{{applicant.stepTitle}}</td>
+            <td>{{applicant.status?.title}}</td>
+            <td>{{applicant.id}}</td>
+            <td>-</td>
+            <td>{{applicant.firstName}}</td>
+            <td>{{applicant.lastName}}</td>
+            <td>{{applicant.nationalNumber}}</td>
+            <td>{{applicant.phoneNumber}}</td>
+            <td>{{applicant.createdDate|persianDate:true }}</td>
+            <td>{{applicant.trackingCode}}</td>
+            @for (field of fields; track $index) {
+            @if(field.fieldTypeId!=FIELD_TYPE_ENUMS.Image){
+            <td>
+                @if(field.fieldTypeId==FIELD_TYPE_ENUMS.Date && applicant['field_'+field.id]){
+                {{applicant['field_'+field.id]|persianDate}}
+                }@else {
+                {{applicant['field_'+field.id]}}
+                }
+            </td>
+            }
+            }
+        </tr>
+        @for (member of applicant.inverseLeader; track $index) {
+        <tr>
+            <td>{{index+1}}</td>
+            <td>{{member.stepTitle}}</td>
+            <td>{{member.status?.title}}</td>
+            <td>{{member.id}}</td>
+            <td>{{member.leaderId}}</td>
+            <td>{{member.firstName}}</td>
+            <td>{{member.lastName}}</td>
+            <td>{{member.nationalNumber}}</td>
+            <td>{{member.phoneNumber}}</td>
+            <td>{{member.createdDate|persianDate:true }}</td>
+            <td>{{member.trackingCode}}</td>
+            @for (field of fields; track $index) {
+            @if(field.fieldTypeId!=FIELD_TYPE_ENUMS.Image){
+            <td>
+                @if(field.fieldTypeId==FIELD_TYPE_ENUMS.Date && member['field_'+field.id]){
+                {{member['field_'+field.id]|persianDate}}
+                }@else {
+                {{member['field_'+field.id]}}
+                }
+            </td>
+            }
+            }
+        </tr>
+        }
+    </ng-template>
+    <ng-template #emptymessage>
+        <tr>
+            <td colspan="7">کاربری یافت نشد</td>
+        </tr>
+    </ng-template>
+</p-table>

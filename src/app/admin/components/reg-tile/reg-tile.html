@@ -30,8 +30,8 @@
     </p-accordion>
 
     <div class="flex gap-4 mt-1">
-        <p-button class="col text-left" severity="warn"
-            (onClick)="route('/admin/dashboard/'+ reg.id.toString())">ورود</p-button>
+        <p-button class="col" severity="primary" (onClick)="route('/admin/full-view/'+ reg.id.toString())">لیست کامل</p-button>
+        <p-button class="col text-left" severity="warn"(onClick)="route('/admin/dashboard/'+ reg.id.toString())">ورود</p-button>
     </div>
     <ng-template #footer>
 

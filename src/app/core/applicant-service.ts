@@ -10,7 +10,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApplicantService {
-
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/applicant`;
 
@@ -47,6 +46,9 @@ export class ApplicantService {
     return this.httpClient.get<ApplicantWithFormValueDto[]>(`${this.address}/GetLeadersWithFormValuesAndMembersWithRegStepId/${regStepId}`)
   }
 
+  getLeadersFullDataByRegId(regId: number): Observable<ApplicantWithFormValueDto[]> {
+    return this.httpClient.get<ApplicantWithFormValueDto[]>(`${this.address}/getLeadersFullDataByRegId/${regId}`)
+  }
   changeApplicantStatus(applicantId: number, statusId: number, sendSms: boolean, smsText: string): Observable<void> {
     smsText = sendSms ? smsText : null;
     return this.httpClient.put<void>(`${this.address}/changeApplicantStatus/${applicantId}/${statusId}/${sendSms}`, JSON.stringify(smsText), { headers: { 'Content-Type': 'application/json' } })
