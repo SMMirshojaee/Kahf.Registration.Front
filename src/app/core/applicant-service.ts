@@ -26,6 +26,9 @@ export class ApplicantService {
   getMembers(): Observable<MemberInfoDto[]> {
     return this.httpClient.get<MemberInfoDto[]>(`${this.address}/getMembers`)
   }
+  getMembersCount(): Observable<number> {
+    return this.httpClient.get<number>(`${this.address}/getMembersCount`)
+  }
 
   addMember(regStepId: number, addMemberForm: SignupDto): Observable<MemberInfoDto> {
     return this.httpClient.post<MemberInfoDto>(`${this.address}/addMember/${regStepId}`, addMemberForm)

@@ -46,6 +46,7 @@
         <tr>
             <th>ردیف</th>
             <th pSortableColumn="status.title">وضعیت زائر<p-sortIcon field="status.title" /></th>
+            <th>توضیحات ادمین</th>
             <th pSortableColumn="id">آی دی<p-sortIcon field="id" /></th>
             <th pSortableColumn="inverseLeader.length">تعداد همراه <p-sortIcon field="inverseLeader.length" /></th>
             <th pSortableColumn="firstName">نام <p-sortIcon field="firstName" /></th>
@@ -61,6 +62,7 @@
         <tr class="filter-div">
             <th></th>
             <th><p-columnFilter matchMode="contains" type="text" field="status.title"></p-columnFilter></th>
+            <th></th>
             <th></th>
             <th></th>
             <th><p-columnFilter matchMode="contains" type="text" field="firstName"></p-columnFilter></th>
@@ -79,6 +81,7 @@
             <td><i (click)="openChangeStatusDialog(applicant,index)"
                     class="cursor-pointer text-orange-500 pl-2 pi pi-arrow-right-arrow-left"></i>
                 {{applicant.status?.title}} </td>
+            <td>{{applicant.description}}</td>
             <td>{{applicant.id}}</td>
             <td>@if(applicant.inverseLeader.length){<i (click)="openMembersDialog(applicant)"
                     class="pi pi-eye cursor-pointer text-primary pr-2"></i>}

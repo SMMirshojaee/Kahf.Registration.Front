@@ -1,3 +1,5 @@
+import { SafeHtml } from "@angular/platform-browser";
+
 export class RegDto {
     public constructor(raw: any) {
         this.id = raw['id'];
@@ -40,6 +42,8 @@ export class RegStepDto {
     public memberLimit: number;
     public addMemberDescription: string;
     public regStepStatuses: RegStepStatusDto[];
+    //
+    public htmlDescription?: SafeHtml;
 }
 
 export class RegStepStatusDto {

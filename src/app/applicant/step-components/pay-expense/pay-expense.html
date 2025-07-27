@@ -2,10 +2,57 @@
 <p-message>
     مبلغ قابل پرداخت : {{amount|number}} ریال
 </p-message>
+@if(!payment.installmentsCount){
 <div class="mt-3 text-center">
-    <div>زائر گرامی جهت پرداخت وجه مورد نظر روی دکمه زیر کلیک نمایید. ضمنا اطلاعات دریافتی پس از پرداخت را نزد خود نگه دارید</div>
+    <div>زائر گرامی جهت پرداخت وجه مورد نظر روی دکمه زیر کلیک نمایید. ضمنا اطلاعات دریافتی پس از پرداخت را نزد خود نگه
+        دارید</div>
     <div class="mt-5">
-        <p-button  (onClick)="getUrl()">پرداخت</p-button>
+        <p-button (onClick)="getUrl()">پرداخت</p-button>
+    </div>
+</div>
+}@else {
+<div class="mt-3 grid align-center">
+    {{payment.description}}
+</div>
+<p-divider></p-divider>
+<div class="mt-3 grid align-center">
+    <div>میزان وام درخواستی</div>
+    <div class="col">
+        <p-floatlabel variant="on">
+            <input [disabled]="loanIsDisable" class="w-full" pInputText id="loan" [max]="amount" min="0" step="1000000"
+                [(ngModel)]="loan" type="number" (change)="loanChanged()" />
+            <label for="loan">وام (ریال)</label>
+        </p-floatlabel>
+
+    </div>
+    <div class="col-12">
+        <span style="font-size: small;">مبلغ هر قسط = {{loan/payment.installmentsCount|number:'1.0-0'}} ریال</span>
+    </div>
+</div>
+<div class="mt-3 grid align-center">
+    <div>باقی مانده بصورت نقد:</div>
+    <div class="col">
+        {{cash|number}} ریال
+    </div>
+</div>
+<div class="mt-3 grid">
+    <div class="col text-center">
+        @if(loanIsDisable){
+        @if(cash>0){
+        <p-button (onClick)="payCash()">پرداخت بخش نقدی</p-button>
+        }@else {
+        <p-message>تسویه شما انجام شده است. درصورت نیاز با ادمین تماس حاصل فرمایید</p-message>
+        <div class="mt-2">
+
+            <p-button severity="warn" (onClick)="route('/applicant/dashboard')">بازگشت</p-button>
+        </div>
+
+        }
+        }@else{
+        <p-button (onClick)="showConfirmationModal()">ثبت</p-button>
+        }
     </div>
 </div>
 }
+}
+<p-confirmDialog key="loanConfirmModal" position="center" />

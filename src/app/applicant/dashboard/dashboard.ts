@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/module.d';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ApplicantService } from '@app/core/applicant-service';
 import { RegStepService } from '@app/core/reg-step-service';
 import { GenericComponent } from '@app/share/generic-component';
@@ -21,6 +22,7 @@ import { finalize, forkJoin } from 'rxjs';
 export class Dashboard extends GenericComponent {
   private applicantService = inject(ApplicantService);
   private regStepService = inject(RegStepService);
+  private sanitizer = inject(DomSanitizer);
   protected regSteps: RegStepDto[];
   protected applicantInfo: ApplicantDto = { regStepId: 0 } as ApplicantDto;
   protected currentRegStep: RegStepDto;
@@ -58,6 +60,9 @@ export class Dashboard extends GenericComponent {
       .subscribe({
         next: data => {
           this.regSteps = data.regSteps;
+          this.regSteps.forEach(regStep => {
+            regStep.htmlDescription = this.sanitizer.bypassSecurityTrustHtml(regStep.description);
+          });
           this.applicantInfo = data.status;
           this.members = data.members;
           if (!this.applicantInfo.statusId) {
