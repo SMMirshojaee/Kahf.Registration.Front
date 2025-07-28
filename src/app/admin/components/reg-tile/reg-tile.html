@@ -29,9 +29,12 @@
         </p-accordion-panel>
     </p-accordion>
 
-    <div class="flex gap-4 mt-1">
-        <p-button class="col" severity="primary" (onClick)="route('/admin/full-view/'+ reg.id.toString())">لیست کامل</p-button>
-        <p-button class="col text-left" severity="warn"(onClick)="route('/admin/dashboard/'+ reg.id.toString())">ورود</p-button>
+    <div class="grid gap-4 mt-1">
+        <p-button class="col" styleClass="w-full"severity="primary" (onClick)="route('/admin/full-view/'+ reg.id.toString())">لیست کامل</p-button>
+        <p-button class="col text-left" styleClass="w-full"severity="warn"(onClick)="route('/admin/dashboard/'+ reg.id.toString())">ورود</p-button>
+    </div>
+    <div class="grid gap-4 mt-1">
+        <p-button class="col" styleClass="w-full" severity="danger" (onClick)="route('/admin/costs/'+ reg.id.toString())">هزینه ها</p-button>
     </div>
     <ng-template #footer>
 

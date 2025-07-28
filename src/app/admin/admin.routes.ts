@@ -6,6 +6,7 @@ export const routes: Routes = [
     { path: 'step/:regId/:regStepId', loadComponent: () => import('./view-step/view-form-step/view-form-step').then(c => c.ViewFormStep) },
     { path: 'dashboard/:regId', loadComponent: () => import('./dashboard/dashboard').then(c => c.Dashboard) },
     { path: 'full-view/:regId', loadComponent: () => import('./full-view/full-view').then(c => c.FullView) },
+    { path: 'costs/:regId', loadComponent: () => import('./manage-costs/manage-costs').then(c => c.ManageCosts) },
     { path: '', loadComponent: () => import('./dashboard/dashboard').then(c => c.Dashboard) },
     { path: '**', loadComponent: () => import('@app/not-found-page/not-found-page').then(c => c.NotFoundPage) }
 ]

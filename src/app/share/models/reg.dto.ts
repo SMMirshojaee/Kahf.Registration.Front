@@ -65,3 +65,11 @@ export class StepDto {
     public description: string;
     public regSteps: RegStepDto;
 }
+
+export class RegCostDto {
+    public id: number;
+    public regId: number;
+    public title: number;
+    public amount: number;
+    public description?: string;
+}

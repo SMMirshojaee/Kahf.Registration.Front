@@ -16,3 +16,21 @@ export class OrderDto {
     public verifyDate?: Date;
     public refId?: number;
 }
+
+export class ApplicantOrderDto {
+    public id: number;
+    public statusId: number;
+    public statusTitle?: string;
+    public stepTitle?: string;
+    public firstName: string;
+    public lastName: string;
+    public nationalNumber: string;
+    public phoneNumber: string;
+    public membersCount: number;
+    public orders: OrderDto[]
+    //
+    public totalCost: number;
+    public totalCash: number;
+    public totalLoan: number;
+    public remained: number;
+}

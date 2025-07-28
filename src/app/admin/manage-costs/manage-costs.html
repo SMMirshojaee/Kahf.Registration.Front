@@ -1,0 +1,97 @@
+<div>هزینه ها:</div>
+<div class="grid align-center">
+    @for (cost of costsToEdit; track $index) {
+    <div class="col">
+        <p-floatlabel variant="on" class="mt-2">
+            <input [disabled]="costInputsDisable" class="w-full" pInputText id="cost_{{cost.id}}" autocomplete="off"
+                [(ngModel)]="cost.amount" (input)="convertToEnglishDigits($event)" />
+            <label for="cost_{{cost.id}}">{{cost.title}}</label>
+        </p-floatlabel>
+        {{cost.amount/10|number}} تومن
+    </div>
+    }
+    @if(costsToEdit?.length){
+    <p-button (onClick)="costInputsDisable=!costInputsDisable">
+        @if(costInputsDisable){
+        اعمال تغییر
+        }@else(){
+        لغو
+        }
+    </p-button>
+    @if(!costInputsDisable){
+    <p-button class="pr-2" severity="danger" (onClick)="openChangeCostsModal($event)">ثبت</p-button>
+
+    }
+    }
+</div>
+<div>
+    جمع هزینه ها: {{totalCost|number}} ریال معادل {{totalCost/10|number}} تومن
+</div>
+<p-divider></p-divider>
+<p-table #dt1 [value]="applicants" dataKey="id" [size]="'small'" styleClass="text-sm"
+    [globalFilterFields]="['firstName', 'lastName', 'nationalNumber', 'phoneNumber']" sortMode="multiple"
+    [stripedRows]="true">
+    <ng-template #caption>
+        <div class="flex">
+            <p-iconfield iconPosition="right" class="w-full">
+                <p-inputicon>
+                    <i class="pi pi-search"></i>
+                </p-inputicon>
+                <input pInputText [(ngModel)]="searchValue" type="text" class="w-5"
+                    (input)="dt1.filterGlobal($event.target['value'], 'contains')"
+                    placeholder="سرچ: نام - نام خانوادگی - کدملی - موبایل " />
+                @if(searchValue){
+                <i class="pi pi-filter-slash pr-2 cursor-pointer" (click)="clear()"></i>
+                }
+            </p-iconfield>
+            <i style="font-size: xx-large;" class="pi pi-file-excel text-primary cursor-pointer float-left"
+                (click)="exportToExcel(dt1)"></i>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th>ردیف</th>
+            <th pSortableColumn="stepTitle">مرحله<p-sortIcon field="stepTitle" /></th>
+            <th pSortableColumn="statusTitle">وضعیت<p-sortIcon field="statusTitle" /></th>
+            <th pSortableColumn="id">Id<p-sortIcon field="id" /></th>
+            <th pSortableColumn="firstName">نام<p-sortIcon field="firstName" /></th>
+            <th pSortableColumn="lastName">نام خانوادگی <p-sortIcon field="lastName" /></th>
+            <th pSortableColumn="nationalNumber">کدملی <p-sortIcon field="nationalNumber" /></th>
+            <th pSortableColumn="phoneNumber">شماره موبایل <p-sortIcon field="phoneNumber" /></th>
+            <th pSortableColumn="membersCount">تعداد همراه <p-sortIcon field="membersCount" /></th>
+            <th pSortableColumn="totalCost">هزینه کل (ریال) <p-sortIcon field="totalCost" /></th>
+            <th pSortableColumn="totalCash">واریز نقدی  (ریال)<p-sortIcon field="totalCash" /></th>
+            <th pSortableColumn="totalLoan">وام  (ریال)<p-sortIcon field="totalLoan" /></th>
+            <th pSortableColumn="remained">مانده  (ریال)<p-sortIcon field="remained" /></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-applicant let-index="rowIndex">
+        <tr>
+            <td>{{index+1}}</td>
+            <td>{{applicant.stepTitle}}</td>
+            <td>{{applicant.statusTitle}}</td>
+            <td>{{applicant.id}}</td>
+            <td>{{applicant.firstName}}</td>
+            <td>{{applicant.lastName}}</td>
+            <td>{{applicant.nationalNumber}}</td>
+            <td>{{applicant.phoneNumber}}</td>
+            <td>{{applicant.membersCount}}</td>
+            <td>{{applicant.totalCost|number}}</td>
+            <td>{{applicant.totalCash|number}}</td>
+            <td>{{applicant.totalLoan|number}}</td>
+            <td>
+                @if(applicant.remained>0){
+                   <span class="text-red-500"> ({{applicant.remained|number}})</span>
+                }@else {
+                    <span class="text-green-500"> {{applicant.remained|number}}</span>
+                }
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+        <tr>
+            <td colspan="10">دیتایی جهت نمایش وجود ندارد</td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-confirmPopup key="costChangeConfirmation"></p-confirmPopup>

@@ -61,6 +61,9 @@ export class PayExpense extends GenericComponent {
       })
   }
   loanChanged() {
+    debugger
+    if (!this.loan)
+      this.loan = 0;
     if (this.loan > this.amount)
       this.loan = this.amount;
     if (this.loan < 0)
