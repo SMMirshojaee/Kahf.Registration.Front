@@ -28,7 +28,7 @@
     جمع هزینه ها: {{totalCost|number}} ریال معادل {{totalCost/10|number}} تومن
 </div>
 <p-divider></p-divider>
-<p-table #dt1 [value]="applicants" dataKey="id" [size]="'small'" styleClass="text-sm"
+<p-table #dt1 [value]="applicants" dataKey="id" [size]="'small'" styleClass="text-sm  filter-div"
     [globalFilterFields]="['firstName', 'lastName', 'nationalNumber', 'phoneNumber']" sortMode="multiple"
     [stripedRows]="true">
     <ng-template #caption>
@@ -44,6 +44,7 @@
                 <i class="pi pi-filter-slash pr-2 cursor-pointer" (click)="clear()"></i>
                 }
             </p-iconfield>
+            <i style="font-size: xx-large;padding-left:5px" class="cursor-pointer pi pi-sync text-pink-500" (click)="ngOnInit()"></i>
             <i style="font-size: xx-large;" class="pi pi-file-excel text-primary cursor-pointer float-left"
                 (click)="exportToExcel(dt1)"></i>
         </div>
@@ -64,6 +65,21 @@
             <th pSortableColumn="totalLoan">وام  (ریال)<p-sortIcon field="totalLoan" /></th>
             <th pSortableColumn="remained">مانده  (ریال)<p-sortIcon field="remained" /></th>
         </tr>
+        <tr>
+            <th></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="stepTitle"></p-columnFilter></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="statusTitle"></p-columnFilter></th>
+            <th></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="firstName"></p-columnFilter></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="lastName"></p-columnFilter></th>
+            <th><p-columnFilter matchMode="contains" type="text" field="nationalNumber"></p-columnFilter></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
     </ng-template>
     <ng-template #body let-applicant let-index="rowIndex">
         <tr>
@@ -73,7 +89,9 @@
             <td>{{applicant.id}}</td>
             <td>{{applicant.firstName}}</td>
             <td>{{applicant.lastName}}</td>
-            <td>{{applicant.nationalNumber}}</td>
+            <td>{{applicant.nationalNumber}}
+                <i (click)="openSignInmodal($event, applicant)"
+                class="cursor-pointer text-cyan-500 pi pi-external-link pr-2"></i></td>
             <td>{{applicant.phoneNumber}}</td>
             <td>{{applicant.membersCount}}</td>
             <td>{{applicant.totalCost|number}}</td>
@@ -95,3 +113,4 @@
     </ng-template>
 </p-table>
 <p-confirmPopup key="costChangeConfirmation"></p-confirmPopup>
+<p-confirmpopup />

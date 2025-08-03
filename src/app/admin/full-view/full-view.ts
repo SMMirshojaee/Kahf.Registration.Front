@@ -13,17 +13,20 @@ import { PersianDatePipe } from '@app/share/persian-date-pipe';
 import { RegStepService } from '@app/core/reg-step-service';
 import { FieldDto } from '@app/share/models/field.dto';
 import { FieldTypeEnum } from '@app/share/models/field-type.enum';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   standalone: true,
   imports: [SHARE_IMPORTS, PersianDatePipe],
   templateUrl: './full-view.html',
-  styleUrl: './full-view.scss'
+  styleUrl: './full-view.scss',
+  providers:[ConfirmationService]
 })
 export class FullView extends GenericComponent {
   private applicantService = inject(ApplicantService);
   private fieldService = inject(FieldService);
   private regStepService = inject(RegStepService);
+  private confirmationService = inject(ConfirmationService);
   private regId: number;
   protected applicants: ApplicantWithFormValueDto[];
   protected searchValue: string;
@@ -84,6 +87,28 @@ export class FullView extends GenericComponent {
   clear() {
     this.table.clear()
     this.searchValue = ''
+  }
+  openSignInmodal(event: Event, applicant: ApplicantWithFormValueDto) {
+    let link = `${window.location.origin}/applicant/signin/${applicant.regId}?nc=${applicant.nationalNumber}&pn=${applicant.phoneNumber}&tc=${applicant.trackingCode}`;
+    this.confirmationService.confirm({
+      target: event.currentTarget as EventTarget,
+      header: 'این لینک رو توی incognito کپی کن.',
+      message: link,
+      icon: 'pi pi-info-triangle',
+      rejectButtonProps: {
+        label: 'بازکردن در همین پنجره',
+        severity: 'danger',
+        outlined: true
+      },
+      acceptLabel: 'کپی لینک',
+      reject: () => {
+        window.location.href = link
+      },
+      accept: () => {
+        navigator.clipboard.writeText(link);
+        this.notify.info('لینک کپی شد')
+      },
+    })
   }
   exportToExcel(): void {
 

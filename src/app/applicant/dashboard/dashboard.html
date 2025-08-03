@@ -1,12 +1,21 @@
 <div>
     <p-card class="bg-second">
         <div class="grid">
-
             <div class="col-4 m-auto">
+                @if(baseData.isServant){
+                <img src="/images/servant.png" style="width:100%">
+                }@else{
                 <img src="/images/user.png" style="width:100%">
+                }
             </div>
             <div class="col">
-
+                @if(baseData.isServant){
+                <div>
+                    <span style="color: #1a8c4e !important;">
+                        خادم الحسین ع
+                    </span>
+                </div>
+                }
                 <div class="col">
                     نام: {{baseData.firstName}}
                 </div>

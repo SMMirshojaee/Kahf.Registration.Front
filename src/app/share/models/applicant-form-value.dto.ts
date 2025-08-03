@@ -31,6 +31,7 @@ export class ApplicantWithFormValueDto {
     //
     public notFilledMandoryFields: any[];
     public stepTitle?: string;
+    public isCheck: boolean;
 }
 
 export class MessageDto {

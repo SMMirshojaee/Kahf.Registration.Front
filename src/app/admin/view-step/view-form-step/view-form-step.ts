@@ -16,10 +16,12 @@ import { Table } from 'primeng/table';
 import { finalize, forkJoin } from 'rxjs';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import { SmsService } from '@app/core/sms-service';
+import { SmsStatusPipe } from '@app/share/sms-status-pipe';
 
 @Component({
   standalone: true,
-  imports: [SHARE_IMPORTS, PersianDatePipe],
+  imports: [SHARE_IMPORTS, PersianDatePipe, SmsStatusPipe],
   templateUrl: './view-form-step.html',
   styleUrl: './view-form-step.scss',
   providers: [ConfirmationService]
@@ -29,6 +31,7 @@ export class ViewFormStep extends GenericComponent {
   private fieldService = inject(FieldService);
   private regStepService = inject(RegStepService);
   private confirmationService = inject(ConfirmationService);
+  private smsService = inject(SmsService);
   private regStepId: number;
   private regId: number;
   protected applicants: ApplicantWithFormValueDto[];
@@ -53,6 +56,8 @@ export class ViewFormStep extends GenericComponent {
   protected nextStep: RegStepDto;
   protected nextStatusId: number;
   protected showMessageModal: boolean;
+  protected smsPanelIsOpen = false;
+  protected checkAll = false;
 
   @ViewChild('dt1') private table: Table;
   ngOnInit() {
@@ -254,7 +259,55 @@ export class ViewFormStep extends GenericComponent {
     this.showMessageModal = true;
     this.selectedApplicant = applicant;
   }
+  showSmsModal() {
+    this.smsPanelIsOpen = !this.smsPanelIsOpen;
+  }
+  checkAllChanged() {
+    this.applicants.forEach(e => e.isCheck = this.checkAll);
+  }
+  sendSms() {
+    let checkedIds = this.applicants.filter(e => e.isCheck).map(e => e.id);
+    if (!(checkedIds?.length > 0)) {
+      return this.notify.warn('هیچ زائری انتخاب نشده است')
+    }
+    if (!this.smsText)
+      return this.notify.warn('متن پیامک نمی تواند خالی باشد');
+    this.spinnerService.show();
 
+    this.smsService.send(this.smsText, checkedIds)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: data => {
+          this.notify.success('پیامک ها با موفقیت ارسال شدند')
+        },
+        error: (err: HttpErrorResponse) => {
+          this.notify.defaultError();
+        }
+      })
+
+  }
+  openSignInmodal(event: Event, applicant: ApplicantWithFormValueDto) {
+    let link = `${window.location.origin}/applicant/signin/${applicant.regId}?nc=${applicant.nationalNumber}&pn=${applicant.phoneNumber}&tc=${applicant.trackingCode}`;
+    this.confirmationService.confirm({
+      target: event.currentTarget as EventTarget,
+      header: 'این لینک رو توی incognito کپی کن.',
+      message: link,
+      icon: 'pi pi-info-triangle',
+      rejectButtonProps: {
+        label: 'بازکردن در همین پنجره',
+        severity: 'danger',
+        outlined: true
+      },
+      acceptLabel: 'کپی لینک',
+      reject: () => {
+        window.location.href = link
+      },
+      accept: () => {
+        navigator.clipboard.writeText(link);
+        this.notify.info('لینک کپی شد')
+      },
+    })
+  }
   getApplicantsWithFormValues() {
     return this.applicantService.getLeadersWithFormValuesAndMembersWithRegStepId(this.regStepId);
   }

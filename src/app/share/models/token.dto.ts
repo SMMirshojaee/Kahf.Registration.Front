@@ -11,6 +11,7 @@ export class ApplicantInfo {
         this.mobile = raw["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone"];
         this.firstName = raw["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
         this.lastName = raw["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"];
+        this.isServant = raw["IsServant"]?.toLowerCase() == "true";
     }
     public actor: string;
     public applicantid: number;
@@ -19,4 +20,5 @@ export class ApplicantInfo {
     public mobile: string;
     public firstName: string;
     public lastName: string;
+    public isServant: boolean;
 }

@@ -27,6 +27,7 @@ export class ApplicantOrderDto {
     public nationalNumber: string;
     public phoneNumber: string;
     public membersCount: number;
+    public trackingCode?: number;
     public orders: OrderDto[]
     //
     public totalCost: number;

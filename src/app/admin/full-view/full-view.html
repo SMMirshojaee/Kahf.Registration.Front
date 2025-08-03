@@ -13,7 +13,8 @@
                 @if(searchValue){
                 <i class="pi pi-filter-slash pr-2 cursor-pointer" (click)="clear()"></i>
                 }
-            </p-iconfield>
+            </p-iconfield>      
+            <i style="font-size: xx-large;padding-left:5px" class="cursor-pointer pi pi-sync text-pink-500" (click)="ngOnInit()"></i>
             <i style="font-size: xx-large;" class="pi pi-file-excel text-primary cursor-pointer float-left"
                 (click)="exportToExcel()"></i>
         </div>
@@ -68,7 +69,10 @@
             <td>-</td>
             <td>{{applicant.firstName}}</td>
             <td>{{applicant.lastName}}</td>
-            <td>{{applicant.nationalNumber}}</td>
+            <td>{{applicant.nationalNumber}}
+                <i (click)="openSignInmodal($event, applicant)"
+                class="cursor-pointer text-cyan-500 pi pi-external-link pr-2"></i>
+            </td>
             <td>{{applicant.phoneNumber}}</td>
             <td>{{applicant.createdDate|persianDate:true }}</td>
             <td>{{applicant.trackingCode}}</td>
@@ -118,3 +122,4 @@
         </tr>
     </ng-template>
 </p-table>
+<p-confirmpopup />

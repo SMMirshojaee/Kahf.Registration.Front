@@ -21,28 +21,31 @@ import { finalize } from 'rxjs';
 export class signIn extends GenericComponent {
   private applicantService = inject(ApplicantService);
   private regService = inject(RegService);
-  protected followupForm: FormGroup;
+  protected followupForm: FormGroup = null;
   private regId;
   protected reg: RegDto;
 
-  constructor() {
-    super();
-    this.followupForm = new FormGroup({
-      nationalCode: new FormControl('', [Validators.required, NationalCodeValidator]),
-      mobile: new FormControl('', [Validators.required, MobileValidator]),
-      trackingCode: new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(5)])
-    });
-
-  }
   ngOnInit() {
     this.regId = this.activatedRoute.snapshot.params['id'];
+    let nationalCode = this.activatedRoute.snapshot.queryParamMap.get("nc") ?? '';
+    let mobile = this.activatedRoute.snapshot.queryParamMap.get("pn") ?? '';
+    let trackingCode = this.activatedRoute.snapshot.queryParamMap.get("tc") ?? '';
+    this.followupForm = new FormGroup({
+      nationalCode: new FormControl(nationalCode, [Validators.required, NationalCodeValidator]),
+      mobile: new FormControl(mobile, [Validators.required, MobileValidator]),
+      trackingCode: new FormControl(trackingCode, [Validators.required, Validators.minLength(5), Validators.maxLength(5)])
+    });
+    if (nationalCode && mobile && trackingCode) {
+      this.submit();
+      return
+    }
     if (!this.regId) {
       this.notify.error('ثبت نام مورد نظر یافت نشد');
       this.route('/')
       return;
     }
     let selectedReg = this.tokenService.getSelectedReg();
-    if (selectedReg.id == this.regId) {
+    if (selectedReg?.id == this.regId) {
       this.reg = selectedReg;
       return;
     }

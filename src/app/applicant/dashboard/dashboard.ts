@@ -36,13 +36,14 @@ export class Dashboard extends GenericComponent {
   private selectedMemberIndexToRemove: number;
   protected showRemoveDialog: boolean;
   protected showFinishDialog: boolean;
-  protected baseData: { firstName: string, lastName: string, nationalCode: string }
+  protected baseData: { firstName: string, lastName: string, nationalCode: string, isServant: boolean }
   ngOnInit() {
     const applicantInfo = this.tokenService.getApplicantInfo();
     this.baseData = {
       firstName: applicantInfo.firstName,
       lastName: applicantInfo.lastName,
-      nationalCode: applicantInfo.nationalcode
+      nationalCode: applicantInfo.nationalcode,
+      isServant: applicantInfo.isServant
     };
     this.addMemberFormGroup = new FormGroup({
       firstName: new FormControl('', [Validators.required]),
@@ -105,7 +106,7 @@ export class Dashboard extends GenericComponent {
   }
 
   addMember() {
-    if (this.currentRegStep.memberLimit > this.members.length) {
+    if (this.currentRegStep.memberLimit >= this.members.length) {
       this.openModel();
 
     } else {

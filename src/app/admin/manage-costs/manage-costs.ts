@@ -53,6 +53,28 @@ export class ManageCosts extends GenericComponent {
         }
       })
   }
+  openSignInmodal(event: Event, applicant: ApplicantOrderDto) {
+    let link = `${window.location.origin}/applicant/signin/${this.regId}?nc=${applicant.nationalNumber}&pn=${applicant.phoneNumber}&tc=${applicant.trackingCode}`;
+    this.confirmationService.confirm({
+      target: event.currentTarget as EventTarget,
+      header: 'این لینک رو توی incognito کپی کن.',
+      message: link,
+      icon: 'pi pi-info-triangle',
+      rejectButtonProps: {
+        label: 'بازکردن در همین پنجره',
+        severity: 'danger',
+        outlined: true
+      },
+      acceptLabel: 'کپی لینک',
+      reject: () => {
+        window.location.href = link
+      },
+      accept: () => {
+        navigator.clipboard.writeText(link);
+        this.notify.info('لینک کپی شد')
+      },
+    })
+  }
   prepareDataToShow() {
     this.applicants.forEach(applicant => {
       applicant.totalCost = this.fixedCosts.map(e => e.amount).reduce((val, sum) => sum += val, 0) * (applicant.membersCount + 1);

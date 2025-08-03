@@ -39,11 +39,27 @@
                 <i class="pi pi-filter-slash pr-2 cursor-pointer" (click)="clear()"></i>
                 }
             </p-iconfield>
-            <i style="font-size: xx-large;" class="pi pi-file-excel text-primary cursor-pointer float-left" (click)="exportToExcel(dt1)"></i>
+            <i style="font-size: xx-large;padding-left:5px" class="cursor-pointer pi pi-send text-yellow-500"
+                (click)="showSmsModal()"></i>
+            <i style="font-size: xx-large;padding-left:5px" class="cursor-pointer pi pi-sync text-pink-500"
+                (click)="ngOnInit()"></i>
+            <i style="font-size: xx-large;" class="pi pi-file-excel text-primary cursor-pointer float-left"
+                (click)="exportToExcel(dt1)"></i>
         </div>
+        @if(smsPanelIsOpen){
+        <div class="mt-3">
+            <textarea pInputText class="w-full" [(ngModel)]="smsText"></textarea>
+        </div>
+        <div class="text-left">
+            <p-button (onClick)="sendSms()">ارسال</p-button>
+        </div>
+        }
     </ng-template>
     <ng-template #header>
         <tr>
+            @if(smsPanelIsOpen){
+            <th> <p-checkBox [binary]="true" [(ngModel)]="checkAll" (onChange)="checkAllChanged()"></p-checkBox> </th>
+            }
             <th>ردیف</th>
             <th pSortableColumn="status.title">وضعیت زائر<p-sortIcon field="status.title" /></th>
             <th>توضیحات ادمین</th>
@@ -60,6 +76,9 @@
             <th>پیامک ها </th>
         </tr>
         <tr class="filter-div">
+            @if(smsPanelIsOpen){
+            <th> </th>
+            }
             <th></th>
             <th><p-columnFilter matchMode="contains" type="text" field="status.title"></p-columnFilter></th>
             <th></th>
@@ -77,6 +96,9 @@
     </ng-template>
     <ng-template #body let-applicant let-index="rowIndex">
         <tr>
+            @if(smsPanelIsOpen){
+            <th> <p-checkBox [binary]="true" [(ngModel)]="applicant.isCheck"></p-checkBox> </th>
+            }
             <td>{{index+1}}</td>
             <td><i (click)="openChangeStatusDialog(applicant,index)"
                     class="cursor-pointer text-orange-500 pl-2 pi pi-arrow-right-arrow-left"></i>
@@ -91,8 +113,11 @@
             <td> <span
                     [ngClass]="{'text-red-500':applicant.notFilledMandoryFields?.length,'text-green-500':!applicant.notFilledMandoryFields?.length}">{{applicant.notFilledMandoryFields?.length}}</span>
             </td>
-            <td><i (click)="gotoForm(applicant)"
-                    class="cursor-pointer text-primary pi pi-address-book pl-2"></i>{{applicant.nationalNumber}}</td>
+            <td><i (click)="gotoForm(applicant)" class="cursor-pointer text-primary pi pi-address-book pl-2"></i>
+                {{applicant.nationalNumber}}
+                <i (click)="openSignInmodal($event, applicant)"
+                    class="cursor-pointer text-cyan-500 pi pi-external-link pr-2"></i>
+            </td>
             <td>{{applicant.phoneNumber}}</td>
             <td>{{applicant.createdDate|persianDate:true }}</td>
             <td>{{applicant.trackingCode}}</td>
@@ -125,7 +150,7 @@
             optionValue="id" />
     </div>
     <div class="mt-2">
-        <p-checkbox inputId="sendSms" binary="true" [(ngModel)]="sendSmsCheckbox"></p-checkbox>
+        <p-checkbox [binary]="true" inputId="sendSms" binary="true" [(ngModel)]="sendSmsCheckbox"></p-checkbox>
         <label for="sendSms" class=" pr-2">ارسال پیامک؟</label>
     </div>
     @if(sendSmsCheckbox){
@@ -141,7 +166,7 @@
     }
 </p-dialog>
 
-<p-dialog [modal]="true" [(visible)]="showFormModal" closeOnEscape="true"dismissableMask="true">
+<p-dialog [modal]="true" [(visible)]="showFormModal" closeOnEscape="true" dismissableMask="true">
     <ng-template #header>
         <div class="grid align-center">
             <div class="col-auto">
@@ -198,7 +223,7 @@
     }
     }
 </p-dialog>
-<p-dialog header="همراهان" [modal]="true" [(visible)]="showMembersDialog" closeOnEscape="true"dismissableMask="true"
+<p-dialog header="همراهان" [modal]="true" [(visible)]="showMembersDialog" closeOnEscape="true" dismissableMask="true"
     [style]="{'min-width':'50vw'}">
     @if(selectedApplicant){
     @for (member of selectedApplicant.inverseLeader; track $index) {
@@ -215,8 +240,8 @@
     }
 
 </p-dialog>
-<p-dialog header="پیامک های ارسالی" [modal]="true" [(visible)]="showMessageModal" closeOnEscape="true" dismissableMask="true"
-    [style]="{'min-width':'80vw'}">
+<p-dialog header="پیامک های ارسالی" [modal]="true" [(visible)]="showMessageModal" closeOnEscape="true"
+    dismissableMask="true" [style]="{'min-width':'80vw'}">
     <ng-template #header>
         پیامک های ارسال شده به {{selectedApplicant.firstName}}-{{selectedApplicant.lastName}}
     </ng-template>
@@ -238,11 +263,11 @@
                     <td>{{index+1}}</td>
                     <td>{{message.createdDate|persianDate: true}}</td>
                     <td>{{message.text}}</td>
-                    <td>{{(message.status==0?'موفق':'ناموفق')}}</td>
+                    <td>{{(message.status|smsStatus)}}</td>
                 </tr>
             </ng-template>
         </p-table>
-    }
+        }
 
     </div>
 </p-dialog>
