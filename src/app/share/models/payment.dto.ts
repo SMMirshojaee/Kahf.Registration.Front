@@ -30,6 +30,7 @@ export class ApplicantOrderDto {
     public trackingCode?: number;
     public orders: OrderDto[]
     //
+    public fullName: string;
     public totalCost: number;
     public totalCash: number;
     public totalLoan: number;

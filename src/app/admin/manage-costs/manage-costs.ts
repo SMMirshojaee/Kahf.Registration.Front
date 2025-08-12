@@ -77,6 +77,7 @@ export class ManageCosts extends GenericComponent {
   }
   prepareDataToShow() {
     this.applicants.forEach(applicant => {
+      applicant.fullName = `${applicant.firstName} - ${applicant.lastName}`;
       applicant.totalCost = this.fixedCosts.map(e => e.amount).reduce((val, sum) => sum += val, 0) * (applicant.membersCount + 1);
       applicant.totalLoan = applicant.orders.filter(e => e.authority == "LOAN").map(e => e.amount).reduce((val, sum) => sum += val, 0);
       applicant.totalCash = applicant.orders.filter(e => e.authority !== "LOAN").map(e => e.amount).reduce((val, sum) => sum += val, 0);
