@@ -28,11 +28,19 @@ export class ApplicantOrderDto {
     public phoneNumber: string;
     public membersCount: number;
     public trackingCode?: number;
-    public orders: OrderDto[]
+    public orders: OrderDto[];
+    public applicantExtraCosts: ApplicantExtraCostDto[];
     //
     public fullName: string;
+    public totalExtraCosts: number;
     public totalCost: number;
     public totalCash: number;
     public totalLoan: number;
     public remained: number;
+}
+export class ApplicantExtraCostDto {
+    public id: number;
+    public title: string;
+    public amount: number;
+    public description?: string
 }

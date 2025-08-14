@@ -12,12 +12,13 @@ import { StepEnum } from '@app/share/models/step.enum';
 import { MobileValidator } from '@app/share/validators/mobile.validator';
 import { NationalCodeValidator } from '@app/share/validators/national-code.validator';
 import { finalize, forkJoin } from 'rxjs';
+import { PayInstallments } from './components/pay-installments/pay-installments';
 
 @Component({
   standalone: true,
-  imports: [SHARE_IMPORTS],
+  imports: [SHARE_IMPORTS, PayInstallments],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss'
+  styleUrl: './dashboard.scss',
 })
 export class Dashboard extends GenericComponent {
   private applicantService = inject(ApplicantService);

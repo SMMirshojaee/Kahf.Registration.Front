@@ -44,7 +44,8 @@
                 <i class="pi pi-filter-slash pr-2 cursor-pointer" (click)="clear()"></i>
                 }
             </p-iconfield>
-            <i style="font-size: xx-large;padding-left:5px" class="cursor-pointer pi pi-sync text-pink-500" (click)="ngOnInit()"></i>
+            <i style="font-size: xx-large;padding-left:5px" class="cursor-pointer pi pi-sync text-pink-500"
+                (click)="ngOnInit()"></i>
             <i style="font-size: xx-large;" class="pi pi-file-excel text-primary cursor-pointer float-left"
                 (click)="exportToExcel(dt1)"></i>
         </div>
@@ -58,12 +59,13 @@
             <!-- <th pSortableColumn="firstName">نام<p-sortIcon field="firstName" /></th> -->
             <th pSortableColumn="fullName">نام و نام خانوادگی <p-sortIcon field="fullName" /></th>
             <th pSortableColumn="nationalNumber">کدملی <p-sortIcon field="nationalNumber" /></th>
-            <th pSortableColumn="phoneNumber">شماره موبایل <p-sortIcon field="phoneNumber" /></th>
+            <!-- <th pSortableColumn="phoneNumber">شماره موبایل <p-sortIcon field="phoneNumber" /></th> -->
             <th pSortableColumn="membersCount">تعداد همراه <p-sortIcon field="membersCount" /></th>
+            <th pSortableColumn="totalExtraCosts">هزینه های اضافی (تومن) <p-sortIcon field="totalExtraCosts" /></th>
             <th pSortableColumn="totalCost">هزینه کل (تومن) <p-sortIcon field="totalCost" /></th>
-            <th pSortableColumn="totalCash">واریز نقدی  (تومن)<p-sortIcon field="totalCash" /></th>
-            <th pSortableColumn="totalLoan">وام  (تومن)<p-sortIcon field="totalLoan" /></th>
-            <th pSortableColumn="remained">مانده  (تومن)<p-sortIcon field="remained" /></th>
+            <th pSortableColumn="totalCash">واریز نقدی (تومن)<p-sortIcon field="totalCash" /></th>
+            <th pSortableColumn="totalLoan">وام (تومن)<p-sortIcon field="totalLoan" /></th>
+            <th pSortableColumn="remained">مانده َ(تومن)<p-sortIcon field="remained" /></th>
         </tr>
         <tr>
             <th></th>
@@ -73,6 +75,7 @@
             <th><p-columnFilter matchMode="contains" type="text" field="fullName"></p-columnFilter></th>
             <!-- <th><p-columnFilter matchMode="contains" type="text" field="lastName"></p-columnFilter></th> -->
             <th><p-columnFilter matchMode="contains" type="text" field="nationalNumber"></p-columnFilter></th>
+            <!-- <th></th> -->
             <th></th>
             <th></th>
             <th></th>
@@ -90,18 +93,24 @@
             <td>{{applicant.fullName}}</td>
             <!-- <td>{{applicant.lastName}}</td> -->
             <td>{{applicant.nationalNumber}}
-                <i (click)="openSignInmodal($event, applicant)"
-                class="cursor-pointer text-cyan-500 pi pi-external-link pr-2"></i></td>
-            <td>{{applicant.phoneNumber}}</td>
+                <i (click)="openSigninModal($event, applicant)"
+                    class="cursor-pointer text-cyan-500 pi pi-external-link pr-2"></i>
+            </td>
+            <!-- <td>{{applicant.phoneNumber}}</td> -->
             <td>{{applicant.membersCount}}</td>
+            <td>
+                {{applicant.totalExtraCosts/10|number}}
+                <i (click)="openExtraCostsModal(applicant)"
+                    class="cursor-pointer text-cyan-500 pi pi-money-bill pr-2"></i>
+            </td>
             <td>{{applicant.totalCost/10|number}}</td>
             <td>{{applicant.totalCash/10|number}}</td>
             <td>{{applicant.totalLoan/10|number}}</td>
             <td>
                 @if(applicant.remained>0){
-                   <span class="text-red-500"> ({{applicant.remained/10|number}})</span>
+                <span class="text-red-500"> ({{applicant.remained/10|number}})</span>
                 }@else {
-                    <span class="text-green-500"> {{applicant.remained/10|number}}</span>
+                <span class="text-green-500"> {{applicant.remained/10|number}}</span>
                 }
             </td>
         </tr>
@@ -114,3 +123,26 @@
 </p-table>
 <p-confirmPopup key="costChangeConfirmation"></p-confirmPopup>
 <p-confirmpopup />
+<p-dialog key="extraCostsDialog" [(visible)]="showExtraCostsModal" dismissableMask="true" modal="true" header="هزینه های اضافی">
+    <p-table [value]="extraCosts">
+        <ng-template #header>
+            <tr>
+                <th>عنوان</th>
+                <th>مبلغ</th>
+                <th>توضیحات</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-extraCost let-index="rowIndex">
+            <tr>
+                <td>{{extraCost.title}}</td>
+                <td>{{extraCost.amount/10|number}}</td>
+                <td>{{extraCost.description}}</td>
+                <td>
+                    <i (click)="openRemoveExtraCostConfirmationDialog($event,index)"
+                        class="cursor-pointer text-red-500 pi pi-trash pr-2"></i>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>

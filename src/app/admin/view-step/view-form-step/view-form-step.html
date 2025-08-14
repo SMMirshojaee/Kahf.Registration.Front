@@ -1,10 +1,17 @@
-<p-button (onClick)="openTransferModal()">انتقال همه موفق ها، به مرحله بعدی</p-button>
+<p-button (onClick)="openTransferModal()">انتقال موفق ها، به مرحله بعدی</p-button>
 <p-dialog header="انتقال به مرحله بعد" [modal]="true" [(visible)]="showTransferModal">
     @if(nextStep){
 
-    <div class="mt-2">مرحله بعد: {{nextStep.title}}</div>
-    <div class="mt-2">انتقال به وضعیت:</div>
+    <div> انتقال همه وضعیت های زیر از مرحله کنونی:</div>
     <div>
+        <p-selectbutton [options]="acceptedStatuses" [(ngModel)]="selectedStatusesForTransfer" [multiple]="true"
+            optionLabel="title" optionValue="id" />
+    </div>
+    <div class="mt-2">به وضعیت های زیر از مرحله
+        <strong>{{nextStep.title}}</strong>
+        :
+    </div>
+    <div class="mt-2">
         <p-selectbutton [options]="nextStep.regStepStatuses" [(ngModel)]="nextStatusId" optionLabel="title"
             optionValue="id" />
     </div>

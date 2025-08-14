@@ -9,7 +9,7 @@ import { Table } from 'primeng/table';
 import { finalize, forkJoin } from 'rxjs';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
-import { ApplicantOrderDto } from '@app/share/models/payment.dto';
+import { ApplicantExtraCostDto, ApplicantOrderDto } from '@app/share/models/payment.dto';
 import { ApplicantService } from '@app/core/applicant-service';
 
 @Component({
@@ -31,6 +31,8 @@ export class ManageCosts extends GenericComponent {
   protected searchValue = '';
   @ViewChild('dt1') private table: Table;
   protected applicants: ApplicantOrderDto[];
+  protected extraCosts: ApplicantExtraCostDto[];
+  protected showExtraCostsModal = false;
 
   ngOnInit() {
     this.regId = this.activatedRoute.snapshot.params['regId'];
@@ -53,7 +55,39 @@ export class ManageCosts extends GenericComponent {
         }
       })
   }
-  openSignInmodal(event: Event, applicant: ApplicantOrderDto) {
+  openExtraCostsModal(applicant: ApplicantOrderDto) {
+    this.extraCosts = applicant.applicantExtraCosts;
+    this.showExtraCostsModal = true;
+  }
+  openRemoveExtraCostConfirmationDialog(event: Event, index: number) {
+    this.confirmationService.confirm({
+      target: event.currentTarget as EventTarget,
+      header: 'حذف هزینه اضافی',
+      message: 'مطمئنی؟',
+      icon: 'pi pi-info-triangle',
+      rejectLabel: 'انصراف',
+      acceptLabel: 'بله',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.spinnerService.show();
+        this.applicantService.removeExtraCost(this.extraCosts[index].id)
+          .pipe(finalize(() => this.spinnerService.hide()))
+          .subscribe({
+            next: data => {
+              this.extraCosts.splice(index);
+              this.prepareDataToShow();
+            },
+            error: (err: HttpErrorResponse) => {
+              if (err.status == 403)
+                this.notify.error('دسترسی غیر مجاز');
+              else
+                this.notify.defaultError();
+            }
+          })
+      },
+    })
+  }
+  openSigninModal(event: Event, applicant: ApplicantOrderDto) {
     let link = `${window.location.origin}/applicant/signin/${this.regId}?nc=${applicant.nationalNumber}&pn=${applicant.phoneNumber}&tc=${applicant.trackingCode}`;
     this.confirmationService.confirm({
       target: event.currentTarget as EventTarget,
@@ -78,7 +112,9 @@ export class ManageCosts extends GenericComponent {
   prepareDataToShow() {
     this.applicants.forEach(applicant => {
       applicant.fullName = `${applicant.firstName} - ${applicant.lastName}`;
-      applicant.totalCost = this.fixedCosts.map(e => e.amount).reduce((val, sum) => sum += val, 0) * (applicant.membersCount + 1);
+      let extraCostsAmount = applicant.applicantExtraCosts.map(e => e.amount).reduce((val, sum) => sum += val, 0);
+      applicant.totalExtraCosts = extraCostsAmount;
+      applicant.totalCost = extraCostsAmount + this.fixedCosts.map(e => e.amount).reduce((val, sum) => sum += val, 0) * (applicant.membersCount + 1);
       applicant.totalLoan = applicant.orders.filter(e => e.authority == "LOAN").map(e => e.amount).reduce((val, sum) => sum += val, 0);
       applicant.totalCash = applicant.orders.filter(e => e.authority !== "LOAN").map(e => e.amount).reduce((val, sum) => sum += val, 0);
       applicant.remained = applicant.totalCost - applicant.totalCash - applicant.totalLoan;

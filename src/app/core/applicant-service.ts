@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class ApplicantService {
 
+
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/applicant`;
 
@@ -63,11 +64,20 @@ export class ApplicantService {
     return this.httpClient.get(`${this.address}/saveDescription/${applicantId}?description=${description}`)
   }
 
-  transferToNextStep(regStepId: number, nextStatusId: number, sendSms: boolean, smsText: string): Observable<void> {
-    return this.httpClient.put<void>(`${this.address}/transferToNextStep/${regStepId}/${nextStatusId}/${sendSms}`, JSON.stringify(smsText), { headers: { 'Content-Type': 'application/json' } });
+  transferToNextStep(regStepId: number, currentStatusIds: number[], nextStatusId: number, sendSms: boolean, smsText: string): Observable<number> {
+    let queryString = "";
+    currentStatusIds.forEach((e, index) => {
+      queryString += `ids=${e}`;
+      if (index != currentStatusIds.length - 1)
+        queryString += '&';
+    });
+    return this.httpClient.put<number>(`${this.address}/transferToNextStep/${regStepId}/${nextStatusId}/${sendSms}?${queryString}`, JSON.stringify(smsText), { headers: { 'Content-Type': 'application/json' } });
   }
 
   getWithOrders(regId: number): Observable<ApplicantOrderDto[]> {
     return this.httpClient.get<ApplicantOrderDto[]>(`${this.address}/getWithOrders/${regId}`);
+  }
+  removeExtraCost(id: number): Observable<any> {
+    return this.httpClient.delete(`${this.address}/removeExtraCost/${id}`);
   }
 }

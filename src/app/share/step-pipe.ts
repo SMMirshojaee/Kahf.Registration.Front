@@ -11,6 +11,7 @@ export class StepPipe implements PipeTransform {
       case "1": return "پرکردن فرم";
       case "2": return "واریز وجه";
       case "3": return "قبول / رد";
+      case "4": return "پرداخت قسط";
       default: return "نا مشخص!!";
     }
   }

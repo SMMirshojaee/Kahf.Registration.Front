@@ -9,7 +9,7 @@ import { SHARE_IMPORTS } from '@app/share/imports';
 import { ApplicantWithFormValueDto } from '@app/share/models/applicant-form-value.dto';
 import { FieldTypeEnum } from '@app/share/models/field-type.enum';
 import { FieldDto } from '@app/share/models/field.dto';
-import { RegStepDto } from '@app/share/models/reg.dto';
+import { RegStepDto, RegStepStatusDto } from '@app/share/models/reg.dto';
 import { PersianDatePipe } from '@app/share/persian-date-pipe';
 import { ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
@@ -27,6 +27,7 @@ import { SmsStatusPipe } from '@app/share/sms-status-pipe';
   providers: [ConfirmationService]
 })
 export class ViewFormStep extends GenericComponent {
+
   private applicantService = inject(ApplicantService);
   private fieldService = inject(FieldService);
   private regStepService = inject(RegStepService);
@@ -58,6 +59,8 @@ export class ViewFormStep extends GenericComponent {
   protected showMessageModal: boolean;
   protected smsPanelIsOpen = false;
   protected checkAll = false;
+  protected acceptedStatuses: RegStepStatusDto[];
+  protected selectedStatusesForTransfer: number[];
 
   @ViewChild('dt1') private table: Table;
   ngOnInit() {
@@ -76,6 +79,8 @@ export class ViewFormStep extends GenericComponent {
           this.members = [...this.applicants.flatMap(e => e.inverseLeader)];
           this.allFields = data.fields;
           this.selectedRegStep = data.statuses;
+          this.acceptedStatuses = this.selectedRegStep.regStepStatuses.filter(e => e.isAccepted);
+          this.selectedStatusesForTransfer = this.acceptedStatuses.map(e => e.id);
           this.checkForm();
         },
         error: (err: HttpErrorResponse) => {
@@ -224,6 +229,10 @@ export class ViewFormStep extends GenericComponent {
 
   }
   transfer() {
+    if (!this.selectedStatusesForTransfer?.length) {
+      this.notify.warn('انتخاب حداقل یک وضعیت از مرحله کنونی الزامی است!');
+      return
+    }
     if (!this.nextStatusId) {
       this.notify.warn('وضعیت بعدی انتخاب نشده است!');
       return
@@ -233,12 +242,12 @@ export class ViewFormStep extends GenericComponent {
       return;
     }
     this.spinnerService.show();
-    this.applicantService.transferToNextStep(this.regStepId, this.nextStatusId, this.sendSmsCheckbox, this.smsText)
+    this.applicantService.transferToNextStep(this.regStepId, this.selectedStatusesForTransfer, this.nextStatusId, this.sendSmsCheckbox, this.smsText)
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
-        next: () => {
+        next: count => {
           this.nextStatusId = null;
-          this.notify.defaultSuccess();
+          this.notify.success(`تعداد ${count} کاربر منتقل شدند`);
           this.showTransferModal = false;
           this.ngOnInit();
         },
@@ -308,6 +317,7 @@ export class ViewFormStep extends GenericComponent {
       },
     })
   }
+
   getApplicantsWithFormValues() {
     return this.applicantService.getLeadersWithFormValuesAndMembersWithRegStepId(this.regStepId);
   }
