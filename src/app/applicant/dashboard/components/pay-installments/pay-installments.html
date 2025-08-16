@@ -1,1 +1,135 @@
-<p>pay-installments works!</p>
+<table class="p-datatable p-component p-datatable-striped p-datatable-sm">
+    <thead>
+        <tr>
+            <th colspan="4">
+                ریز هزینه های سفر (برای هر نفر)
+            </th>
+        </tr>
+        <tr>
+            <th>ردیف</th>
+            <th>عنوان</th>
+            <th>مبلغ(تومن)</th>
+            <th>توضیحات</th>
+        </tr>
+    </thead>
+    <tbody class="p-datatable-tbody">
+        @for (regCost of regCosts; track $index) {
+        <tr>
+            <td>{{$index+1}}</td>
+            <td>{{regCost.title}}</td>
+            <td>{{regCost.amount|toman}}</td>
+            <td>{{regCost.description}}</td>
+        </tr>
+        }
+        @if(extraCosts?.length){
+        <tr>
+            <td colspan="4"><p-divider></p-divider></td>
+        </tr>
+        <tr>
+            <td colspan="4">هزینه های اختصاصی شما</td>
+        </tr>
+        @for (extraCost of extraCosts; track $index) {
+        <tr>
+            <td>{{$index+1}}</td>
+            <td>{{extraCost.title}}</td>
+            <td>{{extraCost.amount|toman}}</td>
+            <td>{{extraCost.description}}</td>
+        </tr>
+        }
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4">
+                جمع کل هزینه (برای {{membersCount+1}} نفر): {{totalCosts|toman:true}}
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<p-divider></p-divider>
+<!-- @if(applicantOrders?.length){
+<table>
+    <thead>
+        <tr>
+            <th colspan="4">
+                پرداخت ها
+            </th>
+        </tr>
+        <tr>
+            <th>ردیف</th>
+            <th>مبلغ(تومن)</th>
+            <th>نوع</th>
+            <th>تاریخ</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (order of applicantOrders; track $index) {
+        <tr>
+            <td>{{$index+1}}</td>
+            <td>{{order.amount|toman}}</td>
+            <td>{{(order.authority.toLocaleLowerCase()=='loan')?'وام':'آنلاین'}}</td>
+            <td>{{order.createdDate|persianDate}}</td>
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4">
+                جمع کل پرداختی ها: {{totalPays|toman}}
+            </td>
+        </tr>
+    </tfoot>
+</table>
+} 
+<p-divider></p-divider>-->
+
+<div class="grid">
+    <div class="col-12 text-right">
+        جمع مبالغ وصول شده از شما: {{totalReceivedPays|toman:true}}
+    </div>
+</div>
+@if(remainedAmount>0){
+<div class="grid">
+    <div class="col text-right">باقی مانده نقدی: {{remainedAmount|toman:true}}</div>
+    <div>
+        <p-button size="small" (onClick)="payExpense(remainedAmount)">پرداخت</p-button>
+    </div>
+</div>
+}
+@if(this.loans?.length){
+<p-accordion [value]="[0]" [multiple]="true">
+    @for (loan of loans; track $index) {
+    <p-accordion-panel [value]="$index">
+        <p-accordion-header class="bg-yellow-400">مبلغ وام: {{loan.amount|toman}}. تعداد اقساط
+            {{loan.installmentsCount}}</p-accordion-header>
+        <p-accordion-content>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>مبلغ (تومن)</th>
+                        <th>تاریخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (installment of loan.installments; track $index) {
+                    <tr>
+                        <td>{{$index+1}}</td>
+                        <td>{{installment.amount|toman}}</td>
+                        <td>
+                            @if(installment.received){
+                            {{installment.date|persianDate}}
+                            }@else {
+                            <p-button size="small" (onClick)="payExpense(installment.amount,loan.id)">پرداخت</p-button>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+        </p-accordion-content>
+    </p-accordion-panel>
+    }
+</p-accordion>
+}

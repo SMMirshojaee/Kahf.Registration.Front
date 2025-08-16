@@ -211,7 +211,7 @@
                 }
                 }
                 @else if(step.stepId==STEP_ENUM.Installments){
-                <pay-installments></pay-installments>
+                <pay-installments [regStep]="currentRegStep" [membersCount]="members.length"></pay-installments>
                 }
                 }
 

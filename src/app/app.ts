@@ -4,6 +4,7 @@ import { SHARE_IMPORTS } from './share/imports';
 import { Footer } from './footer/footer';
 import { Header } from './header/header';
 import { GenericComponent } from './share/generic-component';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ import { GenericComponent } from './share/generic-component';
   templateUrl: './app.html',
   styleUrl: './app.scss',
   standalone: true,
-  providers: []
+  providers: [DecimalPipe]
 })
 export class App extends GenericComponent {
 

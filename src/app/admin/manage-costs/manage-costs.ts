@@ -116,7 +116,7 @@ export class ManageCosts extends GenericComponent {
       applicant.totalExtraCosts = extraCostsAmount;
       applicant.totalCost = extraCostsAmount + this.fixedCosts.map(e => e.amount).reduce((val, sum) => sum += val, 0) * (applicant.membersCount + 1);
       applicant.totalLoan = applicant.orders.filter(e => e.authority == "LOAN").map(e => e.amount).reduce((val, sum) => sum += val, 0);
-      applicant.totalCash = applicant.orders.filter(e => e.authority !== "LOAN").map(e => e.amount).reduce((val, sum) => sum += val, 0);
+      applicant.totalCash = applicant.orders.filter(e => e.authority !== "LOAN" && !e.loanId).map(e => e.amount).reduce((val, sum) => sum += val, 0);
       applicant.remained = applicant.totalCost - applicant.totalCash - applicant.totalLoan;
     })
   }

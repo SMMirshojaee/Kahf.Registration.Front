@@ -151,9 +151,14 @@
         کدملی: {{selectedApplicant.nationalNumber}}
     </div>
     <div>وضعیت فعلی: {{selectedApplicant.status?.title}}</div>
-    <div>تغییر وضعیت به: </div>
+    <div>تغییر وضعیت در همین مرحله: </div>
     <div>
         <p-selectbutton [options]="selectedRegStep.regStepStatuses" [(ngModel)]="newStatusId" optionLabel="title"
+            optionValue="id" />
+    </div>
+    <div>تغییر وضعیت به مرحله بعدی: </div>
+    <div>
+        <p-selectbutton [options]="nextStep.regStepStatuses" [(ngModel)]="newStatusId" optionLabel="title"
             optionValue="id" />
     </div>
     <div class="mt-2">

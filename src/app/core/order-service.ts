@@ -9,13 +9,17 @@ import { Observable } from 'rxjs';
 })
 export class OrderService {
 
+
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/order`;
 
-  sendRequest(regStepId: number): Observable<string> {
-    return this.httpClient.get(`${this.address}/sendRequest/${regStepId}`, { responseType: 'text' })
+  sendRequestByRegStepId(regStepId: number): Observable<string> {
+    return this.httpClient.get(`${this.address}/sendRequestByRegStepId/${regStepId}`, { responseType: 'text' })
   }
-  payCash(regStepId: number, cash: number) : Observable<string>{
+  sendDirectRequest(amount: number, loanId?: number): Observable<string> {
+    return this.httpClient.get(`${this.address}/sendDirectRequest/${amount}${(loanId ? `/${loanId}` : '')}`, { responseType: 'text' })
+  }
+  payCash(regStepId: number, cash: number): Observable<string> {
     return this.httpClient.get(`${this.address}/payCash/${regStepId}/${cash}`, { responseType: 'text' })
   }
   requestLoan(regStepId: number, loan: number, cash: number) {
@@ -23,5 +27,8 @@ export class OrderService {
   }
   getPrevious(regStepId: number): Observable<OrderDto[]> {
     return this.httpClient.get<OrderDto[]>(`${this.address}/getPrevious/${regStepId}`);
+  }
+  getAll(): Observable<OrderDto[]> {
+    return this.httpClient.get<OrderDto[]>(`${this.address}/getAll`);
   }
 }

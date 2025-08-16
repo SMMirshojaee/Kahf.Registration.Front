@@ -8,7 +8,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PaymentService {
-
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/payment`;
 
@@ -17,7 +16,9 @@ export class PaymentService {
   }
   getByRegStepId(regStepId: number): Observable<PaymentDto> {
     return this.httpClient.get<PaymentDto>(`${this.address}/getByRegStepId/${regStepId}`);
-
+  }
+  getByRegId(regId: number): Observable<PaymentDto[]> {
+    return this.httpClient.get<PaymentDto[]>(`${this.address}/getByRegId/${regId}`);
   }
 }
 

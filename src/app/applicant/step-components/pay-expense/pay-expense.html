@@ -2,7 +2,7 @@
 <p-message>
     مبلغ قابل پرداخت : {{amount|number}} ریال
 </p-message>
-@if(!payment.installmentsCount){
+@if(!payment?.installmentsCount){
 <div class="mt-3 text-center">
     <div>زائر گرامی جهت پرداخت وجه مورد نظر روی دکمه زیر کلیک نمایید. ضمنا اطلاعات دریافتی پس از پرداخت را نزد خود نگه
         دارید</div>

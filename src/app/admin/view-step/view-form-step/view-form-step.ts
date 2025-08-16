@@ -70,7 +70,8 @@ export class ViewFormStep extends GenericComponent {
     forkJoin({
       applicants: this.getApplicantsWithFormValues(),
       fields: this.getFields(),
-      statuses: this.getRegStepStatuses()
+      statuses: this.getRegStepStatuses(),
+      nextStep: this.regStepService.getNextStep(this.regStepId)
     })
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
@@ -81,6 +82,7 @@ export class ViewFormStep extends GenericComponent {
           this.selectedRegStep = data.statuses;
           this.acceptedStatuses = this.selectedRegStep.regStepStatuses.filter(e => e.isAccepted);
           this.selectedStatusesForTransfer = this.acceptedStatuses.map(e => e.id);
+          this.nextStep = data.nextStep;
           this.checkForm();
         },
         error: (err: HttpErrorResponse) => {
@@ -169,19 +171,7 @@ export class ViewFormStep extends GenericComponent {
     });
   }
   openTransferModal() {
-    this.spinnerService.show();
-    this.regStepService.getNextStep(this.regStepId)
-      .pipe(finalize(() => this.spinnerService.hide()))
-      .subscribe({
-        next: data => {
-          this.nextStep = data;
-          this.showTransferModal = true;
-        },
-        error: (err: HttpErrorResponse) => {
-          this.notify.defaultError();
-        }
-      })
-
+    this.showTransferModal = true;
   }
   openChangeStatusDialog(applicant: ApplicantWithFormValueDto, index: number) {
     this.selectedApplicant = applicant;

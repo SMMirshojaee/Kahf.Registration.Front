@@ -23,6 +23,7 @@ export class PayExpense extends GenericComponent {
   private confirmationService = inject(ConfirmationService);
   private regStepId: number;
   protected amount: number;
+  protected loanId: number;
   protected payment: PaymentDto;
   protected loanIsDisable = false;
 
@@ -30,35 +31,42 @@ export class PayExpense extends GenericComponent {
   protected cash: number;
 
   ngOnInit() {
-    this.regStepId = this.activatedRoute.snapshot.params['id'];
-    this.spinnerService.show();
-    forkJoin({
-      payment: this.paymentService.getByRegStepId(this.regStepId),
-      membersCount: this.applicantService.getMembersCount(),
-      previousOrders: this.orderService.getPrevious(this.regStepId)
-    })
-      .pipe(finalize(() => this.spinnerService.hide()))
-      .subscribe({
-        next: data => {
-          this.payment = data.payment;
-          this.amount = (data.membersCount + 1) * data.payment.perPersonAmount;
-          let previousOrders = data.previousOrders;
-          if (previousOrders?.length) {
-            let totalLoans = previousOrders.filter(e => e.authority == "LOAN").reduce((sum, item) => sum + item.amount, 0);
-            if (totalLoans) {
-              this.loan = totalLoans;
-              this.loanIsDisable = true;
-              this.loanChanged();
-              return;
-            }
-          }
-          this.loan = this.amount;
-          this.loanChanged();
-        },
-        error: (err: HttpErrorResponse) => {
-          this.notify.defaultError();
-        }
+    this.regStepId = this.activatedRoute.snapshot.queryParams['regStepId'];
+    this.amount = this.activatedRoute.snapshot.queryParams['amount'];
+    this.loanId = this.activatedRoute.snapshot.queryParams['loanId'];
+    if (this.regStepId) {
+      this.spinnerService.show();
+      forkJoin({
+        payment: this.paymentService.getByRegStepId(this.regStepId),
+        membersCount: this.applicantService.getMembersCount(),
+        previousOrders: this.orderService.getPrevious(this.regStepId)
       })
+        .pipe(finalize(() => this.spinnerService.hide()))
+        .subscribe({
+          next: data => {
+            this.payment = data.payment;
+            this.amount = (data.membersCount + 1) * data.payment.perPersonAmount;
+            let previousOrders = data.previousOrders;
+            if (previousOrders?.length) {
+              let totalLoans = previousOrders.filter(e => e.authority == "LOAN").reduce((sum, item) => sum + item.amount, 0);
+              if (totalLoans) {
+                this.loan = totalLoans;
+                this.loanIsDisable = true;
+                this.loanChanged();
+                return;
+              }
+            }
+            this.loan = this.amount;
+            this.loanChanged();
+          },
+          error: (err: HttpErrorResponse) => {
+            this.notify.defaultError();
+          }
+        })
+    } else if (this.amount) {
+
+    }
+
   }
   loanChanged() {
     debugger
@@ -102,16 +110,28 @@ export class PayExpense extends GenericComponent {
   }
   getUrl() {
     this.spinnerService.show();
-    this.orderService.sendRequest(this.regStepId)
-      .pipe(finalize(() => this.spinnerService.hide()))
-      .subscribe({
-        next: data => {
-          window.location.href = data;
-        },
-        error: (err: HttpErrorResponse) => {
-          this.notify.defaultError();
-        }
-      })
+    if (this.regStepId)
+      this.orderService.sendRequestByRegStepId(this.regStepId)
+        .pipe(finalize(() => this.spinnerService.hide()))
+        .subscribe({
+          next: data => {
+            window.location.href = data;
+          },
+          error: (err: HttpErrorResponse) => {
+            this.notify.defaultError();
+          }
+        })
+    else
+      this.orderService.sendDirectRequest(this.amount, this.loanId)
+        .pipe(finalize(() => this.spinnerService.hide()))
+        .subscribe({
+          next: data => {
+            window.location.href = data;
+          },
+          error: (err: HttpErrorResponse) => {
+            this.notify.defaultError();
+          }
+        })
   }
   payCash() {
     this.spinnerService.show();

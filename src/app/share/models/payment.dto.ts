@@ -5,6 +5,7 @@ export class PaymentDto {
     public installmentsCount?: number;
 }
 export class OrderDto {
+    public id: number;
     public amount: number;
     public createdDate: Date;
     public applicantId: number;
@@ -15,6 +16,12 @@ export class OrderDto {
     public verifyStatus?: number;
     public verifyDate?: Date;
     public refId?: number;
+    public loanId?: number;
+    public inverseLoan?: OrderDto[];
+    //
+    public installmentsCount?: number;
+    public totalyCleared?: boolean;
+    public installments?: { amount: number, received: boolean, date?: Date }[];
 }
 
 export class ApplicantOrderDto {

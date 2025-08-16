@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '@app/share/environment/environment';
 import { ApplicantWithFormValueDto } from '@app/share/models/applicant-form-value.dto';
 import { ApplicantDto, ApplicantInfoDto, MemberInfoDto, SigninDto, SignupDto } from '@app/share/models/applicant.dto';
-import { ApplicantOrderDto } from '@app/share/models/payment.dto';
+import { ApplicantExtraCostDto, ApplicantOrderDto } from '@app/share/models/payment.dto';
 import { TokenDto } from '@app/share/models/token.dto';
 import { Observable } from 'rxjs';
 
@@ -11,8 +11,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApplicantService {
-
-
   private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/applicant`;
 
@@ -76,6 +74,9 @@ export class ApplicantService {
 
   getWithOrders(regId: number): Observable<ApplicantOrderDto[]> {
     return this.httpClient.get<ApplicantOrderDto[]>(`${this.address}/getWithOrders/${regId}`);
+  }
+  getExtraCosts(): Observable<ApplicantExtraCostDto[]> {
+    return this.httpClient.get<ApplicantExtraCostDto[]>(`${this.address}/getExtraCosts`);
   }
   removeExtraCost(id: number): Observable<any> {
     return this.httpClient.delete(`${this.address}/removeExtraCost/${id}`);

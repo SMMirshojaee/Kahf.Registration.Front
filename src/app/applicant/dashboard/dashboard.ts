@@ -192,7 +192,7 @@ export class Dashboard extends GenericComponent {
   }
 
   payExpense(regStep: RegStepDto) {
-    this.route(`/applicant/pay/${regStep.id}`);
+    this.route('/applicant/pay', { regStepId: regStep.id });
   }
 
   openFinishModal() {
