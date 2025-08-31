@@ -262,7 +262,6 @@ export class ViewFormStep extends GenericComponent {
     this.smsPanelIsOpen = !this.smsPanelIsOpen;
   }
   checkAllChanged(table: Table) {
-    debugger
     if (!this.checkAll)
       this.applicants.forEach(app => app.isCheck = false)
     else {
