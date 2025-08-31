@@ -13,6 +13,7 @@ export class OrderDto {
     public requestStatus?: number;
     public requestDate?: Date;
     public authority?: string;
+    public description?: string;
     public verifyStatus?: number;
     public verifyDate?: Date;
     public refId?: number;
@@ -44,10 +45,21 @@ export class ApplicantOrderDto {
     public totalCash: number;
     public totalLoan: number;
     public remained: number;
+    public totalInstallments: number;
+    public remainedLoan: number;
 }
 export class ApplicantExtraCostDto {
     public id: number;
     public title: string;
     public amount: number;
     public description?: string
+}
+
+export class InstallmentDto {
+    public amount: number;
+    public date: Date;
+    public applicantId: number;
+    public loanId: number;
+    public nationalNumber: string;
+    public description: string;
 }

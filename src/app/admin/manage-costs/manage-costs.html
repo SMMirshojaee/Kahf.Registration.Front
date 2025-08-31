@@ -7,7 +7,7 @@
                 [(ngModel)]="cost.amount" (input)="convertToEnglishDigits($event)" />
             <label for="cost_{{cost.id}}">{{cost.title}}</label>
         </p-floatlabel>
-        {{cost.amount/10|number}} تومن
+        {{cost.amount|toman}} تومن
     </div>
     }
     @if(costsToEdit?.length){
@@ -25,7 +25,7 @@
     }
 </div>
 <div>
-    جمع هزینه ها: {{totalCost|number}} ریال معادل {{totalCost/10|number}} تومن
+    جمع هزینه ها: {{totalCost|number}} ریال معادل {{totalCost|toman}} تومن
 </div>
 <p-divider></p-divider>
 <p-table #dt1 [value]="applicants" dataKey="id" [size]="'small'" styleClass="text-sm  filter-div"
@@ -63,9 +63,11 @@
             <th pSortableColumn="membersCount">تعداد همراه <p-sortIcon field="membersCount" /></th>
             <th pSortableColumn="totalExtraCosts">هزینه های اضافی (تومن) <p-sortIcon field="totalExtraCosts" /></th>
             <th pSortableColumn="totalCost">هزینه کل (تومن) <p-sortIcon field="totalCost" /></th>
+            <th pSortableColumn="remained">مانده (تومن)<p-sortIcon field="remained" /></th>
             <th pSortableColumn="totalCash">واریز نقدی (تومن)<p-sortIcon field="totalCash" /></th>
             <th pSortableColumn="totalLoan">وام (تومن)<p-sortIcon field="totalLoan" /></th>
-            <th pSortableColumn="remained">مانده َ(تومن)<p-sortIcon field="remained" /></th>
+            <th pSortableColumn="totalInstallments">اقساط پرداخت شده (تومن)<p-sortIcon field="totalInstallments" /></th>
+            <th pSortableColumn="remainedLoan">مانده اقساط (تومن)<p-sortIcon field="remainedLoan" /></th>
         </tr>
         <tr>
             <th></th>
@@ -76,6 +78,8 @@
             <!-- <th><p-columnFilter matchMode="contains" type="text" field="lastName"></p-columnFilter></th> -->
             <th><p-columnFilter matchMode="contains" type="text" field="nationalNumber"></p-columnFilter></th>
             <!-- <th></th> -->
+            <th></th>
+            <th></th>
             <th></th>
             <th></th>
             <th></th>
@@ -99,20 +103,28 @@
             <!-- <td>{{applicant.phoneNumber}}</td> -->
             <td>{{applicant.membersCount}}</td>
             <td>
-                {{applicant.totalExtraCosts/10|number}}
+                {{applicant.totalExtraCosts|toman}}
                 <i (click)="openExtraCostsModal(applicant)"
-                    class="cursor-pointer text-cyan-500 pi pi-money-bill pr-2"></i>
+                    class="cursor-pointer text-cyan-500 pi pi-plus-circle pr-2"></i>
             </td>
-            <td>{{applicant.totalCost/10|number}}</td>
-            <td>{{applicant.totalCash/10|number}}</td>
-            <td>{{applicant.totalLoan/10|number}}</td>
+            <td>{{applicant.totalCost|toman}}</td>
             <td>
                 @if(applicant.remained>0){
-                <span class="text-red-500"> ({{applicant.remained/10|number}})</span>
+                <span class="text-red-500"> ({{applicant.remained|toman}})</span>
                 }@else {
-                <span class="text-green-500"> {{applicant.remained/10|number}}</span>
+                <span class="text-green-500"> {{applicant.remained|toman}}</span>
                 }
             </td>
+            <td>{{applicant.totalCash|toman}}</td>
+            <td>
+                {{applicant.totalLoan|toman}}
+                @if(applicant.totalLoan){
+                <i (click)="openInstallmentsModal(applicant)"
+                    class="cursor-pointer text-cyan-500 pi pi-plus-circle pr-2"></i>
+                }
+            </td>
+            <td><span class="text-green-500">{{applicant.totalInstallments|toman}}</span></td>
+            <td><span class="text-orange-500">{{applicant.remainedLoan|toman}}</span> </td>
         </tr>
     </ng-template>
     <ng-template #emptymessage>
@@ -123,7 +135,8 @@
 </p-table>
 <p-confirmPopup key="costChangeConfirmation"></p-confirmPopup>
 <p-confirmpopup />
-<p-dialog key="extraCostsDialog" [(visible)]="showExtraCostsModal" dismissableMask="true" modal="true" header="هزینه های اضافی">
+<p-dialog key="extraCostsDialog" [(visible)]="showExtraCostsModal" dismissableMask="true" modal="true"
+    header="هزینه های اضافی">
     <p-table [value]="extraCosts">
         <ng-template #header>
             <tr>
@@ -136,11 +149,76 @@
         <ng-template #body let-extraCost let-index="rowIndex">
             <tr>
                 <td>{{extraCost.title}}</td>
-                <td>{{extraCost.amount/10|number}}</td>
+                <td>{{extraCost.amount|toman}}</td>
                 <td>{{extraCost.description}}</td>
                 <td>
                     <i (click)="openRemoveExtraCostConfirmationDialog($event,index)"
                         class="cursor-pointer text-red-500 pi pi-trash pr-2"></i>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>
+
+<p-dialog key="installmentsDialog" [(visible)]="showInstallmentsModal" dismissableMask="true" modal="true"
+    header="اقساط" [style]="{ width: '70%' }">
+    @if(newInstallmentFormGroup){
+
+    <form [formGroup]="newInstallmentFormGroup">
+        <div class="grid align-center">
+            <div class="col">
+                <p-floatlabel variant="on" class="mt-2">
+                    <input id="newAmount" class="w-full" pInputText autocomplete="off" formControlName="amount" />
+                    <label for="newAmount">مبلغ</label>
+                </p-floatlabel>
+            </div>
+            <div class="col">
+                <p-floatlabel variant="on" class="mt-2">
+                    <ng-persian-datepicker (dateOnSelect)="dateChanged($event)" uiInitViewMode="day"
+                        [dateInitValue]="false" [uiTodayBtnEnable]="true">
+                        <input placeholder="تاریخ" class="w-full" pInputText id="date" formControlName="date"
+                            [autocomplete]="false" />
+                    </ng-persian-datepicker>
+                    <!-- {{newInstallmentFormGroup.controls['date'].value}} -->
+                </p-floatlabel>
+            </div>
+            <div class="col">
+                <p-floatlabel variant="on" class="mt-2">
+                    <input id="newAmount" class="w-full" pInputText autocomplete="off" formControlName="description" />
+                    <label for="newAmount">توضیحات</label>
+                </p-floatlabel>
+            </div>
+            <div class="col-auto">
+                <p-button label="ثبت" [size]="'small'" (onClick)="submitNewInstallment()" />
+            </div>
+        </div>
+        <div>
+            {{newInstallmentFormGroup.controls['amount'].value|toman:true}}
+        </div>
+    </form>
+    }
+
+    <p-table [value]="installments">
+        <ng-template #header>
+            <tr>
+                <th>تاریخ</th>
+                <th>مبلغ</th>
+                <th>توضیحات</th>
+                <th>حذف</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-installment let-index="rowIndex">
+            <tr>
+                <td>{{installment.verifyDate|persianDate:true}}</td>
+                <td>{{installment.amount|toman}}</td>
+                <td>{{installment.description}}</td>
+                <td>
+                    @if(!installment.authority){
+                    <i class="pi pi-trash text-red-500 cursor-pointer"
+                        (click)="removeInstallment(installment.id,index,$event)"></i>
+                    }@else {
+                    اقساط آنلاین امکان حذف ندارند
+                    }
                 </td>
             </tr>
         </ng-template>

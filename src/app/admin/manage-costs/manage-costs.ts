@@ -9,12 +9,17 @@ import { Table } from 'primeng/table';
 import { finalize, forkJoin } from 'rxjs';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
-import { ApplicantExtraCostDto, ApplicantOrderDto } from '@app/share/models/payment.dto';
+import { ApplicantExtraCostDto, ApplicantOrderDto, InstallmentDto, OrderDto } from '@app/share/models/payment.dto';
 import { ApplicantService } from '@app/core/applicant-service';
+import { PersianDatePipe } from '@app/share/persian-date-pipe';
+import { TomanPipe } from '@app/share/toman-pipe';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Jalali } from 'jalali-ts';
+import { IActiveDate } from 'ng-persian-datepicker';
 
 @Component({
   standalone: true,
-  imports: [SHARE_IMPORTS],
+  imports: [SHARE_IMPORTS, PersianDatePipe, TomanPipe],
   templateUrl: './manage-costs.html',
   styleUrl: './manage-costs.scss',
   providers: [ConfirmationService]
@@ -33,6 +38,11 @@ export class ManageCosts extends GenericComponent {
   protected applicants: ApplicantOrderDto[];
   protected extraCosts: ApplicantExtraCostDto[];
   protected showExtraCostsModal = false;
+  protected showInstallmentsModal = false;
+  protected installments: OrderDto[];
+  protected selectedApplicant: ApplicantOrderDto;
+  protected selectedLoan: OrderDto;
+  protected newInstallmentFormGroup: FormGroup;
 
   ngOnInit() {
     this.regId = this.activatedRoute.snapshot.params['regId'];
@@ -58,6 +68,79 @@ export class ManageCosts extends GenericComponent {
   openExtraCostsModal(applicant: ApplicantOrderDto) {
     this.extraCosts = applicant.applicantExtraCosts;
     this.showExtraCostsModal = true;
+  }
+  openInstallmentsModal(applicant: ApplicantOrderDto) {
+    this.selectedApplicant = applicant;
+    let loan = applicant.orders.find(e => e.authority.toLocaleLowerCase() == 'loan');
+    if (!loan) {
+      this.notify.warn('این کاربر وامی ندارد');
+      return;
+    }
+    this.selectedLoan = loan;
+    this.installments = loan.inverseLoan;
+    this.showInstallmentsModal = true;
+    this.newInstallmentFormGroup = new FormGroup({
+      amount: new FormControl('', [Validators.required]),
+      date: new FormControl('', [Validators.required]),
+      description: new FormControl(''),
+    });
+  }
+  submitNewInstallment() {
+    this.newInstallmentFormGroup.markAllAsDirty();
+    if (this.newInstallmentFormGroup.invalid) {
+      this.notify.warn('موارد مشخص شده رو برطرف کن');
+      return;
+    }
+    let amount = this.newInstallmentFormGroup.get('amount')?.value;
+    let date = new Date(Jalali.parse(this.newInstallmentFormGroup.get('date')?.value).gregorian());
+    let description = this.newInstallmentFormGroup.get('description')?.value;
+
+    let newInstallment: InstallmentDto = {
+      loanId: this.selectedLoan.id,
+      amount: amount,
+      description: description,
+      applicantId: this.selectedApplicant.id,
+      date: date,
+      nationalNumber: this.selectedApplicant.nationalNumber
+    }
+    this.spinnerService.show();
+    this.applicantService.insertInstallment(newInstallment)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: data => {
+          this.newInstallmentFormGroup.reset();
+          this.selectedLoan.inverseLoan.push(data);
+          this.prepareDataToShow();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.notify.defaultError();
+        }
+      })
+  }
+  removeInstallment(id: number, index: number, event: Event) {
+    this.confirmationService.confirm({
+      target: event.currentTarget as EventTarget,
+      message: 'آیا از حذف این قسط مطمئنی؟',
+      acceptLabel: 'بله',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectLabel: 'خیر',
+      accept: () => {
+        this.spinnerService.show();
+        this.applicantService.removeInstallment(id)
+          .pipe(finalize(() => this.spinnerService.hide()))
+          .subscribe({
+            next: data => {
+              this.selectedLoan.inverseLoan.splice(index, 1);
+              this.prepareDataToShow();
+
+              this.notify.defaultSuccess();
+            },
+            error: (err: HttpErrorResponse) => {
+              this.notify.defaultError();
+            }
+          })
+      }
+    })
   }
   openRemoveExtraCostConfirmationDialog(event: Event, index: number) {
     this.confirmationService.confirm({
@@ -118,6 +201,11 @@ export class ManageCosts extends GenericComponent {
       applicant.totalLoan = applicant.orders.filter(e => e.authority == "LOAN").map(e => e.amount).reduce((val, sum) => sum += val, 0);
       applicant.totalCash = applicant.orders.filter(e => e.authority !== "LOAN" && !e.loanId).map(e => e.amount).reduce((val, sum) => sum += val, 0);
       applicant.remained = applicant.totalCost - applicant.totalCash - applicant.totalLoan;
+      let loan = applicant.orders.find(e => e.authority.toLocaleLowerCase() == 'loan');
+      if (loan) {
+        applicant.totalInstallments = loan.inverseLoan.map(e => e.amount).reduce((val, sum) => sum += val, 0);
+        applicant.remainedLoan = applicant.totalLoan - applicant.totalInstallments;
+      }
     })
   }
   openChangeCostsModal(event: Event) {
@@ -139,6 +227,8 @@ export class ManageCosts extends GenericComponent {
     this.table.clear()
     this.searchValue = ''
   }
+
+
 
   exportToExcel(table: Table): void {
     if (!table) return;
@@ -188,5 +278,10 @@ export class ManageCosts extends GenericComponent {
     const englishDigits = '0123456789';
 
     event.target.value = event.target.value.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
+  }
+
+
+  dateChanged(event:IActiveDate){
+    this.newInstallmentFormGroup.controls['date'].patchValue(event.shamsi);
   }
 }

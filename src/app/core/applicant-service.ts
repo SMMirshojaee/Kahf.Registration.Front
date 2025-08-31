@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@app/share/environment/environment';
 import { ApplicantWithFormValueDto } from '@app/share/models/applicant-form-value.dto';
 import { ApplicantDto, ApplicantInfoDto, MemberInfoDto, SigninDto, SignupDto } from '@app/share/models/applicant.dto';
-import { ApplicantExtraCostDto, ApplicantOrderDto } from '@app/share/models/payment.dto';
+import { ApplicantExtraCostDto, ApplicantOrderDto, InstallmentDto, OrderDto } from '@app/share/models/payment.dto';
 import { TokenDto } from '@app/share/models/token.dto';
 import { Observable } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApplicantService {
-  private httpClient = inject(HttpClient);
+    private httpClient = inject(HttpClient);
   private address = `${environment.baseApiAddress}/api/applicant`;
 
   signup(regId: number, signupForm: SignupDto): Observable<TokenDto> {
@@ -80,5 +80,14 @@ export class ApplicantService {
   }
   removeExtraCost(id: number): Observable<any> {
     return this.httpClient.delete(`${this.address}/removeExtraCost/${id}`);
+  }
+
+  insertInstallment(newInstallment: InstallmentDto): Observable<OrderDto> {
+    let params = new HttpParams()
+      .set('date', newInstallment.date.toLocaleString());
+    return this.httpClient.post<OrderDto>(`${this.address}/insertInstallment`, newInstallment, { params });
+  }
+  removeInstallment(id: number):Observable<any> {
+    return this.httpClient.delete(`${this.address}/removeInstallment/${id}`);
   }
 }
