@@ -31,7 +31,7 @@
     }
 </p-dialog>
 
-<p-table #dt1 [value]="applicants" dataKey="id" [size]="'small'" styleClass="text-sm"
+<p-table #dt1 [value]="applicants" filter dataKey="id" [size]="'small'" styleClass="text-sm"
     [globalFilterFields]="['firstName', 'lastName', 'nationalNumber', 'phoneNumber']" sortMode="multiple">
     <ng-template #caption>
         <div class="flex">
@@ -65,7 +65,7 @@
     <ng-template #header>
         <tr>
             @if(smsPanelIsOpen){
-            <th> <p-checkBox [binary]="true" [(ngModel)]="checkAll" (onChange)="checkAllChanged()"></p-checkBox> </th>
+            <th> <p-checkBox [binary]="true" [(ngModel)]="checkAll" (onChange)="checkAllChanged(dt1)"></p-checkBox> </th>
             }
             <th>ردیف</th>
             <th pSortableColumn="status.title">وضعیت زائر<p-sortIcon field="status.title" /></th>

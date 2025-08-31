@@ -261,8 +261,19 @@ export class ViewFormStep extends GenericComponent {
   showSmsModal() {
     this.smsPanelIsOpen = !this.smsPanelIsOpen;
   }
-  checkAllChanged() {
-    this.applicants.forEach(e => e.isCheck = this.checkAll);
+  checkAllChanged(table: Table) {
+    debugger
+    if (!this.checkAll)
+      this.applicants.forEach(app => app.isCheck = false)
+    else {
+      if (table.filteredValue)
+        table.filteredValue.forEach(e => {
+          let applicant = this.applicants.find(ap => ap.id == e.id);
+          applicant.isCheck = this.checkAll;
+        });
+      else
+        this.applicants.forEach(e => e.isCheck = this.checkAll);
+    }
   }
   sendSms() {
     let checkedIds = this.applicants.filter(e => e.isCheck).map(e => e.id);
