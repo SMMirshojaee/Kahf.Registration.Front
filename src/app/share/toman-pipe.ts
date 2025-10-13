@@ -7,9 +7,9 @@ import { Pipe, PipeTransform, inject } from '@angular/core';
 })
 export class TomanPipe implements PipeTransform {
   private numberPipe = inject(DecimalPipe);
-  transform(valueInRial: number, showUnit = false): string {
+  transform(valueInRial: number, showUnit = false, nullString = '-'): string {
     if (!valueInRial)
-      return '-';
+      return nullString;
     return `${this.numberPipe.transform(valueInRial / 10)}${(showUnit ? ' تومن' : '')}`;
   }
 

@@ -30,7 +30,7 @@
 <p-divider></p-divider>
 <p-table #dt1 [value]="applicants" dataKey="id" [size]="'small'" styleClass="text-sm  filter-div"
     [globalFilterFields]="['firstName', 'lastName', 'nationalNumber', 'phoneNumber']" sortMode="multiple"
-    [stripedRows]="true">
+    [stripedRows]="true" (onFilter)="calculateSums()">
     <ng-template #caption>
         <div class="flex">
             <p-iconfield iconPosition="right" class="w-full">
@@ -49,6 +49,12 @@
             <i style="font-size: xx-large;" class="pi pi-file-excel text-primary cursor-pointer float-left"
                 (click)="exportToExcel(dt1)"></i>
         </div>
+        <div>
+            <p-message severity="info">
+
+                همه اعداد جدول زیر به "تومان" می باشد
+            </p-message>
+        </div>
     </ng-template>
     <ng-template #header>
         <tr>
@@ -61,13 +67,14 @@
             <th pSortableColumn="nationalNumber">کدملی <p-sortIcon field="nationalNumber" /></th>
             <!-- <th pSortableColumn="phoneNumber">شماره موبایل <p-sortIcon field="phoneNumber" /></th> -->
             <th pSortableColumn="membersCount">تعداد همراه <p-sortIcon field="membersCount" /></th>
-            <th pSortableColumn="totalExtraCosts">هزینه های اضافی (تومن) <p-sortIcon field="totalExtraCosts" /></th>
-            <th pSortableColumn="totalCost">هزینه کل (تومن) <p-sortIcon field="totalCost" /></th>
-            <th pSortableColumn="remained">مانده (تومن)<p-sortIcon field="remained" /></th>
-            <th pSortableColumn="totalCash">واریز نقدی (تومن)<p-sortIcon field="totalCash" /></th>
-            <th pSortableColumn="totalLoan">وام (تومن)<p-sortIcon field="totalLoan" /></th>
-            <th pSortableColumn="totalInstallments">اقساط پرداخت شده (تومن)<p-sortIcon field="totalInstallments" /></th>
-            <th pSortableColumn="remainedLoan">مانده اقساط (تومن)<p-sortIcon field="remainedLoan" /></th>
+            <th pSortableColumn="totalExtraCosts">هزینه های اضافی <p-sortIcon field="totalExtraCosts" /></th>
+            <th pSortableColumn="totalCost">هزینه کل <p-sortIcon field="totalCost" /></th>
+            <th pSortableColumn="remained">مانده <p-sortIcon field="remained" /></th>
+            <th pSortableColumn="totalCash">واریز نقدی <p-sortIcon field="totalCash" /></th>
+            <th pSortableColumn="totalLoan">وام <p-sortIcon field="totalLoan" /></th>
+            <th pSortableColumn="paidInstallments">اقساط پرداخت شده <p-sortIcon field="paidInstallments" /></th>
+            <th pSortableColumn="overdue">مانده سررسید شده <p-sortIcon field="overdue" /></th>
+            <th pSortableColumn="remainedLoan">مانده اقساط <p-sortIcon field="remainedLoan" /></th>
         </tr>
         <tr>
             <th></th>
@@ -80,12 +87,33 @@
             <!-- <th></th> -->
             <th></th>
             <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th>{{tableSums.totalCost|toman}}</th>
+            <th>{{tableSums.remained|toman}}</th>
+            <th>{{tableSums.totalCash|toman}}</th>
+            <th>
+                {{tableSums.totalLoan|toman}}
+                <div class="grid">
+                    <div class="col">
+                        <p-floatlabel variant="on" class="mt-2">
+                            <input pInputText id="installmentCount" autocomplete="off" type="number"
+                                [(ngModel)]="tempInstallmentStatus.count" />
+                            <label for="installmentCount">تعداد اقساط</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="col">
+                        <p-floatlabel variant="on" class="mt-2">
+                            <input pInputText id="passedMonths" autocomplete="off"
+                                [(ngModel)]="tempInstallmentStatus.passedMonths" />
+                            <label for="installmentCount">ماههای گذشته</label>
+                        </p-floatlabel>
+                    </div>
+                    <p-button [rounded]="true" size="small" icon="pi pi-check"
+                        (onClick)="prepareDataToShow()"></p-button>
+                </div>
+            </th>
+            <th>{{tableSums.paidInstallments|toman}}</th>
+            <th>{{tableSums.overdue|toman}}</th>
+            <th>{{tableSums.remainedLoan|toman}}</th>
         </tr>
     </ng-template>
     <ng-template #body let-applicant let-index="rowIndex">
@@ -123,7 +151,8 @@
                     class="cursor-pointer text-cyan-500 pi pi-plus-circle pr-2"></i>
                 }
             </td>
-            <td><span class="text-green-500">{{applicant.totalInstallments|toman}}</span></td>
+            <td><span class="text-green-500">{{applicant.paidInstallments|toman}}</span></td>
+            <td>{{applicant.overdue|toman:false:'ندارد'}}</td>
             <td><span class="text-orange-500">{{applicant.remainedLoan|toman}}</span> </td>
         </tr>
     </ng-template>

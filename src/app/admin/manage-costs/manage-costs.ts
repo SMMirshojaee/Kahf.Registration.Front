@@ -43,6 +43,16 @@ export class ManageCosts extends GenericComponent {
   protected selectedApplicant: ApplicantOrderDto;
   protected selectedLoan: OrderDto;
   protected newInstallmentFormGroup: FormGroup;
+  protected tempInstallmentStatus = { count: 6, passedMonths: 2 }
+  protected tableSums = {
+    totalCost: 0,
+    remained: 0,
+    totalCash: 0,
+    totalLoan: 0,
+    paidInstallments: 0,
+    overdue: 0,
+    remainedLoan: 0,
+  }
 
   ngOnInit() {
     this.regId = this.activatedRoute.snapshot.params['regId'];
@@ -69,6 +79,8 @@ export class ManageCosts extends GenericComponent {
     this.extraCosts = applicant.applicantExtraCosts;
     this.showExtraCostsModal = true;
   }
+
+
   openInstallmentsModal(applicant: ApplicantOrderDto) {
     this.selectedApplicant = applicant;
     let loan = applicant.orders.find(e => e.authority.toLocaleLowerCase() == 'loan');
@@ -192,6 +204,7 @@ export class ManageCosts extends GenericComponent {
       },
     })
   }
+
   prepareDataToShow() {
     this.applicants.forEach(applicant => {
       applicant.fullName = `${applicant.firstName} - ${applicant.lastName}`;
@@ -201,12 +214,33 @@ export class ManageCosts extends GenericComponent {
       applicant.totalLoan = applicant.orders.filter(e => e.authority == "LOAN").map(e => e.amount).reduce((val, sum) => sum += val, 0);
       applicant.totalCash = applicant.orders.filter(e => e.authority !== "LOAN" && !e.loanId).map(e => e.amount).reduce((val, sum) => sum += val, 0);
       applicant.remained = applicant.totalCost - applicant.totalCash - applicant.totalLoan;
-      let loan = applicant.orders.find(e => e.authority.toLocaleLowerCase() == 'loan');
+
+      let loan = applicant.orders.find(e => e.authority?.toLocaleLowerCase() == 'loan');
+
       if (loan) {
-        applicant.totalInstallments = loan.inverseLoan.map(e => e.amount).reduce((val, sum) => sum += val, 0);
-        applicant.remainedLoan = applicant.totalLoan - applicant.totalInstallments;
+        applicant.paidInstallments = loan.inverseLoan.map(e => e.amount).reduce((val, sum) => sum += val, 0);
+        applicant.remainedLoan = applicant.totalLoan - applicant.paidInstallments;
+        if (!this.tempInstallmentStatus.count) {
+          applicant.overdue = Infinity;
+        } else {
+          let overdue = Math.floor(applicant.totalLoan / this.tempInstallmentStatus.count) * this.tempInstallmentStatus.passedMonths - applicant.paidInstallments;
+          applicant.overdue = overdue < 0 ? null : overdue;
+        }
       }
     })
+
+    this.calculateSums();
+  }
+  calculateSums() {
+    let list = this.table.filteredValue ?? this.applicants;
+    this.tableSums.totalCost = list.map(e => e.totalCost).filter((e) => !(e == null || e == undefined || Number.isNaN(e))).reduce((val, sum) => sum += val, 0);
+    this.tableSums.remained = list.map(e => e.remained).filter((e) => !(e == null || e == undefined || Number.isNaN(e))).reduce((val, sum) => sum += val, 0);
+    this.tableSums.totalCash = list.map(e => e.totalCash).filter((e) => !(e == null || e == undefined || Number.isNaN(e))).reduce((val, sum) => sum += val, 0);
+    this.tableSums.totalLoan = list.map(e => e.totalLoan).filter((e) => !(e == null || e == undefined || Number.isNaN(e))).reduce((val, sum) => sum += val, 0);
+    this.tableSums.paidInstallments = list.map(e => e.paidInstallments).filter((e) => !(e == null || e == undefined || Number.isNaN(e))).reduce((val, sum) => sum += val, 0);
+    this.tableSums.overdue = list.map(e => e.overdue).filter((e) => !(e == null || e == undefined || Number.isNaN(e))).reduce((val, sum) => sum += val, 0);
+    this.tableSums.remainedLoan = list.map(e => e.remainedLoan).filter((e) => !(e == null || e == undefined || Number.isNaN(e))).reduce((val, sum) => sum += val, 0);
+
   }
   openChangeCostsModal(event: Event) {
     this.confirmationService.confirm({
@@ -281,7 +315,7 @@ export class ManageCosts extends GenericComponent {
   }
 
 
-  dateChanged(event:IActiveDate){
+  dateChanged(event: IActiveDate) {
     this.newInstallmentFormGroup.controls['date'].patchValue(event.shamsi);
   }
 }

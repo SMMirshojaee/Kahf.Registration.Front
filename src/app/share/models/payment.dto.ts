@@ -45,8 +45,9 @@ export class ApplicantOrderDto {
     public totalCash: number;
     public totalLoan: number;
     public remained: number;
-    public totalInstallments: number;
+    public paidInstallments: number;
     public remainedLoan: number;
+    public overdue?: number;
 }
 export class ApplicantExtraCostDto {
     public id: number;
