@@ -43,7 +43,7 @@ export class ManageCosts extends GenericComponent {
   protected selectedApplicant: ApplicantOrderDto;
   protected selectedLoan: OrderDto;
   protected newInstallmentFormGroup: FormGroup;
-  protected tempInstallmentStatus = { count: 6, passedMonths: 2 }
+  protected tempInstallmentStatus = { count: 6, passedMonths: 3 }
   protected tableSums = {
     totalCost: 0,
     remained: 0,

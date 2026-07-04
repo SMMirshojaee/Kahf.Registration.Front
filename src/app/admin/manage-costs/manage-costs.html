@@ -65,7 +65,7 @@
             <!-- <th pSortableColumn="firstName">نام<p-sortIcon field="firstName" /></th> -->
             <th pSortableColumn="fullName">نام و نام خانوادگی <p-sortIcon field="fullName" /></th>
             <th pSortableColumn="nationalNumber">کدملی <p-sortIcon field="nationalNumber" /></th>
-            <!-- <th pSortableColumn="phoneNumber">شماره موبایل <p-sortIcon field="phoneNumber" /></th> -->
+            <th pSortableColumn="phoneNumber">شماره موبایل <p-sortIcon field="phoneNumber" /></th>
             <th pSortableColumn="membersCount">تعداد همراه <p-sortIcon field="membersCount" /></th>
             <th pSortableColumn="totalExtraCosts">هزینه های اضافی <p-sortIcon field="totalExtraCosts" /></th>
             <th pSortableColumn="totalCost">هزینه کل <p-sortIcon field="totalCost" /></th>
@@ -84,7 +84,7 @@
             <th><p-columnFilter matchMode="contains" type="text" field="fullName"></p-columnFilter></th>
             <!-- <th><p-columnFilter matchMode="contains" type="text" field="lastName"></p-columnFilter></th> -->
             <th><p-columnFilter matchMode="contains" type="text" field="nationalNumber"></p-columnFilter></th>
-            <!-- <th></th> -->
+            <th></th>
             <th></th>
             <th></th>
             <th>{{tableSums.totalCost|toman}}</th>
@@ -112,7 +112,9 @@
                 </div>
             </th>
             <th>{{tableSums.paidInstallments|toman}}</th>
-            <th>{{tableSums.overdue|toman}}</th>
+            <th>{{tableSums.overdue|toman}}
+                <p-columnFilter matchMode="gt" type="numeric" field="overdue"></p-columnFilter>
+            </th>
             <th>{{tableSums.remainedLoan|toman}}</th>
         </tr>
     </ng-template>
@@ -128,7 +130,7 @@
                 <i (click)="openSigninModal($event, applicant)"
                     class="cursor-pointer text-cyan-500 pi pi-external-link pr-2"></i>
             </td>
-            <!-- <td>{{applicant.phoneNumber}}</td> -->
+            <td>{{applicant.phoneNumber}}</td>
             <td>{{applicant.membersCount}}</td>
             <td>
                 {{applicant.totalExtraCosts|toman}}
@@ -152,7 +154,7 @@
                 }
             </td>
             <td><span class="text-green-500">{{applicant.paidInstallments|toman}}</span></td>
-            <td>{{applicant.overdue|toman:false:'ندارد'}}</td>
+            <td>{{applicant.overdue|toman:false:'0'}}</td>
             <td><span class="text-orange-500">{{applicant.remainedLoan|toman}}</span> </td>
         </tr>
     </ng-template>

@@ -99,16 +99,22 @@
             <input [disabled]="formIsDisable" (change)="imageSelected($event,field)" accept="Image/*"
                 id="field_{{field.id}}" [hidden]="true" #fileInput type="file" formControlName="field_{{field.id}}">
             <p-button [disabled]="formIsDisable" icon="pi pi-upload" styleClass="upload-button"
-                (onClick)="fileInput.click()">انتخاب
-                فایل</p-button>
+                (onClick)="fileInput.click()">
+              @if(field.imageSource){
+                تغییر فایل
+              }
+              @else{
+              انتخاب فایل
+              }
+            </p-button>
             @if(field.imageBase64){
             <div class="mt-2">
                 <img class="shadow-5" width="100%" [src]="field.imageBase64">
             </div>
             }
             }
-            @else if(field.imageSource) {
-            <div>
+            @if(field.imageSource && !field.imageBase64) {
+            <div class="mt-2">
                 <img class="shadow-5" width="100%" [src]="field.imageSource">
             </div>
             }

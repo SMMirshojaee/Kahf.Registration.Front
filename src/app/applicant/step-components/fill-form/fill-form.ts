@@ -1,20 +1,20 @@
-import { HttpErrorResponse } from '@angular/common/module.d';
-import { Component, OnDestroy, inject } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ApplicantFormValueService } from '@app/core/applicant-form-value-service';
-import { FieldService } from '@app/core/field-service';
-import { environment } from '@app/share/environment/environment';
-import { GenericComponent } from '@app/share/generic-component';
-import { SHARE_IMPORTS } from '@app/share/imports';
-import { ApplicantFormValueDto } from '@app/share/models/applicant-form-value.dto';
-import { MemberInfoDto } from '@app/share/models/applicant.dto';
-import { FieldTypeEnum } from '@app/share/models/field-type.enum';
-import { FieldDto } from '@app/share/models/field.dto';
-import { MobileValidator } from '@app/share/validators/mobile.validator';
-import { NationalCodeValidator } from '@app/share/validators/national-code.validator';
-import { Jalali } from 'jalali-ts';
-import { ConfirmationService } from 'primeng/api';
-import { finalize, forkJoin } from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/module.d';
+import {Component, OnDestroy, inject} from '@angular/core';
+import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {ApplicantFormValueService} from '@app/core/applicant-form-value-service';
+import {FieldService} from '@app/core/field-service';
+import {environment} from '@app/share/environment/environment';
+import {GenericComponent} from '@app/share/generic-component';
+import {SHARE_IMPORTS} from '@app/share/imports';
+import {ApplicantFormValueDto} from '@app/share/models/applicant-form-value.dto';
+import {MemberInfoDto} from '@app/share/models/applicant.dto';
+import {FieldTypeEnum} from '@app/share/models/field-type.enum';
+import {FieldDto} from '@app/share/models/field.dto';
+import {MobileValidator} from '@app/share/validators/mobile.validator';
+import {NationalCodeValidator} from '@app/share/validators/national-code.validator';
+import {Jalali} from 'jalali-ts';
+import {ConfirmationService} from 'primeng/api';
+import {finalize, forkJoin} from 'rxjs';
 
 @Component({
   standalone: true,
@@ -45,6 +45,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
     clearInterval(this.interval);
     this.tokenService.setFormFields(this.applicantId, this.regStepId, this.formGroup.value);
   }
+
   ngOnInit() {
     const applicantInfo = this.tokenService.getApplicantInfo();
     this.applicantId = applicantInfo.applicantid;
@@ -77,15 +78,16 @@ export class FillForm extends GenericComponent implements OnDestroy {
       .subscribe({
         next: data => {
           let previousValues = data.values;
-          this.formIsDisable ||= previousValues?.length > 0;
+          // this.formIsDisable ||= previousValues?.length > 0;
           this.fields = data.fields;
           this.formGroup = new FormGroup({});
 
           this.fields.forEach(field => {
             let previousValue = previousValues?.filter(e => e.fieldId == field.id);
             let formControl = new FormControl();
-            if (field.mandatory)
+            if (field.mandatory) {
               formControl.addValidators(Validators.required);
+            }
             switch (field.fieldTypeId) {
               case FieldTypeEnum.CheckBox:
                 let cbOptions = field.fieldOptions.filter(e => e.type == 'Option');
@@ -128,7 +130,9 @@ export class FillForm extends GenericComponent implements OnDestroy {
                   maxSizeInMB = parseInt(maxSizeInMBOption.value);
                 field.maxSizeInMB = maxSizeInMB;
                 if (previousValue.length) {
+                  field.fileName = previousValue[0].value;
                   field.imageSource = `${environment.repositoryAddress}/${(this.memberId ?? this.applicantId)}/${previousValue[0].value}`;
+                  formControl.patchValue(previousValue[0].value);
                 }
                 break;
               case FieldTypeEnum.Radio:
@@ -201,6 +205,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
       field.fileName = `${this.regStepId}__${field.id}__${this.generateRandomText(10)}.${extension}`;
     }
   }
+
   private fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -209,6 +214,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
       reader.onerror = error => reject(error);
     });
   }
+
   checkForm() {
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsDirty();
@@ -238,6 +244,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
       }
     });
   }
+
   submitForm() {
     let imageFields: FieldDto[] = [];
     let applicantFormValues: ApplicantFormValueDto[] = [];
@@ -281,14 +288,24 @@ export class FillForm extends GenericComponent implements OnDestroy {
           } as ApplicantFormValueDto)
           break;
         case FieldTypeEnum.Image:
-          applicantFormValues.push({
-            applicantId: this.applicantId,
-            fieldId: field.id,
-            fieldOptionId: null,
-            value: field.fileName,
-            deleted: false,
-          } as ApplicantFormValueDto);
-          imageFields.push(field);
+          debugger
+          if (field.imageBase64) {
+            applicantFormValues.push({
+              applicantId: this.applicantId,
+              fieldId: field.id,
+              fieldOptionId: null,
+              value: field.fileName,
+              deleted: false,
+            } as ApplicantFormValueDto);
+            imageFields.push(field);
+          } else
+            applicantFormValues.push({
+              applicantId: this.applicantId,
+              fieldId: field.id,
+              fieldOptionId: null,
+              value: field.fileName,
+              deleted: false,
+            } as ApplicantFormValueDto);
           break;
         case FieldTypeEnum.Mobile:
         case FieldTypeEnum.NationalCode:
@@ -324,11 +341,13 @@ export class FillForm extends GenericComponent implements OnDestroy {
             forkJoin(uploads)
               .pipe(finalize(() => this.showFinal(data)))
               .subscribe({
-                next: () => { },
-                error: () => { this.notify.error('خطا در بارگذاری عکس!') }
+                next: () => {
+                },
+                error: () => {
+                  this.notify.error('خطا در بارگذاری عکس!')
+                }
               })
           } else {
-
             this.showFinal(data)
           }
         }, error: (err: HttpErrorResponse) => {
@@ -338,6 +357,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
         }
       })
   }
+
   showFinal(trackingCode: string) {
     this.spinnerService.hide();
     let message = trackingCode ? `کد رهگیری ثبت نام شما: ${trackingCode}. این کد را نزد خود نگه دارید. برای پیگیری فرایند های ثبت نام به این کد نیاز دارید` :
@@ -359,19 +379,21 @@ export class FillForm extends GenericComponent implements OnDestroy {
       }
     })
   }
+
   convertToEnglishDigits(event: any, fieldId: number): void {
     const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
     const englishDigits = '0123456789';
 
     event.target.value = event.target.value.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
     // اگر از FormControl استفاده می‌کنی، مقدار رو هم به‌روز کن:
-    this.formGroup.controls[`field_${fieldId}`].setValue(event.target.value, { emitEvent: false });
+    this.formGroup.controls[`field_${fieldId}`].setValue(event.target.value, {emitEvent: false});
   }
 
   openInfoModal(information: { value?: string, title: string, id: number }) {
     this.informationModal = information;
     this.showInfoModal = true;
   }
+
   private generateRandomText(length: number): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';

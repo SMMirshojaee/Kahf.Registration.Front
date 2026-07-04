@@ -40,17 +40,18 @@ export class Signup extends GenericComponent {
 
   }
   ngOnInit() {
-    this.confirmationService.confirm({
-      message: 'زائر گرامی در نظر داشته باشید جهت تکمیل فرم ثبت نام می‌بایست اطلاعاتی نظیر تصویر کارت ملی و عکس پرسنلی و تصویر گذرنامه خود و همراهان را آپلود نمایید. از آنجایی که بعد از وارد نمودن اطلاعات، امکان ویرایش آن ها وجود ندارد قویا توصیه می‌کنیم این مدارک را آماده نمونه و سپس اقدام به ثبت‌نام نمایید',
-      header: 'توجه',
-      icon: 'pi pi-exclamation-triangle text-orange-500',
-      rejectVisible: false,
-      acceptButtonProps: {
-        label: 'متوجه شدم',
-        severity: 'primary',
-        text: false
-      }
-    });
+    if (false)
+      this.confirmationService.confirm({
+        message: 'زائر گرامی در نظر داشته باشید جهت تکمیل فرم ثبت نام می‌بایست اطلاعاتی نظیر تصویر کارت ملی و عکس پرسنلی و تصویر گذرنامه خود و همراهان را آپلود نمایید. از آنجایی که بعد از وارد نمودن اطلاعات، امکان ویرایش آن ها وجود ندارد قویا توصیه می‌کنیم این مدارک را آماده نمونه و سپس اقدام به ثبت‌نام نمایید',
+        header: 'توجه',
+        icon: 'pi pi-exclamation-triangle text-orange-500',
+        rejectVisible: false,
+        acceptButtonProps: {
+          label: 'متوجه شدم',
+          severity: 'primary',
+          text: false
+        }
+      });
     this.regId = this.activatedRoute.snapshot.params['id'];
     if (!this.regId) {
       this.notify.error('ثبت نام مورد نظر یافت نشد');
