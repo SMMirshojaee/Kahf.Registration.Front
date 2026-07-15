@@ -1,23 +1,23 @@
-import { HttpErrorResponse } from '@angular/common/module.d';
-import { Component, ViewChild, inject } from '@angular/core';
-import { ApplicantService } from '@app/core/applicant-service';
-import { FieldService } from '@app/core/field-service';
-import { RegStepService } from '@app/core/reg-step-service';
-import { environment } from '@app/share/environment/environment';
-import { GenericComponent } from '@app/share/generic-component';
-import { SHARE_IMPORTS } from '@app/share/imports';
-import { ApplicantWithFormValueDto } from '@app/share/models/applicant-form-value.dto';
-import { FieldTypeEnum } from '@app/share/models/field-type.enum';
-import { FieldDto } from '@app/share/models/field.dto';
-import { RegStepDto, RegStepStatusDto } from '@app/share/models/reg.dto';
-import { PersianDatePipe } from '@app/share/persian-date-pipe';
-import { ConfirmationService } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { finalize, forkJoin } from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/module.d';
+import {Component, ViewChild, inject} from '@angular/core';
+import {ApplicantService} from '@app/core/applicant-service';
+import {FieldService} from '@app/core/field-service';
+import {RegStepService} from '@app/core/reg-step-service';
+import {environment} from '@app/share/environment/environment';
+import {GenericComponent} from '@app/share/generic-component';
+import {SHARE_IMPORTS} from '@app/share/imports';
+import {ApplicantWithFormValueDto} from '@app/share/models/applicant-form-value.dto';
+import {FieldTypeEnum} from '@app/share/models/field-type.enum';
+import {FieldDto} from '@app/share/models/field.dto';
+import {RegStepDto, RegStepStatusDto} from '@app/share/models/reg.dto';
+import {PersianDatePipe} from '@app/share/persian-date-pipe';
+import {ConfirmationService} from 'primeng/api';
+import {Table} from 'primeng/table';
+import {finalize, forkJoin} from 'rxjs';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
-import { SmsService } from '@app/core/sms-service';
-import { SmsStatusPipe } from '@app/share/sms-status-pipe';
+import {SmsService} from '@app/core/sms-service';
+import {SmsStatusPipe} from '@app/share/sms-status-pipe';
 
 @Component({
   standalone: true,
@@ -55,6 +55,7 @@ export class ViewFormStep extends GenericComponent {
   protected sendSmsCheckbox = false;
   protected smsText = 'زائر گرامی. لطفا جهت مشاهده وضعیت خود، به سامانه ثبت‌نام مراجعه نمایید. با تشکر کهف الحصین';
   protected nextStep: RegStepDto;
+  protected previousStep: RegStepDto;
   protected nextStatusId: number;
   protected showMessageModal: boolean;
   protected smsPanelIsOpen = false;
@@ -63,6 +64,7 @@ export class ViewFormStep extends GenericComponent {
   protected selectedStatusesForTransfer: number[];
 
   @ViewChild('dt1') private table: Table;
+
   ngOnInit() {
     this.regStepId = this.activatedRoute.snapshot.params['regStepId'];
     this.regId = this.activatedRoute.snapshot.params['regId'];
@@ -71,7 +73,8 @@ export class ViewFormStep extends GenericComponent {
       applicants: this.getApplicantsWithFormValues(),
       fields: this.getFields(),
       statuses: this.getRegStepStatuses(),
-      nextStep: this.regStepService.getNextStep(this.regStepId)
+      nextStep: this.regStepService.getNextStep(this.regStepId),
+      previousStep: this.regStepService.getPreviousStep(this.regStepId)
     })
       .pipe(finalize(() => this.spinnerService.hide()))
       .subscribe({
@@ -83,6 +86,7 @@ export class ViewFormStep extends GenericComponent {
           this.acceptedStatuses = this.selectedRegStep.regStepStatuses.filter(e => e.isAccepted);
           this.selectedStatusesForTransfer = this.acceptedStatuses.map(e => e.id);
           this.nextStep = data.nextStep;
+          this.previousStep = data.previousStep;
           this.checkForm();
         },
         error: (err: HttpErrorResponse) => {
@@ -90,11 +94,13 @@ export class ViewFormStep extends GenericComponent {
         }
       })
   }
+
   openMembersDialog(applicant: ApplicantWithFormValueDto) {
     this.selectedApplicant = applicant;
 
     this.showMembersDialog = true;
   }
+
   gotoForm(applicant: ApplicantWithFormValueDto, isMember: boolean = false) {
     this.isMember = isMember;
     this.applicantDescription = applicant.description;
@@ -130,13 +136,13 @@ export class ViewFormStep extends GenericComponent {
         this.formData[`${field.id}`] = answerText;
       } else if (field.fieldTypeId == FieldTypeEnum.Image) {
         this.formData[`${field.id}`] = `${environment.repositoryAddress}/${applicant.id}/${answers[0].value}`;
-      }
-      else
+      } else
         this.formData[`${field.id}`] = answers[0]?.value;
     });
 
     this.showFormModal = true;
   }
+
   saveDescription(event: Event) {
     this.confirmationService.confirm({
       target: event.currentTarget as EventTarget,
@@ -170,9 +176,11 @@ export class ViewFormStep extends GenericComponent {
       }
     });
   }
+
   openTransferModal() {
     this.showTransferModal = true;
   }
+
   openChangeStatusDialog(applicant: ApplicantWithFormValueDto, index: number) {
     this.selectedApplicant = applicant;
     this.selectedApplicantIndex = index;
@@ -181,6 +189,7 @@ export class ViewFormStep extends GenericComponent {
     this.sendSmsCheckbox = false;
     this.showChangeStatusDialog = true;
   }
+
   checkForm() {
     let mandatoryFields = this.allFields.filter(e => e.mandatory && e.forLeader);
     this.applicants.forEach(applicant => {
@@ -188,6 +197,7 @@ export class ViewFormStep extends GenericComponent {
       applicant.notFilledMandoryFields = mandatoryFields.filter(item => !answeredFieldIds.includes(item.id))
     })
   }
+
   changeStatus() {
     if (this.newStatusId == this.selectedApplicant.statusId && !this.sendSmsCheckbox) {
       this.notify.warn('وضعیت انتخاب شده با وضعیت قبلی یکی است');
@@ -218,6 +228,7 @@ export class ViewFormStep extends GenericComponent {
       })
 
   }
+
   transfer() {
     if (!this.selectedStatusesForTransfer?.length) {
       this.notify.warn('انتخاب حداقل یک وضعیت از مرحله کنونی الزامی است!');
@@ -249,6 +260,7 @@ export class ViewFormStep extends GenericComponent {
       })
 
   }
+
   clear() {
     this.table.clear()
     this.searchValue = ''
@@ -258,9 +270,11 @@ export class ViewFormStep extends GenericComponent {
     this.showMessageModal = true;
     this.selectedApplicant = applicant;
   }
+
   showSmsModal() {
     this.smsPanelIsOpen = !this.smsPanelIsOpen;
   }
+
   checkAllChanged(table: Table) {
     if (!this.checkAll)
       this.applicants.forEach(app => app.isCheck = false)
@@ -274,6 +288,7 @@ export class ViewFormStep extends GenericComponent {
         this.applicants.forEach(e => e.isCheck = this.checkAll);
     }
   }
+
   sendSms() {
     let checkedIds = this.applicants.filter(e => e.isCheck).map(e => e.id);
     if (!(checkedIds?.length > 0)) {
@@ -295,6 +310,7 @@ export class ViewFormStep extends GenericComponent {
       })
 
   }
+
   openSignInmodal(event: Event, applicant: ApplicantWithFormValueDto) {
     let link = `${window.location.origin}/applicant/signin/${applicant.regId}?nc=${applicant.nationalNumber}&pn=${applicant.phoneNumber}&tc=${applicant.trackingCode}`;
     this.confirmationService.confirm({
@@ -321,12 +337,15 @@ export class ViewFormStep extends GenericComponent {
   getApplicantsWithFormValues() {
     return this.applicantService.getLeadersWithFormValuesAndMembersWithRegStepId(this.regStepId);
   }
+
   getFields() {
     return this.fieldService.getAll(this.regId);
   }
+
   getRegStepStatuses() {
     return this.regStepService.getById(this.regStepId);
   }
+
   changeApplicantStatus() {
     return this.applicantService.changeApplicantStatus(this.selectedApplicant.id, this.newStatusId, this.sendSmsCheckbox, this.smsText);
   }
@@ -356,7 +375,7 @@ export class ViewFormStep extends GenericComponent {
     const range = XLSX.utils.decode_range(ws['!ref']!);
     for (let R = range.s.r; R <= range.e.r; ++R) {
       for (let C = range.s.c; C <= range.e.c; ++C) {
-        const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+        const cellAddress = XLSX.utils.encode_cell({r: R, c: C});
         const cell = ws[cellAddress];
         if (cell) {
           cell.t = 's';     // type string
@@ -368,7 +387,7 @@ export class ViewFormStep extends GenericComponent {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const excelBuffer: any = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});
     const blob: Blob = new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });

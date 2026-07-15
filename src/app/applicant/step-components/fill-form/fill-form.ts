@@ -288,7 +288,6 @@ export class FillForm extends GenericComponent implements OnDestroy {
           } as ApplicantFormValueDto)
           break;
         case FieldTypeEnum.Image:
-          debugger
           if (field.imageBase64) {
             applicantFormValues.push({
               applicantId: this.applicantId,
@@ -360,7 +359,7 @@ export class FillForm extends GenericComponent implements OnDestroy {
 
   showFinal(trackingCode: string) {
     this.spinnerService.hide();
-    let message = trackingCode ? `کد رهگیری ثبت نام شما: ${trackingCode}. این کد را نزد خود نگه دارید. برای پیگیری فرایند های ثبت نام به این کد نیاز دارید` :
+    let message = trackingCode ? `کد رهگیری ثبت نام شما: ${trackingCode}. این کد را نزد خود نگه دارید. برای پیگیری فرایند های ثبت نام به این کد نیاز دارید. لطفا برای ادامه فرایند روی دکمه زیر کلیک کنید.` :
       '';
     this.confirmationService.confirm({
       message: message,

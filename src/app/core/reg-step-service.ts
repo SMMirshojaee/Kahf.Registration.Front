@@ -27,4 +27,8 @@ export class RegStepService {
   getNextStep(currentRegStepId: number): Observable<RegStepDto> {
     return this.httpClient.get<RegStepDto>(`${this.address}/getNextStep/${currentRegStepId}`);
   }
+
+  getPreviousStep(currentRegStepId: number): Observable<RegStepDto> {
+    return this.httpClient.get<RegStepDto>(`${this.address}/getPreviousStep/${currentRegStepId}`);
+  }
 }

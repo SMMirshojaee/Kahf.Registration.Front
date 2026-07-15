@@ -7,7 +7,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class SmsStatusPipe implements PipeTransform {
 
   transform(value: number | string): string {
-    value = value.toString();
+    value = value?.toString();
     //Magfa
     // switch (value) {
     //   case "1": return 'رسیده به گوشی';
