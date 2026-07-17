@@ -145,7 +145,9 @@
                 <span class="text-green-500"> {{applicant.remained|toman}}</span>
                 }
             </td>
-            <td>{{applicant.totalCash|toman}}</td>
+            <td>{{applicant.totalCash|toman}}
+              <i (click)="openCashModal(applicant)"
+                 class="cursor-pointer text-cyan-500 pi pi-folder-plus pr-2"></i></td>
             <td>
                 {{applicant.totalLoan|toman}}
                 @if(applicant.totalLoan){
@@ -191,67 +193,131 @@
     </p-table>
 </p-dialog>
 
-<p-dialog key="installmentsDialog" [(visible)]="showInstallmentsModal" dismissableMask="true" modal="true"
-    header="اقساط" [style]="{ width: '70%' }">
+<p-dialog key="cashDialog" [(visible)]="showCashModal" dismissableMask="true" modal="true"
+          header="پرداخت های نقدی" [style]="{ width: '70%' }">
+  @if(newCashFormGroup){
+  <form [formGroup]="newCashFormGroup">
+    <div class="grid align-center">
+      <div class="col">
+        <p-floatlabel variant="on" class="mt-2">
+          <input id="newAmount" class="w-full" pInputText autocomplete="off" formControlName="amount" />
+          <label for="newAmount">مبلغ</label>
+        </p-floatlabel>
+      </div>
+      <div class="col">
+        <p-floatlabel variant="on" class="mt-2">
+          <ng-persian-datepicker (dateOnSelect)="cashDateChanged($event)" uiInitViewMode="day"
+                                 [dateInitValue]="false" [uiTodayBtnEnable]="true">
+            <input placeholder="تاریخ" class="w-full" pInputText id="date" formControlName="date"
+                   [autocomplete]="false" />
+          </ng-persian-datepicker>
+        </p-floatlabel>
+      </div>
+      <div class="col">
+        <p-floatlabel variant="on" class="mt-2">
+          <input id="newAmount" class="w-full" pInputText autocomplete="off" formControlName="description" />
+          <label for="newAmount">توضیحات</label>
+        </p-floatlabel>
+      </div>
+      <div class="col-auto">
+        <p-button label="ثبت" [size]="'small'" (onClick)="submitNewCash()" />
+      </div>
+    </div>
+    <div>
+      {{newCashFormGroup.controls['amount'].value|toman:true}}
+    </div>
+  </form>
+  }
+  @if(orders){
+  <p-table [value]="orders">
+    <ng-template #header>
+      <tr>
+        <th>تاریخ</th>
+        <th>مبلغ (تومن)</th>
+        <th>توضیحات</th>
+        <th>حذف</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-order let-index="rowIndex">
+      <tr>
+        <td>{{order.verifyDate|persianDate:true}}</td>
+        <td>{{order.amount|toman}}</td>
+        <td>{{order.description}}</td>
+        <td>
+          @if(!order.authority){
+          <i class="pi pi-trash text-red-500 cursor-pointer"
+             (click)="removeOrder(order.id,index,$event)"></i>
+          }@else {
+          پرداخت های آنلاین امکان حذف ندارند
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  }
+</p-dialog>
+
+  <p-dialog key="installmentsDialog" [(visible)]="showInstallmentsModal" dismissableMask="true" modal="true"
+            header="اقساط" [style]="{ width: '70%' }">
     @if(newInstallmentFormGroup){
 
     <form [formGroup]="newInstallmentFormGroup">
-        <div class="grid align-center">
-            <div class="col">
-                <p-floatlabel variant="on" class="mt-2">
-                    <input id="newAmount" class="w-full" pInputText autocomplete="off" formControlName="amount" />
-                    <label for="newAmount">مبلغ</label>
-                </p-floatlabel>
-            </div>
-            <div class="col">
-                <p-floatlabel variant="on" class="mt-2">
-                    <ng-persian-datepicker (dateOnSelect)="dateChanged($event)" uiInitViewMode="day"
-                        [dateInitValue]="false" [uiTodayBtnEnable]="true">
-                        <input placeholder="تاریخ" class="w-full" pInputText id="date" formControlName="date"
-                            [autocomplete]="false" />
-                    </ng-persian-datepicker>
-                    <!-- {{newInstallmentFormGroup.controls['date'].value}} -->
-                </p-floatlabel>
-            </div>
-            <div class="col">
-                <p-floatlabel variant="on" class="mt-2">
-                    <input id="newAmount" class="w-full" pInputText autocomplete="off" formControlName="description" />
-                    <label for="newAmount">توضیحات</label>
-                </p-floatlabel>
-            </div>
-            <div class="col-auto">
-                <p-button label="ثبت" [size]="'small'" (onClick)="submitNewInstallment()" />
-            </div>
+      <div class="grid align-center">
+        <div class="col">
+          <p-floatlabel variant="on" class="mt-2">
+            <input id="newAmount" class="w-full" pInputText autocomplete="off" formControlName="amount" />
+            <label for="newAmount">مبلغ</label>
+          </p-floatlabel>
         </div>
-        <div>
-            {{newInstallmentFormGroup.controls['amount'].value|toman:true}}
+        <div class="col">
+          <p-floatlabel variant="on" class="mt-2">
+            <ng-persian-datepicker (dateOnSelect)="installmentDateChanged($event)" uiInitViewMode="day"
+                                   [dateInitValue]="false" [uiTodayBtnEnable]="true">
+              <input placeholder="تاریخ" class="w-full" pInputText id="date" formControlName="date"
+                     [autocomplete]="false" />
+            </ng-persian-datepicker>
+            <!-- {{newInstallmentFormGroup.controls['date'].value}} -->
+          </p-floatlabel>
         </div>
+        <div class="col">
+          <p-floatlabel variant="on" class="mt-2">
+            <input id="newAmount" class="w-full" pInputText autocomplete="off" formControlName="description" />
+            <label for="newAmount">توضیحات</label>
+          </p-floatlabel>
+        </div>
+        <div class="col-auto">
+          <p-button label="ثبت" [size]="'small'" (onClick)="submitNewInstallment()" />
+        </div>
+      </div>
+      <div>
+        {{newInstallmentFormGroup.controls['amount'].value|toman:true}}
+      </div>
     </form>
     }
 
     <p-table [value]="installments">
-        <ng-template #header>
-            <tr>
-                <th>تاریخ</th>
-                <th>مبلغ (تومن)</th>
-                <th>توضیحات</th>
-                <th>حذف</th>
-            </tr>
-        </ng-template>
-        <ng-template #body let-installment let-index="rowIndex">
-            <tr>
-                <td>{{installment.verifyDate|persianDate:true}}</td>
-                <td>{{installment.amount|toman}}</td>
-                <td>{{installment.description}}</td>
-                <td>
-                    @if(!installment.authority){
-                    <i class="pi pi-trash text-red-500 cursor-pointer"
-                        (click)="removeInstallment(installment.id,index,$event)"></i>
-                    }@else {
-                    اقساط آنلاین امکان حذف ندارند
-                    }
-                </td>
-            </tr>
-        </ng-template>
+      <ng-template #header>
+        <tr>
+          <th>تاریخ</th>
+          <th>مبلغ (تومن)</th>
+          <th>توضیحات</th>
+          <th>حذف</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-installment let-index="rowIndex">
+        <tr>
+          <td>{{installment.verifyDate|persianDate:true}}</td>
+          <td>{{installment.amount|toman}}</td>
+          <td>{{installment.description}}</td>
+          <td>
+            @if(!installment.authority){
+            <i class="pi pi-trash text-red-500 cursor-pointer"
+               (click)="removeInstallment(installment.id,index,$event)"></i>
+            }@else {
+            اقساط آنلاین امکان حذف ندارند
+            }
+          </td>
+        </tr>
+      </ng-template>
     </p-table>
-</p-dialog>
+  </p-dialog>

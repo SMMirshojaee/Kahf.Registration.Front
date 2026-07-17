@@ -87,7 +87,15 @@ export class ApplicantService {
       .set('date', newInstallment.date.toLocaleString());
     return this.httpClient.post<OrderDto>(`${this.address}/insertInstallment`, newInstallment, { params });
   }
+  insertCash(newOrder: OrderDto): Observable<OrderDto> {
+    let params = new HttpParams()
+      .set('verifyDate', newOrder.verifyDate.toLocaleString());
+    return this.httpClient.post<OrderDto>(`${this.address}/insertCash`, newOrder, { params });
+  }
   removeInstallment(id: number):Observable<any> {
     return this.httpClient.delete(`${this.address}/removeInstallment/${id}`);
+  }
+  removeOrder(id: number):Observable<any> {
+    return this.httpClient.delete(`${this.address}/removeOrder/${id}`);
   }
 }

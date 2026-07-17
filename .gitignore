@@ -40,3 +40,7 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+/.vs/Kahf.Registration.Front.slnx/v18
+/.vs/Kahf.Registration.Front.slnx/config
+/.vs/Kahf.Registration.Front.slnx/FileContentIndex
+/.vs

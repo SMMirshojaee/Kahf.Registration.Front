@@ -39,10 +39,13 @@ export class ManageCosts extends GenericComponent {
   protected extraCosts: ApplicantExtraCostDto[];
   protected showExtraCostsModal = false;
   protected showInstallmentsModal = false;
+  protected showCashModal = false;
   protected installments: OrderDto[];
+  protected orders: OrderDto[];
   protected selectedApplicant: ApplicantOrderDto;
   protected selectedLoan: OrderDto;
   protected newInstallmentFormGroup: FormGroup;
+  protected newCashFormGroup: FormGroup;
   protected tempInstallmentStatus = { count: 6, passedMonths: 3 }
   protected tableSums = {
     totalCost: 0,
@@ -97,6 +100,47 @@ export class ManageCosts extends GenericComponent {
       description: new FormControl(''),
     });
   }
+  openCashModal(applicant: ApplicantOrderDto) {
+    this.selectedApplicant = applicant;
+    this.showCashModal = true;
+    this.orders = this.selectedApplicant.orders;
+    this.newCashFormGroup = new FormGroup({
+      amount: new FormControl('', [Validators.required]),
+      date: new FormControl('', [Validators.required]),
+      description: new FormControl(''),
+    });
+  }
+  submitNewCash() {
+    this.newCashFormGroup.markAllAsDirty();
+    if (this.newCashFormGroup.invalid) {
+      this.notify.warn('موارد مشخص شده رو برطرف کن');
+      return;
+    }
+    let amount = this.newCashFormGroup.get('amount')?.value;
+    let date = new Date(Jalali.parse(this.newCashFormGroup.get('date')?.value).gregorian());
+    let description = this.newCashFormGroup.get('description')?.value;
+    let newOrder: OrderDto = {
+      amount: amount,
+      verifyDate: date,
+      description: description,
+      applicantId: this.selectedApplicant.id,
+      nationalNumber: this.selectedApplicant.nationalNumber
+    } as OrderDto;
+
+    this.spinnerService.show();
+    this.applicantService.insertCash(newOrder)
+      .pipe(finalize(() => this.spinnerService.hide()))
+      .subscribe({
+        next: data => {
+          this.newCashFormGroup.reset();
+          this.selectedApplicant.orders.push(data);
+          this.prepareDataToShow();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.notify.defaultError();
+        }
+      })
+  }
   submitNewInstallment() {
     this.newInstallmentFormGroup.markAllAsDirty();
     if (this.newInstallmentFormGroup.invalid) {
@@ -128,6 +172,31 @@ export class ManageCosts extends GenericComponent {
           this.notify.defaultError();
         }
       })
+  }
+  removeOrder(id: number, index: number, event: Event) {
+    this.confirmationService.confirm({
+      target: event.currentTarget as EventTarget,
+      message: 'آیا از حذف این تراکنش مطمئنی؟',
+      acceptLabel: 'بله',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectLabel: 'خیر',
+      accept: () => {
+        this.spinnerService.show();
+        this.applicantService.removeOrder(id)
+          .pipe(finalize(() => this.spinnerService.hide()))
+          .subscribe({
+            next: data => {
+              this.selectedApplicant.orders.splice(index, 1);
+              this.prepareDataToShow();
+
+              this.notify.defaultSuccess();
+            },
+            error: (err: HttpErrorResponse) => {
+              this.notify.defaultError();
+            }
+          })
+      }
+    })
   }
   removeInstallment(id: number, index: number, event: Event) {
     this.confirmationService.confirm({
@@ -315,7 +384,10 @@ export class ManageCosts extends GenericComponent {
   }
 
 
-  dateChanged(event: IActiveDate) {
+  installmentDateChanged(event: IActiveDate) {
     this.newInstallmentFormGroup.controls['date'].patchValue(event.shamsi);
+  }
+  cashDateChanged(event: IActiveDate) {
+    this.newCashFormGroup.controls['date'].patchValue(event.shamsi);
   }
 }
